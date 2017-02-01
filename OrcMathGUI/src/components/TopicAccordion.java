@@ -65,7 +65,7 @@ public class TopicAccordion extends Accordion {
 				"Complex Numbers: Rationalize Imaginary Denominators",
 				"Complex Numbers: Multiply Complex Numbers",
 				"Complex Numbers: Simplify powers of i",
-		 		"Rational Expressions: Simplify polynomials",
+//		 		"Rational Expressions: Simplify polynomials",
 				};
 		String[] geometryTopics = {
 				"Transformations: Reflection",
@@ -101,16 +101,16 @@ public class TopicAccordion extends Accordion {
 				"Coordinate Geometry: Calculate midpoint",
 				"Coordinate Geometry: Determine the relationship between two lines",
 				"Coordinate Geometry: Write the equation of a line that is perp. or par. to a given line",
-				"Geometry Basics: Use algebra to calculate the measure of an angle",
+//				"Geometry Basics: Use algebra to calculate the measure of an angle",
 				"Quadrilaterals: Use algebra to calculate angle measures in a quadrilateral",
 				"Quadrilaterals: Algebraically solve using Pythagorean Theorem applications",              //no key!
 				"Quadrilaterals: Algebraically solve using Pythagorean Theorem applications Using Quadratic Equations",
 				"Quadrilaterals: Use algebra to calculate measures of congruent parts in a quadrilateral",
 				"Geometric relationships",
-				"Geometric Constructions: Justifications",
-				"Geometric Constructions: Justifications",
-				"Geometric Constructions",
-				"Locus: Sketch locus in a coordinate plane",
+//				"Geometric Constructions: Justifications",
+//				"Geometric Constructions: Justifications",
+//				"Geometric Constructions",
+//				"Locus: Sketch locus in a coordinate plane",
 				"Locus: Identify the number of points"};		//check
 		
 		String[] functions = {
