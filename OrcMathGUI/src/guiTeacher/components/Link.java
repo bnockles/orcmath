@@ -24,20 +24,22 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import guiTeacher.Utilities;
+
 public class Link extends Button {
 
 	private int align;
 	private Color linkColor;
-	
+
 	public Link(int x, int y, int w, int h, String text, Action action) {
 		super(x, y, w, h, text, null, action);
 		linkColor = getAccentColor();
 		align = StyledComponent.ALIGN_LEFT;
 		update();
 	}
-	
-	
-	
+
+
+
 	public Color getLinkColor() {
 		return linkColor;
 	}
@@ -56,33 +58,40 @@ public class Link extends Button {
 	}
 
 
-
 	public void update(Graphics2D g){
 		clear();
+		super.update(g);
+	}
+
+	public void drawButton(Graphics2D g, boolean hover){
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(getLinkColor());
-		g.setFont(getBaseFont());
-		FontMetrics fm = g.getFontMetrics();
-		
-		if(getText()!= null){
-			String t = getText();
-			//just in case text is too wide, cut off
-			int cutoff = t.length();
-			while(cutoff > 0 && fm.stringWidth(t) > getWidth()){
-				cutoff --;
-				t = t.substring(0,cutoff); 
+		if(getLinkColor() != null){
+
+			if(!hover)g.setColor(getLinkColor());
+			else g.setColor(Utilities.lighten(getLinkColor(),.4f));
+			g.setFont(getBaseFont());
+			FontMetrics fm = g.getFontMetrics();
+
+			if(getText()!= null){
+				String t = getText();
+				//just in case text is too wide, cut off
+				int cutoff = t.length();
+				while(cutoff > 0 && fm.stringWidth(t) > getWidth()){
+					cutoff --;
+					t = t.substring(0,cutoff); 
+				}
+
+				int xStart = 0;
+				int sWidth = fm.stringWidth(t);
+				if(align == StyledComponent.ALIGN_CENTER){
+					xStart = getWidth()/2-sWidth;
+				}else if(align == StyledComponent.ALIGN_RIGHT){
+					xStart = getWidth()-sWidth;
+				}
+				g.drawString(t, xStart, fm.getHeight());
+				g.drawLine(xStart,fm.getHeight()+1,xStart+sWidth,fm.getHeight()+1);
 			}
-			
-			int xStart = 0;
-			int sWidth = fm.stringWidth(t);
-			if(align == StyledComponent.ALIGN_CENTER){
-				xStart = getWidth()/2-sWidth;
-			}else if(align == StyledComponent.ALIGN_RIGHT){
-				xStart = getWidth()-sWidth;
-			}
-			g.drawString(t, xStart, fm.getHeight());
-			g.drawLine(xStart,fm.getHeight()+1,xStart+sWidth,fm.getHeight()+1);
 		}
 	}
 

@@ -147,6 +147,8 @@ public class OrcMath extends GUIApplication {
 
 
 
+		}else{
+			settings.setDirectoryText(sd.getDirectory());
 		}
 	}
 

@@ -105,6 +105,7 @@ public class Problem {
 	  	"Transformations: Dilation",
 	  	"Transformations: Compositions",
 	  	
+	  	"Similarity: Side Splitter Theorem",
 	  	
 		"Circles: Secant Segments",
 		"Circles: Chord Lengths",
@@ -285,6 +286,11 @@ public class Problem {
     	
     	else if (string.equals("Circles: Secant Segments")){
         	SecantLengths newProblem = new SecantLengths(diff);
+        	getProblemData(newProblem);
+        	}
+    	
+    	else if (string.equals("Similarity: Side Splitter Theorem")){
+        	SideSplitter newProblem = new SideSplitter(diff);
         	getProblemData(newProblem);
         	}
 

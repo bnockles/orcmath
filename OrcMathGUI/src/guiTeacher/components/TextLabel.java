@@ -90,6 +90,7 @@ public class TextLabel extends StyledComponent implements TextComponent{
 			return size;
 		}
 		
+		
 		@Override
 		public void update(Graphics2D g) {
 			clear();
@@ -97,10 +98,11 @@ public class TextLabel extends StyledComponent implements TextComponent{
 //					RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(this.getTextColor());
 			g.setFont(getFont());
+			System.out.println("TextLabel with text = "+text);
 			FontMetrics fm = g.getFontMetrics();
 			if(text != null){
-				Utilities.drawText(g, text, 0, getWidth(), getHeight(), align);
-//				g.drawString(text, 0, getHeight()-fm.getDescent());
+//				Utilities.drawText(g, text, 0, getWidth(), getHeight(), align);
+				g.drawString(text, 0, fm.getHeight());
 			}
 		}
 

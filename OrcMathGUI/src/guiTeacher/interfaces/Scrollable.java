@@ -23,4 +23,6 @@ public interface Scrollable {
 	boolean isHovered(int x, int y);
 	void setFocus(boolean b);
 	void scrollY(int clicks);
+	void press();
+	void release();
 }

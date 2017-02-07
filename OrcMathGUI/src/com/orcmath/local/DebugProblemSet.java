@@ -38,7 +38,7 @@ import com.orcmath.objects.Ops;
 import com.orcmath.objects.SimplestRadicalForm;
 import com.orcmath.objects.Term;
 
-public class ClassworkProblemSet extends MathPage{
+public class DebugProblemSet extends MathPage{
 
 	//fields
 	protected static String subject = "GEO";
@@ -69,114 +69,114 @@ public class ClassworkProblemSet extends MathPage{
 	protected  String[] problemTypes;
 	
 	protected static final String[] allTypes = {
-
-							"Algebra: Linear Equations",
-					"Algebra: Linear Equations (Multiple Choice)",
-					"Algebra: Quadratic Equations",
-					"Algebra: Ratio Sums",
-					"Algebra: Pythagorean Theorem Equations",
-					"Rational Equations: Solve Proportions (Involving Linear Equations)",//includes key
+			"Similarity: Side Splitter Theorem"
+//							"Algebra: Linear Equations",
+//					"Algebra: Linear Equations (Multiple Choice)",
+//					"Algebra: Quadratic Equations",
+//					"Algebra: Ratio Sums",
+//					"Algebra: Pythagorean Theorem Equations",
+//					"Rational Equations: Solve Proportions (Involving Linear Equations)",//includes key
 //////	NOT WORKING			  	"Geometry: Identify Theorem and Solve",//NOTE: As of right now, only circle theorems are used in this set
 ////		NOT WORKING FOR ALL QUESTION TYPES			"Geometry: Identify Theorem Only",
 //
-					"Transformations: Reflection",
-			"Transformations: Rotation",
-				  	"Transformations: Dilation",
-				  	"Transformations: Translation",
-				  	"Transformations: Compositions",
+//					"Transformations: Reflection",
+//			"Transformations: Rotation",
+//				  	"Transformations: Dilation",
+//				  	"Transformations: Translation",
+//				  	"Transformations: Compositions",
+////			//		
+//					"Formulas: Surface Area of a Sphere",
+//					"Formulas: Volume of a Cone",
+//					"Formulas: Volume of a Pyramid",
+////		ENDLESS LOOP			"Formulas: Volume of a Sphere",
+//					"Formulas: Surface Area of a Cylinder",
+//					"Formulas: Surface Area of a Cone",
+//					"Formulas: Volume of a Cylinder",
+////
+//					"Circles: Secant Segments",							//check
+////		NOT WORKING			"Circles: Chord Lengths",
 //			//		
-					"Formulas: Surface Area of a Sphere",
-					"Formulas: Volume of a Cone",
-					"Formulas: Volume of a Pyramid",
-//		ENDLESS LOOP			"Formulas: Volume of a Sphere",
-					"Formulas: Surface Area of a Cylinder",
-					"Formulas: Surface Area of a Cone",
-					"Formulas: Volume of a Cylinder",
+//					"Circles: Parallel Chords",								//check
+//					"Circles: Tangent Lines",							//check
+//					"Circles: Inscribed Angles with a Common Arc",				//check
+//			//		
+//					"Circles: Distance Between Center and Chord",				//check
+//					"Circles: Pythagorean Theorem with Tangent Lines",			//check
+//			//
+//					"Circles: Central Angles",							//check
+//					"Circles: Inscribed Quadrilaterals",				//check
+////					"Circles: Intersecting Chords",
+//					"Circles: Inscribed Angles",//check
+//					"Circles: Secant Angles",
+//					"Circles: Angles Formed by a Chord and a Tangent",		//check
 //
-					"Circles: Secant Segments",							//check
-//		NOT WORKING			"Circles: Chord Lengths",
-			//		
-					"Circles: Parallel Chords",								//check
-					"Circles: Tangent Lines",							//check
-					"Circles: Inscribed Angles with a Common Arc",				//check
-			//		
-					"Circles: Distance Between Center and Chord",				//check
-					"Circles: Pythagorean Theorem with Tangent Lines",			//check
-			//
-					"Circles: Central Angles",							//check
-					"Circles: Inscribed Quadrilaterals",				//check
-//					"Circles: Intersecting Chords",
-					"Circles: Inscribed Angles",//check
-					"Circles: Secant Angles",
-					"Circles: Angles Formed by a Chord and a Tangent",		//check
-
-					"Graphing: Quadratics given domain",
-					"Graphing: Radicals given domain",
-					"Graphing: Absolute value given domain",
-//		NOT WORKING			"Graphing: Piecewise functions",
-//					"Graphing: Determine continuity of piecewise function, including removeable discontinuity",
-					"Graphing: Determine continuity of piecewise function",
-					"Graphing: Determine continuity of piecewise function (algebraically)",
-					"Graphing: Removeable Discontinuity",
-
-					"Graphing: Identify Max and Min",
-
-			//
-					"Systems of linear and quadratic equations",
-					"Systems of linear and quadratic equations, (x,y) solution",
-					"Systems of linear and quadratic equations, (x,y) solution, check work",
-
-
+//					"Graphing: Quadratics given domain",
+//					"Graphing: Radicals given domain",
+//					"Graphing: Absolute value given domain",
+////		NOT WORKING			"Graphing: Piecewise functions",
+////					"Graphing: Determine continuity of piecewise function, including removeable discontinuity",
+//					"Graphing: Determine continuity of piecewise function",
+//					"Graphing: Determine continuity of piecewise function (algebraically)",
+//					"Graphing: Removeable Discontinuity",
 //
-					"Polynomials: Factoring polynomials",
-					"Polynomials: Factoring by grouping",
-					"Polynomials: Factoring GCF",
-					"Polynomials: Factoring by grouping with GCF",
-					"Polynomials: Factoring trinomial by grouping",
-					"Polynomials: Factoring trinomial by grouping",
-					"Polynomials: Factoring trinomial by grouping and GCF",
-					"Polynomials: Factoring higher degree polynomials",//does not contain explained answer key
-					"Polynomials: Solve any quadratic",
-
-					"Polynomials: Factoring polynomials (with rational coefficients)",//INFERIOR, SHOULD BE DELETED, BUT ERASE ASSOCIATED METHODS IN PROBLEM CLASS
-					"Functions: Identify functions",
-					"Functions: Use inverse variation to solve for unknown values",
-					"Systems of linear and quadratic equations",
-					"Systems of linear and quadratic equations by graphing",
-					"Rational Expressions: Multiply and divide rational expressions",
-					"Rational Expressions: Identifying the LCD",
-					"Rational Expressions: Add and subtract rational expressions",//key is not entirely complete
-					"Rational Expressions: Simplify complex rational expressions",
-					"Rational Expressions: Simplify polynomials with fractional coefficients",
-					"Rational Expressions: Distribute polynomials with fractional coefficients",
-					"Rational Equations: Solve Proportions (Involving Linear Equations)",//includes key
-
-					"Logarithms: Solving Equations (Level 1)",//includes key
-
-					"Coordinate Geometry: Calculate distance",
-					"Coordinate Geometry: Calculate midpoint",
-					"Coordinate Geometry: Determine the relationship between two lines",
-					"Geometry Basics: Use algebra to calculate the measure of an angle",
-					"Quadrilaterals: Use algebra to calculate angle measures in a quadrilateral",
-					"Quadrilaterals: Algebraically solve using Pythagorean Theorem applications",              //no key!
-					"Quadrilaterals: Algebraically solve using Pythagorean Theorem applications Using Quadratic Equations",
-					"Quadrilaterals: Use algebra to calculate measures of congruent parts in a quadrilateral",
-			//		
-					"Coordinate Geometry: Write the equation of a line that is perp. or par. to a given line",
-					"Geometric relationships",
-					"Geometric Constructions: Justifications",
-					"Geometric Constructions: Justifications",
-					"Geometric Constructions",
-					"Locus: Sketch locus in a coordinate plane",
-					"Locus: Identify the number of points",
-
-					"Radical Expressions: Simplify radicals",
-					"Radical Expressions: Add radicals",
-					"Radical Expressions: Rationalize denominators",
-			//		
-					"Complex Numbers: Rationalize Imaginary Denominators",
-					"Complex Numbers: Multiply Complex Numbers",
-			"Complex Numbers: Simplify powers of i",
+//					"Graphing: Identify Max and Min",
+//
+//			//
+//					"Systems of linear and quadratic equations",
+//					"Systems of linear and quadratic equations, (x,y) solution",
+//					"Systems of linear and quadratic equations, (x,y) solution, check work",
+//
+//
+////
+//					"Polynomials: Factoring polynomials",
+//					"Polynomials: Factoring by grouping",
+//					"Polynomials: Factoring GCF",
+//					"Polynomials: Factoring by grouping with GCF",
+//					"Polynomials: Factoring trinomial by grouping",
+//					"Polynomials: Factoring trinomial by grouping",
+//					"Polynomials: Factoring trinomial by grouping and GCF",
+//					"Polynomials: Factoring higher degree polynomials",//does not contain explained answer key
+//					"Polynomials: Solve any quadratic",
+//
+//					"Polynomials: Factoring polynomials (with rational coefficients)",//INFERIOR, SHOULD BE DELETED, BUT ERASE ASSOCIATED METHODS IN PROBLEM CLASS
+//					"Functions: Identify functions",
+//					"Functions: Use inverse variation to solve for unknown values",
+//					"Systems of linear and quadratic equations",
+//					"Systems of linear and quadratic equations by graphing",
+//					"Rational Expressions: Multiply and divide rational expressions",
+//					"Rational Expressions: Identifying the LCD",
+//					"Rational Expressions: Add and subtract rational expressions",//key is not entirely complete
+//					"Rational Expressions: Simplify complex rational expressions",
+//					"Rational Expressions: Simplify polynomials with fractional coefficients",
+//					"Rational Expressions: Distribute polynomials with fractional coefficients",
+//					"Rational Equations: Solve Proportions (Involving Linear Equations)",//includes key
+//
+//					"Logarithms: Solving Equations (Level 1)",//includes key
+//
+//					"Coordinate Geometry: Calculate distance",
+//					"Coordinate Geometry: Calculate midpoint",
+//					"Coordinate Geometry: Determine the relationship between two lines",
+//					"Geometry Basics: Use algebra to calculate the measure of an angle",
+//					"Quadrilaterals: Use algebra to calculate angle measures in a quadrilateral",
+//					"Quadrilaterals: Algebraically solve using Pythagorean Theorem applications",              //no key!
+//					"Quadrilaterals: Algebraically solve using Pythagorean Theorem applications Using Quadratic Equations",
+//					"Quadrilaterals: Use algebra to calculate measures of congruent parts in a quadrilateral",
+//			//		
+//					"Coordinate Geometry: Write the equation of a line that is perp. or par. to a given line",
+//					"Geometric relationships",
+//					"Geometric Constructions: Justifications",
+//					"Geometric Constructions: Justifications",
+//					"Geometric Constructions",
+//					"Locus: Sketch locus in a coordinate plane",
+//					"Locus: Identify the number of points",
+//
+//					"Radical Expressions: Simplify radicals",
+//					"Radical Expressions: Add radicals",
+//					"Radical Expressions: Rationalize denominators",
+//			//		
+//					"Complex Numbers: Rationalize Imaginary Denominators",
+//					"Complex Numbers: Multiply Complex Numbers",
+//			"Complex Numbers: Simplify powers of i",
 //		NOT WORKING	 		"Rational Expressions: Simplify polynomials"
 
 
@@ -225,7 +225,7 @@ public class ClassworkProblemSet extends MathPage{
 		//		  numberOfColumns = problem.getNumberOfColumns();
 		//		  instructions = problem.getInstructions();
 		//		  verticalSpacing = problem.getVerticalSpacing();	    
-		ClassworkProblemSet cps = new ClassworkProblemSet();
+		DebugProblemSet cps = new DebugProblemSet();
 		instructions = cps.getInstructions();
 		cps.setProblemTypes(allTypes);
 		cps.createPdf();
@@ -242,7 +242,7 @@ public class ClassworkProblemSet extends MathPage{
 		super.openFile(getFile());
 	}
 	
-	public ClassworkProblemSet(){
+	public DebugProblemSet(){
 		problemTypes = new String[0];
 		numberOfProblems=0;
 		numberOfPages=1;
@@ -387,7 +387,7 @@ public class ClassworkProblemSet extends MathPage{
 			verticalSpace[index] = p.getVerticalSpacing();
 			answerImageMargins[(pageNumber-1)*numberOfProblems+index]=p.getAnswerNeedsThisMuchExtraSpaceOnTop();
 			answerScaleFactors[(pageNumber-1)*numberOfProblems+index]=p.getScaleFactor();
-			p.makeAnswerImage("PDFs/Graphics/answer"+answerNumber);
+			p.makeAnswerImage("PDFs/Graphics/answer"+answerNumber+".png");
 				  
 			instructionsForEachQuestion[index]=p.getInstructions();
 		}

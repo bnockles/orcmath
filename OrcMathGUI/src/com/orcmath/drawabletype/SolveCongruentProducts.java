@@ -31,7 +31,7 @@ import com.orcmath.objects.Ops;
 import com.orcmath.objects.QuadraticEquation;
 import com.orcmath.objects.Term;
 
-public class SolveCongruentProducts extends DynamicType{
+public abstract class SolveCongruentProducts extends DynamicType{
 
 	
 	boolean part2IsAddedToPart1;
@@ -159,9 +159,7 @@ public class SolveCongruentProducts extends DynamicType{
 		return product2Part2;
 	}
 
-	protected void drawDynamicImage(CoordinateImage image2) {
-		// This needs to be overwritten in the subclass	
-	}
+	protected abstract void drawDynamicImage(CoordinateImage image2);
 
 	protected void initializeExpressions(){
 		System.out.println("Creating an expression with xValue ="+xValue+

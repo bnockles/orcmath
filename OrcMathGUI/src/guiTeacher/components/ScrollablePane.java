@@ -65,6 +65,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 	private int maxY;
 	protected int xRelative;
 	protected int yRelative;
+	private int scrollValue;
 
 	public ScrollablePane(FocusController focusController, int x, int y, int w, int h) {
 		super(w, h);
@@ -223,8 +224,18 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 
 		}
 		for(Clickable c:clickables){
+			//update Buttons
+			boolean buttonStateChange = false;
+			if(c instanceof Button){
+				buttonStateChange = ((Button)c).isHovered();
+			}
 			if(c.isHovered(xRelative+contentX, yRelative+contentY)){
 				c.hoverAction();
+				if(c instanceof Button && buttonStateChange != ((Button)c).isHovered()){
+					update();
+					if(containingComponent != null)containingComponent.update();
+				}
+				
 				//				don't break because sometime objects have tasks after hovering is complete
 			}
 		}
@@ -247,7 +258,39 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 			}
 		}
 	}
+	
+	public void press(){
+		scrollValue = 0;
+		if(upArrow.contains(xRelative, yRelative)){
+			scrollValue = -25;
+		}
+		else if(downArrow.contains(xRelative, yRelative)){
+			scrollValue = 25;
+		}
+		if(scrollValue != 0){
+			Thread scroll = new Thread(new Runnable(){
 
+				@Override
+				public void run() {
+					while(scrollValue != 0){
+						scrollY(scrollValue);
+						try {
+							Thread.sleep(25);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				
+			});
+			scroll.start();
+		}
+	}
+
+	public void release(){
+		scrollValue = 0;
+	}
+	
 	public BufferedImage getContentImage(){
 		return contentImage;
 	}

@@ -91,16 +91,16 @@ public class UpdateNotification extends StyledComponent implements Clickable{
 				public void act() {
 					Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 					if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-					        try {
-					            desktop.browse(new URI(url));
-					        } catch (Exception e) {
-					            e.printStackTrace();
-					        }
-					    }else{
-					    	OrcMath.createScreen.remove(notification);
-					    	OrcMath.createScreen.presentNotification("Your system does not allow linking from Java software. Go to neverbenbetter.com/orcmath for details.");
-					    }
-					
+						try {
+							desktop.browse(new URI(url));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}else{
+						OrcMath.createScreen.remove(notification);
+						OrcMath.createScreen.presentNotification("Your system does not allow linking from Java software. Go to neverbenbetter.com/orcmath for details.");
+					}
+
 				}
 			});
 			buttons = new ArrayList<Button>();

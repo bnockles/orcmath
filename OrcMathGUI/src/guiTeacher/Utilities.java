@@ -18,6 +18,7 @@
  *******************************************************************************/
 package guiTeacher;
 
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
@@ -72,6 +73,13 @@ public class Utilities {
 		}else{
 			drawText(g, text, 0,yTop, width, height, align);
 		}
+	}
+	
+	public static Color lighten(Color color, float amount){
+		int red = (int)((color.getRed() * (1-amount)/255+amount)*255);
+		int green = (int)((color.getGreen() * (1-amount)/255+amount)*255);
+		int blue = (int)((color.getBlue() * (1-amount)/255+amount)*255);
+		return new Color(red, green, blue);
 	}
 	
 }

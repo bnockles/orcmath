@@ -315,7 +315,11 @@ public class CoordinateImage {
 		g.drawOval(x, y, (int)(radius*2*(width/(xMax-xMin))), (int)(radius*2*height/(yMax-yMin)));	
 	}
 	
-
+	public void drawTriangle(Triangle t){
+		drawSegment(t.getSegmentA());
+		drawSegment(t.getSegmentB());
+		drawSegment(t.getSegmentC());
+	}
 	
 	public void drawOval(double centerX, double centerY, double width, double height) {
 		int x = getLocation(centerX-width/2, X_COORDINATE);

@@ -35,6 +35,7 @@ public class DirectorySelector {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			OrcMath.createScreen.setDirectory(file);
+			OrcMath.settings.setDirectoryText(file.getAbsolutePath());
 			OrcMath.sd.saveData();
 //			ui.setCsv(new AttendanceCsv(ui, file));
 		} else {

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import components.BackToCreateButton;
+import components.HelpButton;
 import data.DirectorySelector;
 import guiTeacher.components.Action;
 import guiTeacher.components.Checkbox;
@@ -76,7 +77,7 @@ public class Settings extends OrcMathScreen {
 	public void initAllObjects(List<Visible> viewObjects) {
 
 		BackToCreateButton btcb = new BackToCreateButton(getWidth()-_MARGIN1-BackToCreateButton.WIDTH, getHeight()-BackToCreateButton.HEIGHT-_MARGIN1);
-
+		HelpButton hb = new HelpButton(getWidth()-2*_MARGIN1-2*BackToCreateButton.WIDTH, getHeight()-BackToCreateButton.HEIGHT-_MARGIN1);
 		int fieldHeight = 30;
 
 
@@ -87,7 +88,7 @@ public class Settings extends OrcMathScreen {
 				new DirectorySelector();
 			}
 		});
-		directoryName = new TextLabel(_MARGIN1+directory.getWidth()+5, _Y_MARGIN, 200, fieldHeight, "");
+		directoryName = new TextLabel(_MARGIN1+directory.getWidth()+5, _Y_MARGIN, 350, fieldHeight, "Directory ");
 		viewObjects.add(directoryName);
 
 		int leftWidth = _MARGIN2-_MARGIN1-10;
@@ -108,7 +109,7 @@ public class Settings extends OrcMathScreen {
 		staticDifficulty = new TextField(_MARGIN1+110, _Y_MARGIN+_FORM_LINE_WIDTH*9-7, leftWidth-200, fieldHeight, 1+"","");
 		staticDifficulty.setInputType(49,52,1);
 
-		explanation = new TextArea(_MARGIN2, _Y_MARGIN, getWidth()-_MARGIN2-_MARGIN1, getHeight()-_Y_MARGIN*2-btcb.getHeight(), "Thank you for using OrchMath! I'm very excited to be sharing this project with you - a project I started in 2012 - but please be aware that this is only the INITIAL RELEASE. Don't be surprised if you encounter a few bugs. If you would like to notify me via email about any issues you may encounter, I can try to fix them, otherwise you can find tips on how to best use this software at neverbenbetter.com/orcmath");
+		explanation = new TextArea(_MARGIN2, _Y_MARGIN+30, getWidth()-_MARGIN2-_MARGIN1, getHeight()-_Y_MARGIN*2-btcb.getHeight(), "Thank you for using OrchMath! I'm very excited to be sharing this project with you - a project I started in 2012 - but please be aware that this is only the INITIAL RELEASE. Don't be surprised if you encounter a few bugs. If you would like to notify me via email about any issues you may encounter, I can try to fix them, otherwise you can find tips on how to best use this software at neverbenbetter.com/orcmath");
 		explanation.setCustomTextColor(new Color(0,102,102));
 
 		addHoverText(checkbox,"If you think there isn't enough blank space in between questions for students to show their work, check this box to override the vertical space and make it larger (or even smaller)");
@@ -131,6 +132,7 @@ public class Settings extends OrcMathScreen {
 		viewObjects.add(pages);
 		viewObjects.add(includeDirections);
 		viewObjects.add(btcb);
+		viewObjects.add(hb);
 		viewObjects.add(explanation);
 		viewObjects.add(includeHeader);
 		viewObjects.add(includeMainInstructions);
@@ -169,10 +171,7 @@ public class Settings extends OrcMathScreen {
 		return includeDirections.isChecked();
 	}
 
-	public void update(Graphics2D g){
-		if(directoryName!= null) directoryName.setText(OrcMath.createScreen.getSaveDirectory());
-		super.update(g);
-	}
+
 
 	public String getCustomTeacherName() {
 		return teacherName.getText();
@@ -218,6 +217,10 @@ public class Settings extends OrcMathScreen {
 			}
 		}
 		return emptiesExist;
+	}
+
+	public void setDirectoryText(String directoryName) {
+		this.directoryName.setText(directoryName);
 	}
 
 }

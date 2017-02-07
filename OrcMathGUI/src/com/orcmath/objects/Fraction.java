@@ -76,6 +76,46 @@ boolean isPositive;
         denominator=new Term(denom);
         
     }
+    
+    private void initFromIntValues(int num, int den){
+    	//factorizations don't work for negative numbers because the methods only count UP. 
+    	//MUST convert to positive for all operations, then back to negative
+    	isPositive = true;
+    	if (num<0 && den > 0){
+        	num = num *(-1);
+        	isPositive = false;
+        }
+    	else if (num > 0 && den <0){
+        	den = den *(-1);
+        	isPositive = false;
+        }
+    	else if (num< 0 && den < 0){
+    		num = num *(-1);
+    		den = den *(-1);
+    		isPositive = true;
+    	}
+    	
+    	ofConstants = true;
+        //System.out.println("\nA fraction of integers is being created.");
+        int check=num;
+        gcf=1;
+        boolean checking=true;
+        while (checking){
+            if(Ops.isInteger((double)den/check) && Ops.isInteger((double)num/check)){
+            	gcf=check;
+                checking=false;
+                numer = num/check;
+                denom = den/check;
+            }
+            else
+            {
+                check=check-1;
+            }
+        }
+        if (!isPositive) numer = numer*(-1);
+        numerator=new Term(numer);
+        denominator=new Term(denom);
+    }
 
     public Fraction (Term num, Term den){
     	ofConstants = false;
@@ -222,7 +262,20 @@ boolean isPositive;
     }
     
     
-    public int toInt(Fraction fraction){
+    /**
+     * approximates a double using a fraction
+     * @param d
+     */
+    public Fraction(double d) {
+		double rounded = (int)(d*10000)/10000.0;
+		int denominator = 1;
+		while((rounded*denominator)%1 != 0){
+			denominator++;
+		}
+		initFromIntValues((int)(rounded*denominator), denominator);
+	}
+
+	public int toInt(Fraction fraction){
         //if (ofConstants && denom==1)
         //{
             return numer;

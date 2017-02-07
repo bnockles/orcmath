@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 
 import data.SettingsData;
+import guiTeacher.Utilities;
 import guiTeacher.components.Action;
 import guiTeacher.components.Button;
 import guiTeacher.components.StyledComponent;
@@ -40,9 +41,9 @@ public class BackToCreateButton extends Button {
 	public static final Color FORE_COLOR = new Color(140,200,215);
 
 	private Polygon arrow;
-	
+
 	public BackToCreateButton(int x, int y) {
-		
+
 		super(x, y, WIDTH, HEIGHT, "", COLOR, new Action(){
 
 			@Override
@@ -58,7 +59,7 @@ public class BackToCreateButton extends Button {
 					sd.saveData();
 					OrcMath.app.setScreen(OrcMath.createScreen,new Transition(OrcMath.app,Transition.REVEAL_RIGHT,700));			
 				}
-				
+
 			}
 		});
 
@@ -80,15 +81,16 @@ public class BackToCreateButton extends Button {
 			ys[i]=(i<ySide.length)?height/2-ySide[i]: height/2 + ySide[ySide.length-1-(i%ySide.length)];
 		}
 		return new Polygon(xs, ys, ys.length);
-		
+
 	}
-	
-	public void update(Graphics2D g){
+
+	public void drawButton(Graphics2D g, boolean hover){
 		int border =2;
 
 		g.setStroke(new BasicStroke(border));
-		g.setColor(StyledComponent.getAccentColor());
 		if(arrow != null) {
+			if(!hover)g.setColor(StyledComponent.getAccentColor());
+			else g.setColor(Utilities.lighten(StyledComponent.getAccentColor(), .4f));
 			g.fill(arrow);
 			g.setColor(StyledComponent.getStaticBorderColor());
 			g.draw(arrow);

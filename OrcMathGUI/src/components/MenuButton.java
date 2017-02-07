@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 
+import guiTeacher.Utilities;
 import guiTeacher.components.Action;
 import guiTeacher.components.Button;
 import guiTeacher.components.StyledComponent;
@@ -48,7 +49,7 @@ public class MenuButton extends Button{
 		});
 	}
 	
-	public void update(Graphics2D g){
+	public void drawButton(Graphics2D g, boolean hover){
 		int border =2;
 		g.setStroke(new BasicStroke(border));
 //Original THREE BARS
@@ -61,7 +62,8 @@ public class MenuButton extends Button{
 //		}
 		
 		Polygon cog = makeCog(16);
-		g.setColor(StyledComponent.getAccentColor());
+		if(!hover)g.setColor(StyledComponent.getAccentColor());
+		else g.setColor(Utilities.lighten(StyledComponent.getAccentColor(),.4f));
 		g.fill(cog);
 		g.setColor(StyledComponent.getStaticBorderColor());
 		g.draw(cog);
