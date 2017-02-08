@@ -43,8 +43,11 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public static final int BORDER = 2;
 	public static final Color BORDER_COLOR = new Color(80,80,80);
 	private boolean running;
-	private boolean cursorShowing;
+	protected boolean cursorShowing;
 	private int cursorIndex;
+	protected int relativeX;
+	protected int relativeY;
+	protected boolean findCursor;//turns true when the update method is required to look for where a click corresponds to the cursor
 	private boolean editable;
 	private int inputType;
 	private int inputRangeMin;
@@ -117,16 +120,16 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public void run(){
 		cursorShowing = true;
 		while(running){
-			
+			update();			
 			try {
 				Thread.sleep(CURSOR_INTERVAL);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			cursorShowing = !cursorShowing;
-			update();
 		}
 		cursorShowing = false;
+		update();
 	}
 	
 	@Override
@@ -138,6 +141,15 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		g.setFont(getFont());
 		FontMetrics fm = g.getFontMetrics();
 		if(getText() != null) g.drawString(getText(), X_MARGIN, getHeight()-fm.getDescent());
+		if(findCursor){
+			int check = 0;
+			while(check < getText().length() && fm.stringWidth(getText().substring(0,check+1)) < relativeX){
+				check++;
+			}
+			cursorIndex = check;
+			findCursor = false;
+			cursorShowing  = true;
+		}
 		if(cursorShowing && running){
 			g.setColor(Color.black);
 			int base = getHeight()-fm.getDescent();
@@ -217,7 +229,12 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	}
 	
 	public boolean isHovered(int x, int y) {
-		return x > getX() && x < getX() + getWidth() && y > getY() && y < getY() + getHeight();
+		boolean b =  x > getX() && x < getX() + getWidth() && y > getY() && y < getY() + getHeight();
+		if(b){
+			relativeX = x - getX();
+			relativeY = y - getY();
+		}
+		return b;
 	}
 
 
@@ -268,8 +285,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void act() {
-		// TODO Auto-generated method stub
-		
+		findCursor = true;
 	}
 
 	@Override

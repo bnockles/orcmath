@@ -84,6 +84,17 @@ public class TextBox extends TextField {
 						line += words[i]+" ";
 						i++;
 					}
+					//moves the cursor if this line was clicked
+					if(findCursor && relativeY < y && relativeY > y - fm.getHeight()-SPACING-DESCRIPTION_SPACE){
+						int check = 0;
+						while(check < line.length() && fm.stringWidth(line.substring(0,check+1)) < relativeX){
+							check++;
+						}
+						setCursor(count + check);
+						findCursor = false;
+						cursorShowing  = true;
+					}
+					
 					if(y < getHeight()){
 						g.drawString(line, X_MARGIN, y);
 						if(isCursorShowing() && getCursorIndex() <=count+line.length() && !cursorDrawn){
