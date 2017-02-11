@@ -48,6 +48,7 @@ public class SettingsData {
 	private int worksheetType;
 	private ArrayList<UpdateNotification> updateNotifications;
 	private boolean presentOutdatedNotifcationAfterLoad;
+	private boolean shuffleOrder;
 	
 	public SettingsData() {
 		
@@ -126,6 +127,11 @@ public class SettingsData {
 						worksheetType = Integer.parseInt(row[7]);
 						includeHeader = Boolean.parseBoolean(row[8]);
 						includeMainInstructions = Boolean.parseBoolean(row[9]);
+						//NOTE: In all later versions, it is not guaranteed that there are more than 9 fields
+						if(row.length>10)shuffleOrder = Boolean.parseBoolean(row[10]);
+						else{
+							shuffleOrder = false;
+						}
 						
 					}if(lineNumber >1){
 						updateNotifications.add(new UpdateNotification(row));
@@ -144,6 +150,7 @@ public class SettingsData {
 					worksheetType = 0;
 					includeHeader = true;
 					includeMainInstructions = true;
+					shuffleOrder = false;
 					
 //					presentOutdatedNotifcationAfterLoad=true;
 				}
@@ -184,7 +191,8 @@ public class SettingsData {
 															+ instructionsForEachProblem+"\",\""
 																	+ worksheetType+"\",\""
 																			+ includeHeader+"\",\""
-																					+ includeMainInstructions+"\"\n");//has loaded for the first time
+																					+ includeMainInstructions+"\",\""
+																							+ shuffleOrder+"\"\n");//has loaded for the first time
 			for(UpdateNotification un: updateNotifications){
 				bufferedWriter.write(un.getSaveLine()+"\n");
 			}
@@ -249,6 +257,15 @@ public class SettingsData {
 		this.includeHeader = includeHeader;
 	}
 
+	public boolean isShuffleOrder() {
+		return shuffleOrder;
+	}
+
+	public void setShuffleOrder(boolean shuffleOrder) {
+		this.shuffleOrder = shuffleOrder;
+	}
+	
+	
 
 
 

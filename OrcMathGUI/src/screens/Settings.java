@@ -103,7 +103,7 @@ public class Settings extends OrcMathScreen {
 		includeDirections = new Checkbox("Each question has its own directions", _MARGIN1, _Y_MARGIN+_FORM_LINE_WIDTH*5, leftWidth, false, null);
 		includeHeader = new Checkbox("Include Header", _MARGIN1, _Y_MARGIN+_FORM_LINE_WIDTH*6, leftWidth, OrcMath.sd.isIncludeHeader(), null);
 		includeMainInstructions= new Checkbox("Include Main Instructions", _MARGIN1, _Y_MARGIN+_FORM_LINE_WIDTH*7, leftWidth, OrcMath.sd.isIncludeMainInstructions(), null);
-		shuffle= new Checkbox("Shuffle Order", _MARGIN1, _Y_MARGIN+_FORM_LINE_WIDTH*8, leftWidth, OrcMath.sd.isIncludeMainInstructions(), null);
+		shuffle= new Checkbox("Shuffle Order", _MARGIN1, _Y_MARGIN+_FORM_LINE_WIDTH*8, leftWidth, OrcMath.sd.isShuffleOrder(), null);
 		String[] diff = {"Custom","Uniform","Incremental"};
 		difficultyMode = new RadioButtons(_MARGIN1, _Y_MARGIN+_FORM_LINE_WIDTH*9, _MARGIN2, 48,"Difficulty Setting", diff, 0, RadioButtons.STYLE_HORIZONTAL);
 		staticDifficulty = new TextField(_MARGIN1+110, _Y_MARGIN+_FORM_LINE_WIDTH*9-7, leftWidth-200, fieldHeight, 1+"","");

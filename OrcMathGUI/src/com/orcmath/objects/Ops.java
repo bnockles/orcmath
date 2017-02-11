@@ -109,6 +109,19 @@ public class Ops{
 		return Double.valueOf(twoDForm.format(input)); 
 	}
 
+	
+	public static Expression[] simplifyRatio(Expression num1, Expression den1) {
+
+		Term t1 = Ops.findGCF(num1);
+		Term t2 = Ops.findGCF(den1);
+		Term[] terms = {t1,t2};
+		Term factor1 = Ops.findGCF(terms);
+		Expression num1Simp = new Expression(Ops.divideExpressionByTerm(num1.getTermsOfExpression(), factor1));
+		Expression den1Simp = new Expression(Ops.divideExpressionByTerm(den1.getTermsOfExpression(), factor1));
+		Expression[] newFrac = {num1Simp,den1Simp};
+		return newFrac;
+	}
+	
 	public static int multiplyAllFactors(ArrayList<ConstantFactor> rootOfConstants) {
 		int finalProduct = 1;
 		for (int index=0; index < rootOfConstants.size(); index ++){
@@ -350,6 +363,7 @@ public class Ops{
 	}
 
 	public static Term[] combineLikeTerms(Term[] terms){
+//		System.out.println("Ops.class Combing terms "+Arrays.toString(terms));
 		ArrayList<Term> combinedTerms = new ArrayList<Term>();
 		ArrayList<Term> uncombinedTerms = new ArrayList<Term>();
 		//makes an arrayList copy of all the terms in the input array
@@ -358,6 +372,7 @@ public class Ops{
 			Term copy = Term.getCopy(t);
 			uncombinedTerms.add(copy);
 		}
+//		System.out.println("Ops.class Uncombed terms "+uncombinedTerms);
 		//    	System.out.println("\n Combining like terms\nThere are "+uncombinedTerms.size()+" terms to combine.\nThese are the terms\n"+uncombinedTerms);
 		//beginning with the first term, selects it and compares it to all the others
 		for (int index=0;index<uncombinedTerms.size();index++){
@@ -381,7 +396,7 @@ public class Ops{
 			simplified[count]=combinedTerms.get(count);
 		}
 		Arrays.sort(simplified);
-
+//		System.out.println("Ops.class Result of combing terms "+Arrays.toString(simplified));
 		return simplified;
 	}
 
@@ -480,11 +495,11 @@ public class Ops{
 					//adds the unsimplifiable radicands
 					justUnsimplifiableRadicands.add(new SimplestRadicalForm(radicalProduct.get(factorIndex).getRoot(), Term.getCopy(radicalProduct.get(factorIndex).getRadicand())));
 				}
-				System.out.println("Product of all factors = "+productOfFactors);
+//				System.out.println("Product of all factors = "+productOfFactors);
 				product=Term.getCopy(multiplyTerms(productOfFactors, product));
-				System.out.println("Product="+product+" unsimplifiable part = "+justUnsimplifiableRadicands);
+//				System.out.println("Product="+product+" unsimplifiable part = "+justUnsimplifiableRadicands);
 				if(!justUnsimplifiableRadicands.toString().equals("[1]")){
-					System.out.println("multiplyTerms method isn't working with radicals that don't simplify!");
+//					System.out.println("multiplyTerms method isn't working with radicals that don't simplify!");
 					product.addRadicalComponent(justUnsimplifiableRadicands);
 				}
 			}
@@ -512,8 +527,14 @@ public class Ops{
 
 			//    		System.out.println("denominator\n "+t1.getDenominator().toString()+" by "+t2.getDenominator().toString()+" is "+denominator.toString());
 			//makes a new fraction from the numerator and denominator above
+			
 			Fraction productf = new Fraction(numerator, denominator);
-			product = new Term(productf);
+			if(productf.getDenominator().getType().equals(Term.CONSTANT_TYPE) && productf.getDenom() == 1){
+				product = productf.getNumerator();
+			}else{
+				product = new Term(productf);
+				
+			}
 			return product;
 		}
 		//method when neither term is rational
@@ -960,12 +981,13 @@ public class Ops{
 	 * @param b
 	 * @return a double with .5, .33 or .66
 	 */
-	public static double randomSimpleDouble(int minimumInclusive, int maximumInclusive, boolean includeThirds) {
-		if(includeThirds){
-			double d = randomInt(minimumInclusive*6, maximumInclusive*6);
-			return d/6.0;
+	public static double randomSimpleDouble(double e, double f, boolean includeThirds) {
+		if(includeThirds && Math.random() < .5){
+
+				double d = randomInt((int)(e*3), (int)(f*3));
+				return d/3.0;				
 		}else{
-			double d = randomInt(minimumInclusive*2, maximumInclusive*2);
+			double d = randomInt((int)(e*2), (int)(f*2));
 			return d/2.0;
 		}
 	}

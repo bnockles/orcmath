@@ -92,4 +92,10 @@ public class DrawableOps {
 		}
 	}
 
+	public static CoordinatePoint rotate(CoordinatePoint p, double angle) {
+		double x = p.getxCoordinate();
+		double y = p.getyCoordinate();
+		return new CoordinatePoint(x*Math.cos(angle)-y*Math.sin(angle), Math.sin(angle)*x+y*Math.cos(angle));
+	}
+
 }

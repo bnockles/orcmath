@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.orcmath.drawable.Circle;
 import com.orcmath.drawable.Cone;
@@ -176,6 +177,7 @@ public class WorkTable {
 	public void addSolveProportionLinearSteps(Expression num1Expression,
 			Expression den1Expression, Expression num2Expression,
 			Expression den2Expression, String variable, int xValue) {
+		
 		newLine("\\left("+den2Expression+"\\right)"+"\\left("+num1Expression+"\\right)", "\\left("+den1Expression+"\\right)"+"\\left("+num2Expression+"\\right)", 
 				"Rewritten, equivalent form (after multiplying by the reciprocals of each denominator on both sides.)");
 	
@@ -751,27 +753,38 @@ public class WorkTable {
 		//chooses the constant that will be added to both sides
 		boolean leftContainsVar=false;
 		for(Term t:leftTerms){
-			if (t.getType()==Term.VARIABLE_TYPE){
+			if (t.getType()!=Term.CONSTANT_TYPE){
+				System.out.println("WorkTable: found a variable on the left "+t);
 				leftContainsVar=true;
 				break;
 			}
 		}
 		if(leftContainsVar){
 			for(Term t:leftTerms){
-				if (t.getType()==Term.CONSTANT_TYPE)addOnBothSides=Term.getCopy(t);
+				System.out.println("WorkTable: Considering whether or not to add or subtract "+t);
+				if (t.getType()==Term.CONSTANT_TYPE){
+					System.out.println("WorkTable: Determined  "+t+" should be cancelled");
+					addOnBothSides=Term.getCopy(t);
+					break;
+				}
 				else addOnBothSides=new Term(0);
 			}
 		}else{
 			for(Term t:rightTerms){
-				if (t.getType()==Term.CONSTANT_TYPE)addOnBothSides=Term.getCopy(t);
+				if (t.getType()==Term.CONSTANT_TYPE){
+					System.out.println("WorkTable: Determined  "+t+" should be cancelled (term on right side)");
+					addOnBothSides=Term.getCopy(t);
+					break;
+				}
 				else addOnBothSides=new Term(0);
 			}
 		}
+		System.out.println("WorkTable: "+Arrays.toString(leftTerms)+" = "+Arrays.toString(rightTerms)+", Conclusion "+addOnBothSides+" should be cancelled.");
 		//determines spacing
 		String right1stTerm = "-";
 		boolean aVariableTermOnRightSide=false;//helps align constant under other constant
 		for(int check=0; check<rightTerms.length; check++){
-			if(rightTerms[check].getType().equals(Term.VARIABLE_TYPE)) {
+			if(rightTerms[check].containsVariable()) {
 				right1stTerm=rightTerms[check].toString();
 				aVariableTermOnRightSide=true;
 			}
@@ -797,12 +810,12 @@ public class WorkTable {
 		//chooses which constant we will divide by
 		int coefficient=1;
 		for(int check=0; check<leftTerms.length; check++){
-			if(leftTerms[check].getType().equals(Term.VARIABLE_TYPE)) {
+			if(leftTerms[check].containsVariable()) {
 				coefficient=leftTerms[check].getCoefficient();
 			}
 		}
 		for(int check=0; check<rightTerms.length; check++){
-			if(rightTerms[check].getType().equals(Term.VARIABLE_TYPE)) coefficient=rightTerms[check].getCoefficient();
+			if(rightTerms[check].containsVariable()) coefficient=rightTerms[check].getCoefficient();
 		}
 		if (coefficient!=1){
 			setSymbol("\\hspace{1}");
@@ -1491,4 +1504,9 @@ public class WorkTable {
 		addQuadraticEquationSteps(new Expression(distributed), new Expression(squared), ""+variable, actualMeasure);
 		
 	}
+
+
+	
+	
+
 }

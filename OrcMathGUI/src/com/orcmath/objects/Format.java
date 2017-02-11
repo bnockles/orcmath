@@ -26,7 +26,7 @@ public class Format {
 	
 	
 	public static String doubleToString(double d){
-		 int integer=(int)Ops.roundDouble(d, 0);
+		 int integer=(int)(d+.5);
 	     int[] fractionAttempt = Ops.isRational(d);
 		 if(Ops.isInteger(d)){
 			return ""+(int)Ops.roundDouble(d, 0);
@@ -63,7 +63,7 @@ public class Format {
 			}
 			else if(!t[index].isPositive){
 				String s= t[index].toString().replaceAll("[-]", "");//takes the String and removes minus sign 
-				representation = representation + "\\; �\\;" + s;
+				representation = representation + "\\; -\\;" + s;
 			}
 		}
 		return representation;
@@ -213,13 +213,13 @@ public class Format {
 	public static String getStringWithSign(int input){
 		if(input>0) return "\\;+\\;"+input;
 		else if(input==0) return "";
-		else return "\\;�\\;"+Math.abs(input);
+		else return "\\;-\\;"+Math.abs(input);
 	}
 	
 	public static String getStringWithSign(double input){
 		if(input>0) return "\\;+\\;"+doubleToString(input);
 		else if(input==0) return "";
-		else return "\\;�\\;"+doubleToString(Math.abs(input));
+		else return "\\;-\\;"+doubleToString(Math.abs(input));
 	}
 	
 	//returns 1st, 

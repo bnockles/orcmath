@@ -1,7 +1,10 @@
 package com.orcmath.drawable;
 
+import java.util.Arrays;
+
 import org.scilab.forge.jlatexmath.VRowAtom;
 
+import com.orcmath.drawabletype.DrawableOps;
 import com.orcmath.objects.Ops;
 
 public class Triangle {
@@ -28,18 +31,9 @@ public class Triangle {
 	public Triangle(double sidea, double sideb, double sidec) {
 		
 		this.sideA = sidea;
-		if(sideb < sidea){
-			this.sideA = sideb;
-			this.sideB = sidea;
-		}else{
-			this.sideB = sideb;			
-		}
-		if(sidec < sidea){
-			this.sideA = sidec;
-			this.sideC = sidea;
-		}else{
-			this.sideC = sidec;			
-		}
+		this.sideB = sideb;	
+		this.sideC = sidec;	
+		
 		
 		
 		this.angleA = Ops.lawOfCosines(sideA,sideB,sideC);
@@ -52,7 +46,6 @@ public class Triangle {
 		//randomly generates a location for each vertex
 		setPoints();
 	}
-	
 	
 	
 	public double getAngleA() {
@@ -96,6 +89,19 @@ public class Triangle {
 	}
 
 
+	public CoordinateSegment getShortestSide(){
+		CoordinateSegment s = segmentA;
+		if(segmentB.getDecimalLength() < s.getDecimalLength())s = segmentB;
+		if(segmentC.getDecimalLength() < s.getDecimalLength())s = segmentC;
+		return s;
+	}
+	
+	public CoordinateSegment getLongestSide(){
+		CoordinateSegment s = segmentA;
+		if(segmentB.getDecimalLength() > s.getDecimalLength())s = segmentB;
+		if(segmentC.getDecimalLength() > s.getDecimalLength())s = segmentC;
+		return s;
+	}
 
 	public CoordinateSegment getSegmentA() {
 		return segmentA;
@@ -122,37 +128,84 @@ public class Triangle {
 
 
 	public String toString(){
-		return "Triangle with side lengths "+sideA+", "+sideB+", "+sideC+", and angles: "+(angleA*180/Math.PI)+", "+(angleB*180/Math.PI)+", "+(angleC*180/Math.PI) ;
+		return "Triangle with coordinates "+vertexA+", "+vertexB+","+vertexC+", side lengths "+sideA+", "+sideB+", "+sideC+", and angles: "+(angleA*180/Math.PI)+", "+(angleB*180/Math.PI)+", "+(angleC*180/Math.PI) ;
 	}
 	
 	private void setPoints(){
-		vertexA = new CoordinatePoint(0, size);
-		double abSlope = 1/Math.tan(angleA/2);
-		double bIncenterSlope = 1/Math.tan(angleA/2+angleB/2);
-		double bX = (vertexA.getyCoordinate()-abSlope*vertexA.getxCoordinate())/(bIncenterSlope-abSlope);
-		vertexB = new CoordinatePoint(bX, bX*bIncenterSlope);
-		double acSlope = -1/Math.tan(angleA/2);
-		double cIncenterSlope = -1/Math.tan(angleA/2+angleC/2);
-		double cX = (vertexA.getyCoordinate()-acSlope*vertexA.getxCoordinate())/(cIncenterSlope-acSlope);
-		vertexC = new CoordinatePoint(cX, cX*cIncenterSlope);
-//		dilateToFill();
-		segmentA = new CoordinateSegment(vertexB, vertexC);
-		segmentB = new CoordinateSegment(vertexA, vertexC);
-		segmentC = new CoordinateSegment(vertexB, vertexA);
+		
+		CoordinatePoint[] vertices = {vertexA,vertexB,vertexC};
+		//0 is top, 1 is bottom left, 2 is bottom right
+		int[] indices = {0,1,2};
+
+		
+		vertices[0] = new CoordinatePoint(0, size);
+		double smallestAngle = this.angleA;
+		double other1 = this.angleB;
+		double other2 = this.angleC;
+
+		//A' is A, B' is B, C' is C
+		
+		if(this.angleB < this.angleA){
+			smallestAngle = angleB;
+			other1 = angleA;
+			coordSwap(indices,0,1);
+			//A' is B, B' is A
+		}
+		if(this.angleC < smallestAngle){
+			double temp = smallestAngle;
+			smallestAngle = angleC;
+			angleC = temp;
+			coordSwap(indices, 0, 2);
+		}
+		
+		double abSlope = 1/Math.tan(smallestAngle/2);
+		double bIncenterSlope = 1/Math.tan(smallestAngle/2+other1/2);
+		double bX = (vertices[0].getyCoordinate()-abSlope*vertices[0].getxCoordinate())/(bIncenterSlope-abSlope);
+		vertices[1] = new CoordinatePoint(bX, bX*bIncenterSlope);
+		double acSlope = -1/Math.tan(smallestAngle/2);
+		double cIncenterSlope = -1/Math.tan(smallestAngle/2+other2/2);
+		double cX = (vertices[0].getyCoordinate()-acSlope*vertices[0].getxCoordinate())/(cIncenterSlope-acSlope);
+		vertices[2] = new CoordinatePoint(cX, cX*cIncenterSlope);
+		
+		
+		dilateToFill(vertices);
+		vertexA = vertices[indices[0]];
+		vertexB = vertices[indices[1]];
+		vertexC = vertices[indices[2]];
+		
+		double angle = Math.random()*2*Math.PI;
+		vertexA = DrawableOps.rotate(vertexA, angle);
+		vertexB = DrawableOps.rotate(vertexB, angle);
+		vertexC = DrawableOps.rotate(vertexC, angle);
+		
+		
+			segmentA = new CoordinateSegment(vertexB, vertexC);
+			segmentB = new CoordinateSegment(vertexA, vertexC);
+			segmentC = new CoordinateSegment(vertexB, vertexA);
+			
+
+	}
+	
+	private void coordSwap(int[] points, int i, int j){
+		int temp = points[i];
+		points[i]=points[j];
+		points[j] = temp;
 	}
 	
 	/**
 	 * Dialates the triangle so that the result fills the available space
 	 */
-	private void dilateToFill() {
+	private void dilateToFill(CoordinatePoint[] vertices) {
+		CoordinatePoint vertexA = vertices[0];
+		CoordinatePoint vertexB = vertices[1];
+		CoordinatePoint vertexC = vertices[2];
+		
 		double bottomEdge = -size;
 		double leftEdge = -size;
 		double rightEdge = size;
-		while(1.1*(vertexB.getxCoordinate())>leftEdge && 1.1*(vertexC.getxCoordinate())<rightEdge && 1.1*(vertexB.getyCoordinate()-vertexA.getyCoordinate()+vertexA.getyCoordinate())>-bottomEdge && 1.1*(vertexC.getyCoordinate()-vertexA.getyCoordinate()+vertexA.getyCoordinate())>-bottomEdge){
+		while(1.1*(vertexB.getxCoordinate())>leftEdge && 1.1*(vertexC.getxCoordinate())<rightEdge && 1.1*(vertexB.getyCoordinate()-vertexA.getyCoordinate())+vertexA.getyCoordinate()>bottomEdge && 1.1*(vertexC.getyCoordinate()-vertexA.getyCoordinate())+vertexA.getyCoordinate()>bottomEdge){
 			vertexB = new CoordinatePoint(1.1*(vertexB.getxCoordinate()), 1.1*(vertexB.getyCoordinate()-vertexA.getyCoordinate())+vertexA.getyCoordinate());
 			vertexC = new CoordinatePoint(1.1*(vertexC.getxCoordinate()), 1.1*(vertexC.getyCoordinate()-vertexA.getyCoordinate())+vertexA.getyCoordinate());
-			System.out.println(vertexB);
-			System.out.println(vertexC);
 		}
 	}
 	

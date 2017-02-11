@@ -81,7 +81,7 @@ public class TopicAccordion extends Accordion {
 				"Formulas: Surface Area of a Cylinder",
 				"Formulas: Surface Area of a Cone",
 				"Formulas: Volume of a Cylinder",
-				
+				"Similarity: Side Splitter Theorem",
 				"Circles: Secant Segments",							//check
 				"Circles: Chord Lengths",
 				

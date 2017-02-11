@@ -56,6 +56,9 @@ public class BackToCreateButton extends Button {
 					sd.setTeacherName(settings.getCustomTeacherName());
 					sd.setOverrideVerticalSpacing(settings.getOverrideVerticalSpacing());
 					sd.setVSpacing(settings.getVSpacing());		
+					sd.setIncludeMainInstructions(settings.includeMainInstructions());
+					sd.setIncludeHeader(settings.includeHeader());
+					sd.setShuffleOrder(settings.isShuffled());
 					sd.saveData();
 					OrcMath.app.setScreen(OrcMath.createScreen,new Transition(OrcMath.app,Transition.REVEAL_RIGHT,700));			
 				}

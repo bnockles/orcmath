@@ -17,19 +17,41 @@ import com.orcmath.objects.Variable;
 
 public class SideSplitter extends TriangleType{
 
-	Triangle triangle;
-	CoordinateSegment parallelLine;
-	double[] smallTriangleSides;
-	double[] largeTriangleSides;
-	double scaleFactor;
-	
-	String segment1;
-	String segment2;
-	String whole1;
-	String whole2;
-	String part1;
-	String part2;
-	
+	private Triangle triangle;
+	private CoordinateSegment parallelLine;
+	private int[] smallTriangleSides;
+	private double[] largeTriangleSides;
+	private double scaleFactor;
+	//	private int knownSide;
+
+
+	private int vertexLabelIndex;
+	private int base1LabelIndex;
+	private int base2LabelIndex;
+	private int cut1LabelIndex;
+	private int cut2LabelIndex;
+
+	private static final int TYPE_DIFFERENCE = 0;
+	private static final int TYPE_WHOLE = 1;
+	private int type; 
+	private boolean findTopPart;
+
+	private int variableValue;
+	private String var;
+	//let each problem be of the form a/b = c/d
+	private Expression a;
+	private Expression b;
+	private Expression c;
+	private Expression d;
+
+
+	private String segment1;
+	private String segment2;
+	private String whole1;
+	private String whole2;
+	private String part1;
+	private String part2;
+
 
 	public SideSplitter(int difficulty) {
 		super(difficulty);
@@ -50,99 +72,254 @@ public class SideSplitter extends TriangleType{
 
 	@Override
 	public Triangle createTriangle() {
-		smallTriangleSides = new double[3];
+		smallTriangleSides = new int[3];
 		largeTriangleSides = new double[3];
-		double side1;
-		double side2;
-		double side3;
-		if(difficulty < 4){
-			side1 = Ops.randomInt(3, 15);
-			side2 = Ops.randomInt(3, 15);
-			while(Math.abs(side1-side2) >10 || side1 == side2){
-				side2 = Ops.randomInt(3, 15);
-			}
-			side3 = Ops.randomInt((int)(Math.abs(side1-side2)+1), (int)(Math.abs(side1+side2)-1));
-			
-			if(difficulty==1){
-				scaleFactor = Ops.randomInt(2, 5);
-			}else if(difficulty == 2){
-				scaleFactor = Ops.randomSimpleDouble(2, 5, false);
-			}else if(difficulty > 2){
-				scaleFactor = Ops.randomSimpleDouble(2, 5, true);
-			}
-		}else{
-			side1 = Ops.randomSimpleDouble(3,15,false);
-			side2 = Ops.randomSimpleDouble(3,15,false);
-			while(Math.abs(side1-side2) >10 || side1 == side2){
-				side2 = Ops.randomSimpleDouble(3, 15,false);
-			}
-			side3 = Ops.randomSimpleDouble((int)(Math.abs(side1-side2)+1), (int)(Math.abs(side1+side2)-1),false);
-			
-			scaleFactor = Ops.randomSimpleDouble(2, 6, true);
-		}
 
-		triangle = new Triangle(side1*scaleFactor, side2*scaleFactor, side3*scaleFactor);
-		smallTriangleSides[0] = triangle.getSideA()/scaleFactor;
-		smallTriangleSides[1] = triangle.getSideB()/scaleFactor;
-		smallTriangleSides[2] = triangle.getSideC()/scaleFactor;
+		do{
+			int[] sides = createUniqueSideLengths(difficulty,3,15);
+			smallTriangleSides[0] = sides[0];
+			smallTriangleSides[1] = sides[1];
+			smallTriangleSides[2] = sides[2];
+
+			//		knownSide = Ops.randomInt(1, 1);//0 or 1
+			//choose which of the two sides 
+			//create a scaleFactor
+
+			scaleFactor = Ops.randomSimpleDouble(2.5, 4.5, difficulty>2);
+
+			makeIntegerthroughScaling();
+		}while(hasDuplicateOrImpossibleLengths());
+
+
+
+		//as a result, there will be a small triangle with int side lengths and
+		//although the lengths of the given sides will be integer length
+
+
+		triangle = new Triangle(smallTriangleSides[0]*scaleFactor, smallTriangleSides[1]*scaleFactor, smallTriangleSides[2]*scaleFactor);
+
+
 		largeTriangleSides[0] = triangle.getSideA();
 		largeTriangleSides[1] = triangle.getSideB();
 		largeTriangleSides[2] = triangle.getSideC();
-		
+
 		determineParallelSegment();
+
+		//define values
+		double typeTest = Math.random();
+		if(typeTest < .5){
+			type = TYPE_DIFFERENCE;
+		}else{
+			type = TYPE_WHOLE;
+		}
+
+		var = "x";
+
+		//known1, known2, unknown 1, unknown 2
+		Expression[] e = createExpressions();
+
+		c = e[0];
+		d = e[1];
+		a = e[2];
+		b = e[3];
+		//DEPRICATED QUESTION TYPE
+		//		if(knownSide == 1){
+		//
+		//			
+		//			a = Expression.linearExpression(smallTriangleSides[1], variableValue, var, difficulty);
+		//				b = Expression.linearExpression((int)(largeTriangleSides[1] - smallTriangleSides[1]), variableValue, var, difficulty);				
+		//
+		//			
+		//			c = Expression.constantExpression(smallTriangleSides[2]);
+		//			d = Expression.constantExpression((int)(largeTriangleSides[2] - smallTriangleSides[2]));
+		//		}else{
+		//			variableValue = Ops.randomInt(2, 15);
+		//
+		//			a = Expression.linearExpression(smallTriangleSides[2], variableValue, var, difficulty);
+		//			b = Expression.linearExpression((int)(largeTriangleSides[2] - smallTriangleSides[2]), variableValue, var, difficulty);
+		//			c = Expression.constantExpression(smallTriangleSides[1]);
+		//			d = Expression.constantExpression((int)(largeTriangleSides[1] - smallTriangleSides[1]));
+		//		}
+
 		return triangle;
 	}
 
+	private boolean hasDuplicateOrImpossibleLengths() {
+		boolean duplicate =  smallTriangleSides[0] == smallTriangleSides[1] || smallTriangleSides[1]==smallTriangleSides[2]|| smallTriangleSides[2]==smallTriangleSides[0];
+		boolean impossible = smallTriangleSides[0] + smallTriangleSides[1] < smallTriangleSides[2] ||smallTriangleSides[0] + smallTriangleSides[2] < smallTriangleSides[1] || smallTriangleSides[1] + smallTriangleSides[2] < smallTriangleSides[0];
+		return duplicate || impossible;
+	}
+
+	private void makeIntegerthroughScaling(){
+		if((int)scaleFactor != scaleFactor){
+			int index = indexOfNonInteger();
+			while(index != -1){
+				smallTriangleSides[index]++;
+				index = indexOfNonInteger();
+			}
+		}
+	}
+
+	private int indexOfNonInteger() {
+		for(int i = 0; i <smallTriangleSides.length; i++){
+			int sideLength = smallTriangleSides[i];
+			if((int)(scaleFactor * sideLength) != (scaleFactor * sideLength))return i;
+		}
+		return -1;
+	}
+
+	private Expression[] createExpressions() {
+		Expression[] e = new Expression[4];
+		//known1, known2, unknown 1, unknown 2
+		//		int i =(knownSide==1)?1:2;
+		//		int j =(knownSide==1)?2:1;
+		int i = 1;
+		int j = 2;
+		e[0] = Expression.constantExpression(smallTriangleSides[j]);
+		e[1] = Expression.constantExpression((int)(largeTriangleSides[j] - smallTriangleSides[j]));
+		if(difficulty == 1){
+			e[2] = Expression.constantExpression(smallTriangleSides[i]);
+			e[3] = Expression.constantExpression((int)(largeTriangleSides[i] - smallTriangleSides[i]));
+			Term[] ts = new Term[1];
+			var = Variable.randVar()+"";
+			ts[0] = new Term(var);
+			if(Math.random() < .5){//top is unknown
+				findTopPart = true;
+				e[2] = new Expression(ts);
+				variableValue = smallTriangleSides[i];
+			}else{
+				findTopPart = false;
+				e[3] = new Expression(ts);
+				variableValue = (int)(largeTriangleSides[i] - smallTriangleSides[i]);
+			}
+		}else if(type == TYPE_DIFFERENCE){
+			Term[] ts = new Term[2];
+			ts[0] = new Term(var);
+			if(Math.random() < .5){//top is unknown
+				findTopPart = true;
+				ts[1] = new Term((int)(2*smallTriangleSides[i]-largeTriangleSides[i]));
+				e[3] = new Expression(ts[0]);
+				e[2] = new Expression(ts);
+				variableValue = (int)(largeTriangleSides[i]-smallTriangleSides[i]);
+			}else{//bottom is unknown
+				findTopPart = false;
+				ts[1] = new Term((int)(largeTriangleSides[i]-2*smallTriangleSides[i]));	
+				e[2] = new Expression(ts[0]);
+				e[3] = new Expression(ts);
+				variableValue = (int)(smallTriangleSides[i]);
+			}
+		}else if(type == TYPE_WHOLE){
+			Term[] ts = new Term[2];
+			ts[0] = new Term((int)(largeTriangleSides[i]));
+			ts[1] = new Term(-1,var);
+			e[2] = new Expression(new Term(var));
+
+			e[3] = new Expression(ts);
+			variableValue = smallTriangleSides[i];
+		}
+		return e;
+	}
+
 	private void determineParallelSegment() {
-		CoordinateSegment s = triangle.getSegmentA();
-		CoordinatePoint vA = triangle.getVertexA();
+		CoordinateSegment s;
+		CoordinatePoint vA;
+
+		vertexLabelIndex = 0;
+		base1LabelIndex = 1;
+		cut1LabelIndex = 3;
+		base2LabelIndex = 2;
+		cut2LabelIndex = 4;
+		s = triangle.getSegmentA();
+		vA = triangle.getVertexA();
+
+
 		CoordinatePoint s1 = new CoordinatePoint((s.getEndpoint1().getxCoordinate()-vA.getxCoordinate())/scaleFactor+vA.getxCoordinate(), (s.getEndpoint1().getyCoordinate()-vA.getyCoordinate())/scaleFactor+vA.getyCoordinate());
 		CoordinatePoint s2 = new CoordinatePoint((s.getEndpoint2().getxCoordinate()-vA.getxCoordinate())/scaleFactor+vA.getxCoordinate(), (s.getEndpoint2().getyCoordinate()-vA.getyCoordinate())/scaleFactor+vA.getyCoordinate());
 		parallelLine = new CoordinateSegment(s1, s2);
 	}
 
 	protected String initiateString() {
-		segment1 = Character.toString(labels[0])+Character.toString(labels[4]);
-		segment2 = Character.toString(labels[0])+Character.toString(labels[3]);
-		whole1 = Character.toString(labels[0])+Character.toString(labels[2]);
-		whole2 = Character.toString(labels[0])+Character.toString(labels[1]);
-		part1 = Character.toString(labels[4])+Character.toString(labels[2]);
-		part2 = Character.toString(labels[3])+Character.toString(labels[1]);
-		
-		
-		
-		
-		return "In the diagram below of #\\triangle "+labels[0]+labels[1]+labels[2]+"#, #\\overline{"+labels[3]+labels[4]+"}# is paralel to #\\overline{"+labels[1]+labels[2]+"}#."
-				+ "If #"+segment1+" = "+smallTriangleSides[1]+","+segment2+" = "+smallTriangleSides[2]+",# and #"+part1+" = "+ (largeTriangleSides[1]-smallTriangleSides[1])+"#, find the measure of #"+part2+"#.";
+		segment1 = Character.toString(labels[vertexLabelIndex])+Character.toString(labels[cut1LabelIndex]);
+		segment2 = Character.toString(labels[vertexLabelIndex])+Character.toString(labels[cut2LabelIndex]);
+		whole1 = Character.toString(labels[vertexLabelIndex])+Character.toString(labels[base1LabelIndex]);
+		whole2 = Character.toString(labels[vertexLabelIndex])+Character.toString(labels[base2LabelIndex]);
+		part1 = Character.toString(labels[cut1LabelIndex])+Character.toString(labels[base1LabelIndex]);
+		part2 = Character.toString(labels[cut2LabelIndex])+Character.toString(labels[base2LabelIndex]);
+
+
+
+
+
+
+		if(difficulty == 1){
+			String partToFind = (findTopPart)?segment2:part2;
+
+			return "In the diagram below of #\\triangle "+labels[0]+labels[1]+labels[2]+"#, #\\overline{"+labels[cut1LabelIndex]+labels[cut2LabelIndex]+"}# is paralel to #\\overline{"+labels[base1LabelIndex]+labels[base2LabelIndex]+"}#."
+			+ "If #"+segment1+" = "+c+","+segment2+" = "+a+", "+part2+"="+b+",# and #"+part1+" = "+ d+"#, find the measure of #"+partToFind+"#.";
+
+		}else{
+			String text = "In the diagram below of #\\triangle "+labels[0]+labels[1]+labels[2]+"#, #\\overline{"+labels[cut1LabelIndex]+labels[cut2LabelIndex]+"}# is paralel to #\\overline{"+labels[base1LabelIndex]+labels[base2LabelIndex]+"}#.";
+			//			int i =(knownSide==1)?1:2;
+			int i = 1;
+			if(type == TYPE_DIFFERENCE){
+				text += " If #"+segment1+" = "+c+","+part1+" = "+ d+"#, and #";
+				if(findTopPart){
+					text += segment2+"# is "+(int)(largeTriangleSides[i]-2*smallTriangleSides[i])+" units shorter than #"+ part2+",# find the measure of #"+segment2+"#.";
+				}else{
+
+					text += part2+"# is "+(int)(largeTriangleSides[i]-2*smallTriangleSides[i])+" units longer than #"+ segment2+",# find the measure of #"+part2+"#.";
+				}
+			}else{
+				text += " If #"+segment1+" = "+c+","+part1+" = "+ d+"#, and #"+whole2+"= "+(int)(largeTriangleSides[i])+",# find the measure of #"+part2+"#.";
+			}
+
+			return text;
+
+		}
 	}
 
 	@Override
 	public char[] initLabels() {
 		return Variable.randCapVars(5);
 	}
-	
+
 	public void drawExtras(CoordinateImage image){
 		image.drawSegment(parallelLine);
 		image.drawAngleVertexLabel(""+labels[3], triangle.getVertexB(), parallelLine.getEndpoint1(), parallelLine.getEndpoint2());
 		image.drawAngleVertexLabel(""+labels[4], triangle.getVertexC(), parallelLine.getEndpoint2(), parallelLine.getEndpoint1());
-		image.addGrid(1, 1);
-		image.addAxes(1, 1, false);
 	}
 
 	@Override
 	public void initAnswerWork(WorkTable answerWork) {
-		answerWork.newLine("\\frac{"+segment1+"}{"+segment2+"}", 
-				"\\frac{"+part1+"}{"+part2+"}",
+		answerWork.newLine("\\frac{"+segment2+"}{"+part2+"}", 
+				"\\frac{"+segment1+"}{"+part1+"}",
 				keyTheorem,//theorem
 				"textbf");
-		
-		Expression segment1Expresion = new Expression(new Term(new Fraction(smallTriangleSides[1])));
-		Expression segment2Expresion = new Expression(new Term(new Fraction(smallTriangleSides[2])));
-		Expression whole1Expresion = new Expression(new Term(new Fraction(largeTriangleSides[1]-smallTriangleSides[1])));
-		
-		answerWork.addSolveProportionLinearSteps(segment1Expresion, whole1Expresion, segment2Expresion, new Expression(new Term("x")), "x", (int)(largeTriangleSides[2]-smallTriangleSides[2]));
+		if(type == TYPE_WHOLE){
+			//			int i =(knownSide==1)?1:2;
+			int i = 1;
+			answerWork.newRawCodeLine("\\text{Let }"+segment2+"="+a+"&\\text{ and }&"+ part2 + "="+b +"&\\text{ since }"+segment1+"+"+segment2+"="+(int)(largeTriangleSides[i]));
+		}
+		answerWork.newLine("\\frac{"+a+"}{"+b+"}", 
+				"\\frac{"+c+"}{"+d+"}",
+				"Substitute.");
+		Expression[] ratio1Simp = Ops.simplifyRatio(a, b);
+		Expression[] ratio2Simp = Ops.simplifyRatio(c, d);
+		answerWork.newLine("\\frac{"+ratio1Simp[0]+"}{"+ratio1Simp[1]+"}", 
+				"\\frac{"+ratio2Simp[0]+"}{"+ratio2Simp[1]+"}",
+				"Simplify.");
+
+		answerWork.addSolveProportionLinearSteps(ratio1Simp[0], ratio1Simp[1], ratio2Simp[0], ratio2Simp[1], var, variableValue);
+		if(difficulty > 1){
+			if(findTopPart){
+				answerWork.plugIn(var, variableValue, a);
+			}else{
+				answerWork.plugIn(var, variableValue, b);			
+			}
+
+		}
 	}
-	
+
 
 
 

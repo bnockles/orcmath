@@ -193,5 +193,34 @@ public class Expression {
 		return e;
 	}
 
+	public static Expression linearExpression(int value, int variableValue, String var, int difficulty) {
+	
+		int coef = Ops.randomNotZero(-10, 10);
+		int cons = value - coef*variableValue;
+		int attemptCount = 0;
+		while(Math.abs(cons)>100 && attemptCount < 10){
+			coef = (int) (Math.random()*Ops.randomNotZero(-10, 10));
+			cons = value - coef*variableValue;
+			attemptCount ++;
+		}
+		if(attemptCount >= 10){
+			System.out.println(" - - - - - The linearExpression method in the Expression class was not able to create an expression for the value "+value);
+		}
+		Term x = new Term(coef,var);
+		Term c = new Term(cons);
+		Term[] terms = {x,c};
+		if(coef<0 && cons>0){
+			terms[0] = c;
+			terms[1] = x;
+		}
+		return new Expression(terms);
+	}
+
+	public static Expression constantExpression(int i) {
+		Term x = new Term(i);
+		Term[] terms = {x};
+		return new Expression(terms);
+	}
+
 	
 }

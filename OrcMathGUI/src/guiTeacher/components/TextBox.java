@@ -44,23 +44,6 @@ public class TextBox extends TextField {
 		lengthOfLineBeforeCursorLine = -1;
 	}
 
-//	@Override
-//	public void update(Graphics2D g) {
-//		g = clear();
-//		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//				RenderingHints.VALUE_ANTIALIAS_ON);
-//		g.setColor(getForeground());
-//		g.setFont(new Font(getFont(),Font.PLAIN,getSize()));
-//		FontMetrics fm = g.getFontMetrics();
-//		if(getText() != null) g.drawString(getText(), 0, getHeight()-fm.getDescent());
-//		if(cursorShowing){
-//			g.setColor(Color.black);
-//			int base = getHeight()-fm.getDescent();
-//			if(cursorIndex> getText().length())cursorIndex = getText().length();
-//			int x = fm.stringWidth(getText().substring(0,cursorIndex));
-//			g.drawLine(x, base, x, base - fm.getHeight());
-//		}
-//	}
 	
 	public void update(Graphics2D g){
 		clear();

@@ -35,6 +35,23 @@ public abstract class TriangleType extends DynamicType {
 	
 	public abstract char[] initLabels();
 
+	public static int[] createUniqueSideLengths(int difficulty, int min, int max){
+		int side1 = Ops.randomInt(min, max);
+		int side2 = Ops.randomInt(min, max);
+		while(Math.abs(side1-side2) >10 || side1 == side2){
+			side2 = Ops.randomInt(min, max);
+		}
+		int side3 = Ops.randomInt((int)(Math.abs(side1-side2)+1), (int)(Math.abs(side1+side2)-1));
+		while(side3 == side2 || side3 == side1){
+			side3 = Ops.randomInt((int)(Math.abs(side1-side2)+1), (int)(Math.abs(side1+side2)-1));
+		}
+		
+
+		int[] sides = {side1, side2, side3};
+		return sides;
+	
+	}
+	
 	protected void drawDynamicImage(CoordinateImage image){
 		//names of points
 		labels = initLabels();
@@ -56,7 +73,7 @@ public abstract class TriangleType extends DynamicType {
 	
 	protected void getInstance(){
 		//step two, determine the type of question and the objective
-		image = new CoordinateImage(600, 600, -10, 10, -10, 10);
+		image = new CoordinateImage(525, 525, -10, 10, -10, 10);
 		drawDynamicImage(image);
 		//from the image, take point names that are used in the question text
 
