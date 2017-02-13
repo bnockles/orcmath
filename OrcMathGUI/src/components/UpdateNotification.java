@@ -18,6 +18,7 @@
  *******************************************************************************/
 package components;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.net.URI;
@@ -61,14 +62,19 @@ public class UpdateNotification extends StyledComponent implements Clickable{
 	
 	
 	public UpdateNotification(String[] line) {
-		super(0,OrcMath.SCREEN_WIDTH-NOTIFICATION_HEIGHT, OrcMath.SCREEN_WIDTH,NOTIFICATION_HEIGHT);
+		super(0,OrcMath.SCREEN_HEIGHT-NOTIFICATION_HEIGHT, OrcMath.SCREEN_WIDTH,NOTIFICATION_HEIGHT);
 		try{
 			this.response= line[0];
 			this.title = line[1];
 			this.date = line[DATE_INDEX];
 			this.description = line[3];
-			this.url = line[4];
-			this.notificationText=line[5];				
+			
+//			if(line.length > 3)this.url = line[4];
+//			else 
+				this.url = "http://www.neverbenbetter.com/orcmath/";
+//			if(line.length > 4) this.notificationText=line[5];		
+//			else 
+				this.notificationText  = "A new update is available at orcmath.com/orcmath";
 			
 			
 			
@@ -92,6 +98,7 @@ public class UpdateNotification extends StyledComponent implements Clickable{
 					Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 					if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 						try {
+							OrcMath.createScreen.animateRemoval(UpdateNotification.this);
 							desktop.browse(new URI(url));
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -148,7 +155,6 @@ public class UpdateNotification extends StyledComponent implements Clickable{
 		g.setColor(getAlertColor());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.drawImage(notification.getImage(), notification.getX(), notification.getY(),null);
-		
 		for(Button b: buttons){
 			g.drawImage(b.getImage(), b.getX(), b.getY(), null);
 		}

@@ -48,8 +48,10 @@ public class Accordion extends StyledComponent implements Clickable {
 		return true;
 	}
 	
-	public void addTab(String tabHeader, ScrollablePane content){
-		tabs.add(new AccordionTab(this, tabHeader, content));
+	public AccordionTab addTab(String tabHeader, ScrollablePane content){
+		AccordionTab t = new AccordionTab(this, tabHeader, content);
+		tabs.add(t);
+		return t;
 	}
 	
 	@Override
@@ -109,14 +111,16 @@ public class Accordion extends StyledComponent implements Clickable {
 //		System.out.println("Accordion.java virtual tab index is "+virtualTabIndex+"\nthe actually clicked tabe is at index "+tabs.indexOf(clickedTab)+"\nopenTab is "+indexOfOpenTab+" with height "+heightOfOpenTab+"\nvirtual tab is "+virtualTabIndex);
 		if(openTab != null && clickedTab == openTab){
 			clickedTab.act(relativeX,relativeY-getTabHeight()*(indexOfOpenTab+1));
-		}else if(openTab != null){
-			openTab.close();
-			clickedTab.open();
-			openTab = clickedTab;
 		}else{
-			clickedTab.open();
-			openTab = clickedTab;
+			openTab(clickedTab);
 		}
+	}
+	
+	public void openTab(AccordionTab tab){
+		if(openTab != null)openTab.close();
+		tab.open();
+		openTab = tab;
+
 	}
 
 	/**
@@ -132,6 +136,8 @@ public class Accordion extends StyledComponent implements Clickable {
 	@Override
 	public void update(Graphics2D g) {
 		int tabY= 0;
+		g.setColor(Color.blue);
+		g.fillRect(0, 0, getWidth(), getHeight());
 		for(AccordionTab ac: tabs){
 			ac.update();
 			g.drawImage(ac.getImage(), 0, tabY, null);

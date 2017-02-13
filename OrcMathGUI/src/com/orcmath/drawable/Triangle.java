@@ -1,3 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Benjamin Nockles
+ *
+ * This file is part of OrcMath.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package com.orcmath.drawable;
 
 import java.util.Arrays;
@@ -96,6 +114,17 @@ public class Triangle {
 		return s;
 	}
 	
+	/**
+	 * returns the smallest angle vertex, which is also the center of dilating the triangle (guarantees triangle fits in grid)
+	 * @return
+	 */
+	public CoordinatePoint getSmallestAngleVertex(){
+		CoordinatePoint s = vertexA;
+		if(segmentB.getDecimalLength() < segmentA.getDecimalLength() && segmentB.getDecimalLength() < segmentC.getDecimalLength())s = vertexB;
+		if(segmentC.getDecimalLength() < segmentA.getDecimalLength() && segmentC.getDecimalLength() < segmentB.getDecimalLength())s = vertexC;
+		return s;
+	}
+	
 	public CoordinateSegment getLongestSide(){
 		CoordinateSegment s = segmentA;
 		if(segmentB.getDecimalLength() > s.getDecimalLength())s = segmentB;
@@ -137,7 +166,6 @@ public class Triangle {
 		//0 is top, 1 is bottom left, 2 is bottom right
 		int[] indices = {0,1,2};
 
-		
 		vertices[0] = new CoordinatePoint(0, size);
 		double smallestAngle = this.angleA;
 		double other1 = this.angleB;

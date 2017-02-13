@@ -56,7 +56,6 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		xScreen=0;
 		yScreen=0;
-		setVisible(true);
 	}
 
 	//this method becomes abstract once generalized

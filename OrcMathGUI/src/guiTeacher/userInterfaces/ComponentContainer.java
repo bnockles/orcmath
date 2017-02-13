@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.Visible;
 
 public abstract class ComponentContainer {

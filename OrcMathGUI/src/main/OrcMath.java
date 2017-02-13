@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 
@@ -57,6 +58,7 @@ public class OrcMath extends GUIApplication {
 	 */
 	private static final long serialVersionUID = -8096423404631205711L;
 	public static final int SCREEN_WIDTH = 920; 
+	public static final int SCREEN_HEIGHT = 700; 
 	public static final Color ACCENT_COLOR = new Color(127,0,255);
 
 	public static OrcMath app;
@@ -90,7 +92,7 @@ public class OrcMath extends GUIApplication {
 				}
 				//				String body = text.substring(text.indexOf("<body>")+6,str.indexOf("</body>"));
 				String body = text.replaceAll("\\<.*?>","");
-				versionLog = body.split("<br>");
+				versionLog = body.split("-BREAK-");
 				in.close();
 				sd.checkForUpdates(versionLog);
 			} catch (MalformedURLException e) {
@@ -260,7 +262,12 @@ public class OrcMath extends GUIApplication {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		app = new OrcMath(SCREEN_WIDTH, 700);
+		OpeningImage open = new OpeningImage();
+		open.setVisible(true);
+		
+		app = new OrcMath(SCREEN_WIDTH, SCREEN_HEIGHT);
+		open.setVisible(false);
+		app.setVisible(true);
 		Thread go = new Thread(app);
 		go.start();
 	}

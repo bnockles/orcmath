@@ -51,6 +51,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	private int xRelative;
 	private int yRelative;
 	private Color highlight;
+	private int lastHeight;//a variable that clears the table when its size is reduced (so old rows get deleted)
 
 	public static final int HOVER_BUTTON_WIDTH= 12;
 	public static final int EDIT_COLUMN = 20;
@@ -99,6 +100,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		if(columns != null){
 			return (1+rows.size())*columns.getRowHeight();
 		}else{
+			
 			return super.getHeight();
 		}
 	}
@@ -141,8 +143,12 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	}
 	
 	@Override
-	public void update(Graphics2D g) {
-		clear();
+	public void update(Graphics2D g) {	
+		if(getHeight() < lastHeight){
+			//if rows have been deleted, this clears the residual ghost of their image
+			clear();
+		}
+		lastHeight = getHeight();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,	RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());

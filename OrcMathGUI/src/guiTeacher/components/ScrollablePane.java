@@ -184,16 +184,23 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 
 	public void addObject(Visible v){
 		super.addObject(v);
+		if(v instanceof Clickable){
+			clickables.add((Clickable)v);
+		}
 		setUpContentImage();
 	}
 
 	public void remove(Visible v){
+		if(v instanceof Clickable){
+			clickables.remove(v);
+		}
 		super.remove(v);
 		setUpContentImage();
 	}
 
 	public void removeAll(){
 		super.removeAll();
+		clickables = new ArrayList<Clickable>();
 		setUpContentImage();
 	}
 
@@ -308,19 +315,20 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 			gContent.setColor(Color.WHITE);
 			gContent.fillRect(0, 0, contentImage.getWidth(), contentImage.getHeight());
 			super.update(gContent);
+			g.setColor(Color.WHITE);
+			g.fillRect(0, 0, getWidth(), getHeight());
 			g.drawImage(contentImage, 0, 0, getWidth(), getHeight(), contentX, contentY, contentX+getWidth(), contentY+getHeight(), null);
 			if(upArrowHovered){
 				g.setColor(arrowColor);
 			}else{
 				g.setColor(fadedArrowColor);				
 			}
-
-			g.fill(upArrow);
+			if(contentY>0) g.fill(upArrow);
 			g.setColor(fadedArrowColor);
 			if(downArrowHovered){
 				g.setColor(arrowColor);
 			}
-			g.fill(downArrow);
+			if(contentY+getHeight()<contentImage.getHeight())g.fill(downArrow);
 		}
 	}
 

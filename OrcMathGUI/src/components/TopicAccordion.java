@@ -22,7 +22,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import guiTeacher.components.Accordion;
+import guiTeacher.components.AccordionTab;
 import guiTeacher.components.Action;
+import guiTeacher.components.SearchBox;
 import guiTeacher.components.StyledComponent;
 import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.Visible;
@@ -31,11 +33,13 @@ import main.OrcMath;
 public class TopicAccordion extends Accordion {
 
 	private QuestionPreview qp;
+	private SearchBox searchBox;
 	
 	public static final int CONTENT_HEIGHT = 310;
 	
-	public TopicAccordion(FocusController fc, int x, int y, int w) {
+	public TopicAccordion(FocusController fc, int x, int y, int w, SearchBox searchBox) {
 		super(x, y, w);
+		this.searchBox = searchBox;
 		qp = new QuestionPreview(x+w, y);
 		String[] algebraTopics = {"Algebra: Linear Equations",
 				"Algebra: Linear Equations (Multiple Choice)",
@@ -132,7 +136,10 @@ public class TopicAccordion extends Accordion {
 
 		};
 		
-		addTab(fc, "Simplifying Expressions", algebraTopics);
+		String[] nothing = {};
+		
+		searchBox.setTarget(addTab(fc, "Search Results", nothing));
+		addTab(fc, "Simplifying & Solving", algebraTopics);
 		addTab(fc, "Geometry", geometryTopics);
 		addTab(fc, "Functions", functions);
 		
@@ -147,7 +154,7 @@ public class TopicAccordion extends Accordion {
 		return b;
 	}
 	
-	private void addTab(FocusController fc, String name, String[] types){
+	private AccordionTab addTab(FocusController fc, String name, String[] types){
 		ArrayList<Visible> links = new ArrayList<Visible>();
 		final int LINE_HEIGHT = 22;
 		int yLoc = LINE_HEIGHT;
@@ -160,6 +167,7 @@ public class TopicAccordion extends Accordion {
 					OrcMath.createScreen.addQuestion(tableData);
 				}
 			},qp);
+			searchBox.addToCollection(l);
 			l.setSize(13);
 			l.setLinkColor(Color.BLACK);
 			l.setAlign(StyledComponent.ALIGN_LEFT);
@@ -168,7 +176,8 @@ public class TopicAccordion extends Accordion {
 		}
 		
 		QuestionListSubscreen screen = new QuestionListSubscreen(fc, this, getWidth(), CONTENT_HEIGHT, links);
-		addTab(name, screen);
+		return addTab(name, screen);
+		
 	}
 	
 

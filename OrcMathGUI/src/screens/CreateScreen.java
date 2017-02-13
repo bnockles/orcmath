@@ -32,6 +32,7 @@ import guiTeacher.components.Button;
 import guiTeacher.components.Graphic;
 import guiTeacher.components.ProgressBar;
 import guiTeacher.components.ScrollableDragablePane;
+import guiTeacher.components.SearchBox;
 import guiTeacher.components.SimpleTable;
 import guiTeacher.components.TableHeader;
 import guiTeacher.components.TextBox;
@@ -70,6 +71,7 @@ public class CreateScreen extends OrcMathScreen {
 	private ProgressBar progressBar;
 	private Worksheet cps;
 	private Graphic orcWorker;
+	private SearchBox search;
 	
 
 	public static final int MARGIN = 20;
@@ -87,7 +89,9 @@ public class CreateScreen extends OrcMathScreen {
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) {
 		cps = new Worksheet();
-		questionsByTopic = new TopicAccordion(this, MARGIN,MARGIN+30,_ACCORDION_WIDTH);
+		search = new SearchBox(MARGIN, MARGIN+30, _ACCORDION_WIDTH, 30);
+		viewObjects.add(search);
+		questionsByTopic = new TopicAccordion(this, MARGIN,MARGIN+65,_ACCORDION_WIDTH, search);
 		int textFieldHeight = 30;
 		int vertSpace = 5+TextField.DESCRIPTION_SPACE;
 		fileName = new TextField(fieldMargin, MARGIN+25+vertSpace, _FIELD_WIDTH, textFieldHeight, "Worksheet","File Name");

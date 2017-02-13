@@ -288,6 +288,10 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		findCursor = true;
 	}
 
+	public boolean isRunning(){
+		return running;
+	}
+	
 	@Override
 	public void setAction(Action a) {
 		// TODO Auto-generated method stub

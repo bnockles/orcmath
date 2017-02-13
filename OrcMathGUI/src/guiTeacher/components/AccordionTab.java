@@ -57,7 +57,10 @@ public class AccordionTab extends Component implements Runnable{
 		update();
 	}
 
-
+	public Accordion getParent(){
+		return parent;
+	}
+	
 	public void run(){
 
 		running = true;
@@ -103,6 +106,9 @@ public class AccordionTab extends Component implements Runnable{
 		
 	}
 
+	public ScrollablePane getContent(){
+		return content;
+	}
 
 
 	@Override
@@ -141,6 +147,9 @@ public class AccordionTab extends Component implements Runnable{
 		}
 	}
 
+	public void switchToThisTab(){
+		parent.openTab(this);
+	}
 
 	public void open() {
 		if(!open && !running){

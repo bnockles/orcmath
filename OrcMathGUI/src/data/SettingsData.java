@@ -72,7 +72,7 @@ public class SettingsData {
 			UpdateNotification recordFound = null;
 			for(UpdateNotification un : updateNotifications){
 				//if this version is new...
-				if(un.getTitle().equals(aboutRecentVersion[0])){
+				if(un.getTitle().equals(aboutRecentVersion[1])){
 					recordFound = un;
 					break;
 				}
@@ -90,6 +90,8 @@ public class SettingsData {
 					} catch (ParseException e) {
 						OrcMath.createScreen.presentUpdateNotification(recordFound);
 					}
+				}else{
+					OrcMath.createScreen.presentUpdateNotification(recordFound);
 				}
 			}else{
 				OrcMath.createScreen.presentUpdateNotification(new UpdateNotification(aboutRecentVersion));
