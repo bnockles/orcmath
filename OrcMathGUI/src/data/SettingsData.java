@@ -90,7 +90,7 @@ public class SettingsData {
 					} catch (ParseException e) {
 						OrcMath.createScreen.presentUpdateNotification(recordFound);
 					}
-				}else{
+				}else if(!recordFound.getResponse().equals(UpdateNotification.RESPONSE_NEW)){
 					OrcMath.createScreen.presentUpdateNotification(recordFound);
 				}
 			}else{

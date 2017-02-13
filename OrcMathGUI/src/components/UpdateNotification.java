@@ -69,12 +69,10 @@ public class UpdateNotification extends StyledComponent implements Clickable{
 			this.date = line[DATE_INDEX];
 			this.description = line[3];
 			
-//			if(line.length > 3)this.url = line[4];
-//			else 
-				this.url = "http://www.neverbenbetter.com/orcmath/";
-//			if(line.length > 4) this.notificationText=line[5];		
-//			else 
-				this.notificationText  = "A new update is available at orcmath.com/orcmath";
+			if(line.length > 3)this.url = line[4];
+			else this.url = "http://www.neverbenbetter.com/orcmath/";
+			if(line.length > 4) this.notificationText=line[5];		
+			else this.notificationText  = "A new update is available at orcmath.com/orcmath";
 			
 			
 			
@@ -96,6 +94,8 @@ public class UpdateNotification extends StyledComponent implements Clickable{
 				@Override
 				public void act() {
 					Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+					response = RESPONSE_CLICKED_LINK;
+					OrcMath.sd.recordResponse(UpdateNotification.this);
 					if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 						try {
 							OrcMath.createScreen.animateRemoval(UpdateNotification.this);
