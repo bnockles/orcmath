@@ -86,6 +86,8 @@ public class TopicAccordion extends Accordion {
 				"Formulas: Surface Area of a Cone",
 				"Formulas: Volume of a Cylinder",
 				"Similarity: Side Splitter Theorem",
+				"Similarity: Side Splitter Theorem with Quadratics",
+				"Similarity: Triangle Angle Bisector Theorem",
 				"Circles: Secant Segments",							//check
 				"Circles: Chord Lengths",
 				
@@ -131,6 +133,8 @@ public class TopicAccordion extends Accordion {
 				"Systems of linear and quadratic equations by graphing",
 				"Systems of linear and quadratic equations, (x,y) solution",
 				"Systems of linear and quadratic equations, (x,y) solution, check work",
+				"Trig: Right Triangle Sides",
+				"Trig: Right Triangle Angles",
 				"Functions: Identify functions",
 				"Functions: Use inverse variation to solve for unknown values",
 

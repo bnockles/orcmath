@@ -221,6 +221,12 @@ public class Expression {
 		Term[] terms = {x};
 		return new Expression(terms);
 	}
+	
+	public static Expression constantExpression(double i) {
+		Term x = new Term(new Fraction(i));
+		Term[] terms = {x};
+		return new Expression(terms);
+	}
 
 	
 }

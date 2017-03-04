@@ -110,6 +110,13 @@ public class Ops{
 	}
 
 	
+	public static boolean areInts(double[] values) {
+		for(double d: values){
+			if((int)d != d)return false;
+		}
+		return true;
+	}
+	
 	public static Expression[] simplifyRatio(Expression num1, Expression den1) {
 
 		Term t1 = Ops.findGCF(num1);
@@ -910,11 +917,11 @@ public class Ops{
 
 			}
 
-			System.out.print("- - - -- - - - - -- -- - - -- - - /nLooking for GCD of these terms:\n   ");
-			for(Term t: e.getTermsOfExpression()){
-				System.out.print(""+t.getCoefficient()+" ");
-			}
-			System.out.println("/nAnswer = "+coef);
+//			System.out.print("- - - -- - - - - -- -- - - -- - - /nLooking for GCD of these terms:\n   ");
+//			for(Term t: e.getTermsOfExpression()){
+//				System.out.print(""+t.getCoefficient()+" ");
+//			}
+//			System.out.println("/nAnswer = "+coef);
 
 			return new Term(coef,var);
 		}
@@ -974,6 +981,31 @@ public class Ops{
 		return Math.acos((Math.pow(a, 2)-Math.pow(b, 2)-Math.pow(c, 2))/(-2*b*c));
 	}
 
+	public static int plugIn(String variable, int xValue, Expression expression) {
+		Term[] terms = expression.getTermsOfExpression();//Note:  
+		/**
+		 * a NullPointerException on the above line
+		 * signifies that no "leftExpression" and "rightExpression" have been set
+		 * in the class calling for work to be shown, there is a boolean that calls for the solution to be plugged into the 
+		 * original equation. Either change the boolean to "false" or before showing the work, set the 
+		 * leftExpression and rightExpression by calling the respective methods
+		 */
+		
+		int solution=0;
+		
+
+		
+		for(int index = 0; index< terms.length; index++){
+			int coefficient = terms[index].getCoefficient();
+			int degree = terms[index].getDegree();
+			int valueRaised = (int)Math.pow(xValue, degree);
+			int value = coefficient*valueRaised;
+			solution+=value;
+		}
+
+		return solution;
+	}
+	
 	/**
 	 * 
 	 * @param i
@@ -982,14 +1014,21 @@ public class Ops{
 	 * @return a double with .5, .33 or .66
 	 */
 	public static double randomSimpleDouble(double e, double f, boolean includeThirds) {
-		if(includeThirds && Math.random() < .5){
-
-				double d = randomInt((int)(e*3), (int)(f*3));
-				return d/3.0;				
+		if(includeThirds){
+				double div = randomInt(2, 3);
+				double d = randomInt((int)(e*div), (int)(f*div));
+				return d/div;				
 		}else{
 			double d = randomInt((int)(e*2), (int)(f*2));
 			return d/2.0;
 		}
+	}
+
+	public static Term getTermOfDegree(Term[] quadratic, int i) {
+		for(Term t: quadratic){
+			if(t.degree == i)return t;
+		}
+		return null;
 	}
 }
 

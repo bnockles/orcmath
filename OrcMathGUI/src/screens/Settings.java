@@ -109,7 +109,7 @@ public class Settings extends OrcMathScreen {
 		staticDifficulty = new TextField(_MARGIN1+110, _Y_MARGIN+_FORM_LINE_WIDTH*9-7, leftWidth-200, fieldHeight, 1+"","");
 		staticDifficulty.setInputType(49,52,1);
 
-		explanation = new TextArea(_MARGIN2, _Y_MARGIN+30, getWidth()-_MARGIN2-_MARGIN1, getHeight()-_Y_MARGIN*2-btcb.getHeight(), "Thank you for using OrchMath! I'm very excited to be sharing this project with you - a project I started in 2012 - but please be aware that this is only the INITIAL RELEASE. Don't be surprised if you encounter a few bugs. If you would like to notify me via email about any issues you may encounter, I can try to fix them, otherwise you can find tips on how to best use this software at neverbenbetter.com/orcmath");
+		explanation = new TextArea(_MARGIN2, _Y_MARGIN+30, getWidth()-_MARGIN2-_MARGIN1, getHeight()-_Y_MARGIN*2-btcb.getHeight(), "");
 		explanation.setCustomTextColor(new Color(0,102,102));
 
 		addHoverText(checkbox,"If you think there isn't enough blank space in between questions for students to show their work, check this box to override the vertical space and make it larger (or even smaller)");
@@ -170,7 +170,6 @@ public class Settings extends OrcMathScreen {
 	public boolean isEachQuestionHasItsOwnDirections(){
 		return includeDirections.isChecked();
 	}
-
 
 
 	public String getCustomTeacherName() {

@@ -32,10 +32,12 @@ public class Button extends TextLabel implements Clickable{
 	private Action action;
 	private BufferedImage hoverImage;
 	private boolean hovered;
+	private boolean enabled;
 	
 	public Button(int x, int y, int w, int h, String text, Color color, Action action) {
 		super(x, y, w, h, text);
 		setBackground(color);
+		enabled = true;
 		this.action = action;
 		update();
 		
@@ -44,10 +46,22 @@ public class Button extends TextLabel implements Clickable{
 	public Button(int x, int y, int w, int h, String text, Action action) {
 		super(x, y, w, h, text);
 		this.action = action;
+		enabled = true;
 		update();
 
 	}
 	
+	
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		if(!enabled)hovered = false;
+	}
+
 	public BufferedImage getImage(){
 		if(hovered)return hoverImage;
 		else return super.getImage();
@@ -105,8 +119,8 @@ public class Button extends TextLabel implements Clickable{
 //		if(b != hovered){
 //			
 //		}
-		hovered = b;
-		return b;
+		hovered = b && enabled;
+		return hovered;
 	}
 	
 	public void act(){

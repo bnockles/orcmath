@@ -101,6 +101,29 @@ public class WorkTable {
 		latexTabular+="\\hline ";
 	}
 	
+	public void addSinInverseSteps(String var, String opp, String hyp, Expression oppLength, Expression hypLength,
+			double answer) {
+		plugIntoTrigInverse("sin", "Sine = \\frac{opp}{hyp}", var, opp, hyp, oppLength, hypLength, answer);
+	}
+	
+	public void addCosInverseSteps(String var, String adj, String hyp, Expression adjLength, Expression hypLength,
+			double answer) {
+		plugIntoTrigInverse("cos", "Cosine = \\frac{adj}{hyp}", var, adj, hyp, adjLength, hypLength, answer);
+	}
+	
+	private void plugIntoTrigInverse(String function,String definition, String var, String numName, String denName, Expression numerator, Expression denominator, double answer){
+		newLine("\\"+function+" "+var, "\\frac{"+numName+"}{"+denName+"}", definition);
+		newLine("\\"+function+" "+var, "\\frac{"+numerator+"}{"+denominator+"}", "Substitute.");
+		newLine(var+"", "\\"+function+"^{-1}\\left(\\frac{"+numerator+"}{"+denominator+"}\\right)", "Simplify.");
+//		newLine(var+"", (Math.asin(oppLength/hypLength))*180/Math.PI+"", "Evaluate.");
+		newLine(var+"", answer+"^{\\circ}", "Evaluate.");
+	}
+	
+	public void addTanInverseSteps(String var, String opp, String adj, Expression oppLength, Expression adjLength, double answer) {
+		plugIntoTrigInverse("tan", "Tangent = \\frac{opp}{adj}", var, opp, adj, oppLength, adjLength, answer);
+		
+	}
+	
 	public void addMidpointSteps(String name,int x1,int y1, int x2, int y2, boolean findMidpoint){
 		newLine(name, "\\left(\\frac{x_1+x_2}{2},\\frac{y_1+y_2}{2}\\right)", "Midpoint formula");
 		if(findMidpoint){
@@ -174,10 +197,9 @@ public class WorkTable {
 		addQuadraticEquationSteps(new Expression(aAndBCombined), new Expression(cAfterSquaring), variable, solution);
 	}
 
-	public void addSolveProportionLinearSteps(Expression num1Expression,
+	public Expression[] crossMultiply(Expression num1Expression,
 			Expression den1Expression, Expression num2Expression,
-			Expression den2Expression, String variable, int xValue) {
-		
+			Expression den2Expression){
 		newLine("\\left("+den2Expression+"\\right)"+"\\left("+num1Expression+"\\right)", "\\left("+den1Expression+"\\right)"+"\\left("+num2Expression+"\\right)", 
 				"Rewritten, equivalent form (after multiplying by the reciprocals of each denominator on both sides.)");
 	
@@ -186,8 +208,26 @@ public class WorkTable {
 		
 		newLine(leftResult+"", ""+rightResult, 
 				"Simplify.");
+		Expression[] result = {leftResult, rightResult};
+		return result;
+	}
+	
+	public Term[] addSolveProportionQuadraticSteps(Expression num1Expression,
+			Expression den1Expression, Expression num2Expression,
+			Expression den2Expression, String variable, int xValue) {
 		
-		addLinearEquationSteps(leftResult, rightResult, ""+variable, xValue);
+		Expression[] result = crossMultiply(num1Expression, den1Expression, num2Expression, den2Expression);
+		addQuadraticEquationSteps(result[0], result[1], variable, xValue);
+		return Ops.subtractExpressions(result[0], result[1]);
+	}
+	
+	public void addSolveProportionLinearSteps(Expression num1Expression,
+			Expression den1Expression, Expression num2Expression,
+			Expression den2Expression, String variable, int xValue) {
+		
+		Expression[] result = crossMultiply(num1Expression, den1Expression, num2Expression, den2Expression);
+		
+		addLinearEquationSteps(result[0], result[1], ""+variable, xValue);
 	
 		
 		int numValue1;
@@ -754,16 +794,16 @@ public class WorkTable {
 		boolean leftContainsVar=false;
 		for(Term t:leftTerms){
 			if (t.getType()!=Term.CONSTANT_TYPE){
-				System.out.println("WorkTable: found a variable on the left "+t);
+//				System.out.println("WorkTable: found a variable on the left "+t);
 				leftContainsVar=true;
 				break;
 			}
 		}
 		if(leftContainsVar){
 			for(Term t:leftTerms){
-				System.out.println("WorkTable: Considering whether or not to add or subtract "+t);
+//				System.out.println("WorkTable: Considering whether or not to add or subtract "+t);
 				if (t.getType()==Term.CONSTANT_TYPE){
-					System.out.println("WorkTable: Determined  "+t+" should be cancelled");
+//					System.out.println("WorkTable: Determined  "+t+" should be cancelled");
 					addOnBothSides=Term.getCopy(t);
 					break;
 				}
@@ -772,14 +812,14 @@ public class WorkTable {
 		}else{
 			for(Term t:rightTerms){
 				if (t.getType()==Term.CONSTANT_TYPE){
-					System.out.println("WorkTable: Determined  "+t+" should be cancelled (term on right side)");
+//					System.out.println("WorkTable: Determined  "+t+" should be cancelled (term on right side)");
 					addOnBothSides=Term.getCopy(t);
 					break;
 				}
 				else addOnBothSides=new Term(0);
 			}
 		}
-		System.out.println("WorkTable: "+Arrays.toString(leftTerms)+" = "+Arrays.toString(rightTerms)+", Conclusion "+addOnBothSides+" should be cancelled.");
+//		System.out.println("WorkTable: "+Arrays.toString(leftTerms)+" = "+Arrays.toString(rightTerms)+", Conclusion "+addOnBothSides+" should be cancelled.");
 		//determines spacing
 		String right1stTerm = "-";
 		boolean aVariableTermOnRightSide=false;//helps align constant under other constant
@@ -810,13 +850,17 @@ public class WorkTable {
 		//chooses which constant we will divide by
 		int coefficient=1;
 		for(int check=0; check<leftTerms.length; check++){
+			
 			if(leftTerms[check].containsVariable()) {
 				coefficient=leftTerms[check].getCoefficient();
 			}
 		}
 		for(int check=0; check<rightTerms.length; check++){
-			if(rightTerms[check].containsVariable()) coefficient=rightTerms[check].getCoefficient();
+			if(rightTerms[check].containsVariable()) {
+				coefficient=rightTerms[check].getCoefficient();
+			}
 		}
+		System.out.println("WorkTable.java coefficient to divide by is "+coefficient);
 		if (coefficient!=1){
 			setSymbol("\\hspace{1}");
 			newLine("\\overline{"+coefficient+"}", "\\overline{"+coefficient+"}", 

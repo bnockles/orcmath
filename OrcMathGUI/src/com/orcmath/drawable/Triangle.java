@@ -28,7 +28,7 @@ import com.orcmath.objects.Ops;
 public class Triangle {
 
 	
-	public static final int DEFAULT_SIZE = 8;//pixels of standard triangle
+	public static final int DEFAULT_SIZE = 7;//pixels of standard triangle
 	
 	private double sideA;
 	private double sideB;
@@ -56,7 +56,7 @@ public class Triangle {
 		
 		this.angleA = Ops.lawOfCosines(sideA,sideB,sideC);
 		this.angleB = Ops.lawOfCosines(sideB,sideA,sideC);
-		this.angleC = Ops.lawOfCosines(sideC,sideA,sideC);
+		this.angleC = Ops.lawOfCosines(sideC,sideA,sideB);
 		
 		
 		incenter = new CoordinatePoint(0, 0);
@@ -195,8 +195,8 @@ public class Triangle {
 		double cX = (vertices[0].getyCoordinate()-acSlope*vertices[0].getxCoordinate())/(cIncenterSlope-acSlope);
 		vertices[2] = new CoordinatePoint(cX, cX*cIncenterSlope);
 		
-		
 		dilateToFill(vertices);
+		
 		vertexA = vertices[indices[0]];
 		vertexB = vertices[indices[1]];
 		vertexC = vertices[indices[2]];

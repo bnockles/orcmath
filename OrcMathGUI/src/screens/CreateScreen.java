@@ -64,7 +64,7 @@ public class CreateScreen extends OrcMathScreen {
 	private TextField fileName;
 	private TextField heading;
 	private TextBox instructionsField;
-	private Button generate;
+	public Button generate;
 	private Accordion questionsByTopic;
 	private SimpleTable outputTable;
 	private ScrollableDragablePane tableScroll;
@@ -149,6 +149,7 @@ public class CreateScreen extends OrcMathScreen {
 				//					System.out.println("Directories: " 
 				//							+ directory + " created");
 				//				}
+				generate.setEnabled(false);
 				identifier=(int)(Math.random()*1000);//TODO once applet is made, this is no longer randomly assigned
 				//		  Problem problem = new Problem(problemType,difficulty);
 				//		  numberOfColumns = problem.getNumberOfColumns();
@@ -198,7 +199,13 @@ public class CreateScreen extends OrcMathScreen {
 					cps.setOverrideVerticalSpacing(OrcMath.settings.getOverrideVerticalSpacing());
 					cps.setVerticalSpacingStatic(OrcMath.settings.getVSpacing());
 					//						cps.createPdf();
-					progressBar.startTask();
+					progressBar.startTask(new Action() {
+						
+						@Override
+						public void act() {
+							generate.setEnabled(true);
+						}
+					});
 				}else{
 					System.out.println("You cannot create a worksheet with no problems");
 				}

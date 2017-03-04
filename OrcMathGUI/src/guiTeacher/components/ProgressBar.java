@@ -74,14 +74,14 @@ public class ProgressBar extends StyledComponent {
 		}
 	}
 
-	public void startTask(){
+	public void startTask(Action toDoOnCompletion){
 		setVisible(true);
 		Thread runTask = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				task.start();
-				while(task.getProgress() < task.getTotal()){
+				while(!task.isFinished()){
 					update();
 					try {
 						Thread.sleep(30);
@@ -94,9 +94,13 @@ public class ProgressBar extends StyledComponent {
 				
 				setVisible(false);
 				update();
+				if(toDoOnCompletion != null){
+					toDoOnCompletion.act();
+				}
 			}
 		});
 		runTask.start();
 	}
+	
 
 }

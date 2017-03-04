@@ -17,6 +17,8 @@ public interface Task {
 	
 	void reset();
 	
+	boolean isFinished();
+	
 	String getDescriptionOfCurrentTask();
 	
 }

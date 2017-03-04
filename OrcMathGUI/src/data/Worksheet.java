@@ -77,6 +77,9 @@ public class Worksheet implements Task{
 	private boolean includeTeacherNameInHeader;
 	private int identifier;//used to match sheets with answer keys
 	private  boolean keepQuestionOrder;
+	
+	//task related
+	private boolean finished;
 
 	//setup during PDF construction
 	private String latexFontCode = "text";
@@ -199,7 +202,7 @@ public class Worksheet implements Task{
 		return image;
 	}
 
-	private Image prepareAndAddInstructions(PdfPCell cell, String instruction, int cellWidthLimit, double scaleFactor){
+	private Image prepareAndAddInstructions(PdfPCell cell, String instruction, int cellWidthLimit, double scaleFactor, int heightOfProblem){
 		Image instructionImage = null;
 		File file = new File(getFolder()+"/"+SUBFOLDER_IMAGES+"/instruction.png");
 		try {
@@ -215,7 +218,7 @@ public class Worksheet implements Task{
 		//			int scaledInstructionsImageHeight = (int)(instructionImage.getWidth()*scaleFactor);
 
 		//			cell.setPaddingLeft(((scaledInstructionsImageWidth)/-2));
-		cell.addElement(new Chunk(instructionImage,0,0));
+		cell.addElement(new Chunk(instructionImage,0,heightOfProblem-instructionImage.getScaledHeight()));//-100 used to be 0
 
 		//			cell.setPadding(0);
 		//			cell.setPaddingTop(table.getDefaultCell().getPaddingTop());
@@ -412,8 +415,11 @@ public class Worksheet implements Task{
 
 			//makes image of instructions and places question according to where it must go.
 			int scaledInstructionsImageWidth=0;
+			System.out.println("1. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions());
+
 			if (eachQuestionHasItsOwnInstructions && !q.neverIncludeInstructions()) {
-				Image instructionsImage = prepareAndAddInstructions(cell, q.getInstructions(), cellWidthLimit, q.getScaleFactors());
+				System.out.println("2. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions()+", scaleFactor = "+q.getScaleFactors());
+				Image instructionsImage = prepareAndAddInstructions(cell, q.getInstructions(), cellWidthLimit, q.getScaleFactors(),(int)(image.getScaledHeight()));
 				int scaledInstructionsImageHeight = (int)(instructionsImage.getHeight()*q.getScaleFactors());
 				scaledInstructionsImageWidth = (int)(instructionsImage.getWidth()*q.getScaleFactors());
 				//add the image of the question under the instructions
@@ -580,6 +586,8 @@ public class Worksheet implements Task{
 		this.includeInstructions = includeInstructions;
 	}
 
+
+	
 	public void setNumberOfProblems(int numberOfProblems) {
 		this.numberOfProblems = numberOfProblems;
 		resetDificulties();
@@ -660,6 +668,10 @@ public class Worksheet implements Task{
 		return 2*numberOfPages*numberOfProblems;
 	}
 
+	
+	public boolean isFinished(){
+		return finished;
+	}
 	@Override
 	public void start() {
 
@@ -667,6 +679,7 @@ public class Worksheet implements Task{
 
 			@Override
 			public void run() {
+				finished = false;
 				try {
 					if(OrcMath.createScreen != null){
 						OrcMath.createScreen.setOrcWorkerVisible(true);
@@ -683,6 +696,8 @@ public class Worksheet implements Task{
 					if(OrcMath.createScreen != null){
 						OrcMath.createScreen.setOrcWorkerVisible(false);
 					}
+					OrcMath.createScreen.generate.setEnabled(true);
+					finished = true;
 				}
 			}
 		});

@@ -411,8 +411,10 @@ public class CoordinateImage {
 	public void drawCircleLabel(String string, Circle circle, double angle, boolean inDegrees) {
 		CoordinatePoint location = circle.getPointOnCircle(angle, inDegrees);
 		CoordinatePoint center = circle.getCenter();
+		g.setFont(labelFont);
 		FontMetrics fm= g.getFontMetrics();
 		int labelHeight = fm.getHeight();
+//		System.out.println("Drawing label ("+string+")with height = "+labelHeight);
 		if((location.getxCoordinate()-center.getxCoordinate())==0){//label is perfectly centered on top or bottom
 			int lineStart = fm.stringWidth(string)/2;
 			if(location.getyCoordinate()>center.getyCoordinate()){//top center		
@@ -665,7 +667,7 @@ public class CoordinateImage {
 
 		//prepares the LaTeX
 		TeXFormula formula = new TeXFormula(string);
-		TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, labelSize);//used to be 20
+		TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 25);//used to be 20
 		JLabel jl = new JLabel();
 		jl.setForeground(new Color(0, 0, 0));
 
@@ -732,6 +734,44 @@ public class CoordinateImage {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public void drawRightAngleBox(CoordinatePoint vertexA, CoordinatePoint vertexC, CoordinatePoint vertexB) {
+		double[] lineToA = DrawableOps.getLinearEquation(vertexA, vertexC);
+		double[] lineToB = DrawableOps.getLinearEquation(vertexB, vertexC);
+		double x1 = Math.sqrt(1/(Math.pow(lineToA[0],2)+1))+vertexC.getxCoordinate();
+		if((x1 < vertexA.getxCoordinate() && x1 < vertexC.getxCoordinate()) || (x1 > vertexA.getxCoordinate() && x1 > vertexC.getxCoordinate())){
+			x1 = -Math.sqrt(1/(Math.pow(lineToA[0],2)+1))+vertexC.getxCoordinate();
+		}
+		double x2 = Math.sqrt(1/(Math.pow(lineToB[0],2)+1))+vertexC.getxCoordinate();
+		if((x2 < vertexB.getxCoordinate() && x2 < vertexC.getxCoordinate()) || (x2 > vertexB.getxCoordinate() && x2 > vertexC.getxCoordinate())){
+			x2 = -Math.sqrt(1/(Math.pow(lineToB[0],2)+1))+vertexC.getxCoordinate();
+		}
+		CoordinatePoint squareCorner1 = new CoordinatePoint(x1, lineToA[0]*x1+lineToA[1]);
+		CoordinatePoint squareCorner2 = new CoordinatePoint(x2, lineToB[0]*x2+lineToB[1]);
+		double[] squareEdge1 = {lineToA[0],squareCorner2.getyCoordinate()-lineToA[0]*squareCorner2.getxCoordinate()};
+		double[] squareEdge2 = {lineToB[0],squareCorner1.getyCoordinate()-lineToB[0]*squareCorner1.getxCoordinate()};
+		CoordinatePoint vertex = DrawableOps.getIntersectionOfLines(squareEdge1, squareEdge2);
+		drawSegment(squareCorner1,vertex);
+		drawSegment(squareCorner2,vertex);
+		
+	}
+
+	public void drawAngleMeasure(int m, CoordinatePoint p1, CoordinatePoint vertex,
+			CoordinatePoint p2) {
+//		Circle c = new Circle(vertexA, .6);
+//		drawCircle(c);
+//		drawArcLabel(c, (int)Math.asin((vertexB.getyCoordinate()-vertexA.getyCoordinate())/(vertexB.getxCoordinate()-vertexA.getxCoordinate())), (int)Math.asin((vertexC.getyCoordinate()-vertexA.getyCoordinate())/(vertexC.getxCoordinate()-vertexA.getxCoordinate())),true);
+	
+		double p1x = p1.getxCoordinate();
+		double p1y = p1.getyCoordinate();
+		double p2x = p2.getxCoordinate();
+		double p2y = p2.getyCoordinate();
+		double x = vertex.getxCoordinate();
+		double y = vertex.getyCoordinate();
+		CoordinatePoint reflectP1 = new CoordinatePoint(x-(p1x-x), y-(p1y-y));
+		CoordinatePoint reflectP2 = new CoordinatePoint(x-(p2x-x), y-(p2y-y));
+		drawAngleVertexLabel(""+m+"°", reflectP1, vertex, reflectP2);
 	}
 
 

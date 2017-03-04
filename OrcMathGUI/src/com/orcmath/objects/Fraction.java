@@ -269,10 +269,11 @@ boolean isPositive;
     public Fraction(double d) {
 		double rounded = (int)(d*10000)/10000.0;
 		int denominator = 1;
-		while((rounded*denominator)%1 != 0){
+		while((rounded*denominator)%1 > 0.001 && (rounded*denominator)%1 < 0.999){
 			denominator++;
 		}
-		initFromIntValues((int)(rounded*denominator), denominator);
+		System.out.println(d +" AS A FRACTION IS "+(int)(rounded*denominator+.5)+"/"+ denominator);
+		initFromIntValues((int)(rounded*denominator+.5), denominator);
 	}
 
 	public int toInt(Fraction fraction){

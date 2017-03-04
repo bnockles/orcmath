@@ -176,25 +176,29 @@ public class Term implements Comparable<Term>{
 		primeFactorization = determinePrimeFactorization(coefficient);
 		//        System.out.println("Creating a rational term with numerator variables "+f.getVariableNumerator());
 		//        System.out.println("Creating a rational term with denominator "+f.getDenominator());
-		variableFactorization = f.getVariableNumerator();
-		
+		if(f.getVariableNumerator() != null){
+			variableFactorization = f.getVariableNumerator();
+		}else{
+			variableFactorization = new ArrayList<Variable>();
+		}
+
 		//standard constructor
-//		//System.out.println("\n Creating a new term");
-//		type = "variable";
-//		coefficient = givenCoefficient;
-//		if (coefficient<0){
-//			isPositive=false;
-//		}
-//		variables = Format.addBracketsAroundExponents(givenVariables);
-//		//        expressionFactors = new ArrayList<Expression>();
-//		//        System.out.println("The coefficient is: " + coefficient + ". Now we will work on interpreting the variable string, "+givenVariables+"\nwith brackets, this is read as: "+variables);
-//
-//		//radicalComponent = new SimplestRadicalForm(1,1); 
-//		primeFactorization = determinePrimeFactorization(coefficient);
-//		variableFactorization = variableStringToArrayList(variables);
-//		degree=determineDegree();
-		
-		System.out.println("Term.java Creating a fraction using constructor A : "+f.getNumer()+"/"+f.getDenom()+" result ="+toString());
+		//		//System.out.println("\n Creating a new term");
+		//		type = "variable";
+		//		coefficient = givenCoefficient;
+		//		if (coefficient<0){
+		//			isPositive=false;
+		//		}
+		//		variables = Format.addBracketsAroundExponents(givenVariables);
+		//		//        expressionFactors = new ArrayList<Expression>();
+		//		//        System.out.println("The coefficient is: " + coefficient + ". Now we will work on interpreting the variable string, "+givenVariables+"\nwith brackets, this is read as: "+variables);
+		//
+		//		//radicalComponent = new SimplestRadicalForm(1,1); 
+		//		primeFactorization = determinePrimeFactorization(coefficient);
+		//		variableFactorization = variableStringToArrayList(variables);
+		//		degree=determineDegree();
+
+		//		System.out.println("Term.java Creating a fraction using constructor A : "+f.getNumer()+"/"+f.getDenom()+" result ="+toString());
 	}
 
 	public Term(Fraction f, String variables)
@@ -607,7 +611,7 @@ public class Term implements Comparable<Term>{
 	}
 
 	public boolean containsVariable(){
-		return toString().contains("[a-zA-Z]+");
+		return toString().matches("[0-9]+?[a-zA-Z]+");
 	}
 
 	public Term getDenominator() {
@@ -899,7 +903,7 @@ public class Term implements Comparable<Term>{
 
 	public static Term getCopy(Term term) {
 		Term copy ;
-//		System.out.println("Term.class Making a copy of "+term+", which is of type "+term.getType());
+		//		System.out.println("Term.class Making a copy of "+term+", which is of type "+term.getType());
 		//for terms that are not constant terms
 		if (!term.getType().equals(Term.CONSTANT_TYPE)){
 			copy = new Term(term.getCoefficient(), getVariableFactorizationCopy(term));
@@ -929,18 +933,18 @@ public class Term implements Comparable<Term>{
 				!copy.getType().equals("constant") && 
 				!copy.getType().equals("variable") &&
 				!copy.getType().equals("rational"))
-//			System.out.println("Term.class The getCopy(Term) method is being called but the method is not yet defined for the type of term being copied.");
+			//			System.out.println("Term.class The getCopy(Term) method is being called but the method is not yet defined for the type of term being copied.");
 
-		//copies the radical portion
-		if(term.containsARadical){		
-			ArrayList<SimplestRadicalForm> component = new ArrayList<SimplestRadicalForm>();
-			for (int index=0; index<term.getRadicalComponent().size(); index++){
-				System.out.println("Copying the radical component:"+term.getRadicalComponent().get(index));
-				component.add(term.getRadicalComponent().get(index));
+			//copies the radical portion
+			if(term.containsARadical){		
+				ArrayList<SimplestRadicalForm> component = new ArrayList<SimplestRadicalForm>();
+				for (int index=0; index<term.getRadicalComponent().size(); index++){
+					System.out.println("Copying the radical component:"+term.getRadicalComponent().get(index));
+					component.add(term.getRadicalComponent().get(index));
+				}
+				copy.addRadicalComponent(component);
+				//			System.out.println("Term.class Copied:" +copy);
 			}
-			copy.addRadicalComponent(component);
-//			System.out.println("Term.class Copied:" +copy);
-		}
 		return copy;
 	}
 

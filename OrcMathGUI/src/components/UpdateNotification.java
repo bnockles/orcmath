@@ -18,7 +18,6 @@
  *******************************************************************************/
 package components;
 
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.net.URI;
