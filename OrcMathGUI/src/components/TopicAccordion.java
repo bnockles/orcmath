@@ -135,6 +135,9 @@ public class TopicAccordion extends Accordion {
 				"Systems of linear and quadratic equations, (x,y) solution, check work",
 				"Trig: Right Triangle Sides",
 				"Trig: Right Triangle Angles",
+				"Trig: Law of Cosines (Sides)",
+				"Trig: Law of Cosines (Angles)",
+				"Trig: Law of Sines",
 				"Functions: Identify functions",
 				"Functions: Use inverse variation to solve for unknown values",
 

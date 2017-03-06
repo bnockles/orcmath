@@ -100,13 +100,9 @@ public class Ops{
 	}
 
 	public static double roundDouble(double input, int decimalPlaces){
-		String format = "#";
-		if (decimalPlaces>0) format+=".";
-		for(int index=0; index<decimalPlaces; index++){
-			format+="#";
-		}
-		DecimalFormat twoDForm = new DecimalFormat(format);
-		return Double.valueOf(twoDForm.format(input)); 
+		int multiple = (int)(input*Math.pow(10, decimalPlaces)+.5);
+		return multiple/Math.pow(10, decimalPlaces);
+
 	}
 
 	

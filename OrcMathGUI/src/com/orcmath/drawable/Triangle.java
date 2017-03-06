@@ -256,4 +256,20 @@ public class Triangle {
 		return sideC;
 	}
 
+
+	public CoordinateSegment getSide(int sideIndex) {
+		if(sideIndex == 0)return segmentA;
+		if(sideIndex == 1)return segmentB;
+		if(sideIndex == 2)return segmentC;
+		return null;
+	}
+
+
+	public CoordinatePoint getVertex(int sideIndex) {
+		if(sideIndex == 0)return vertexA;
+		if(sideIndex == 1)return vertexB;
+		if(sideIndex == 2)return vertexC;
+		return null;
+	}
+
 }

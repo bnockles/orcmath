@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import data.SettingsData;
@@ -75,6 +76,7 @@ public class OrcMath extends GUIApplication {
 	 */
 	public OrcMath(int width, int height) {
 		super(width, height);
+		setIconImage(new ImageIcon("resources/appIcon.png").getImage());
 		setResizable(false);
 		if(checkUpdates){
 			try {

@@ -55,9 +55,9 @@ public class DebugProblemSet extends MathPage{
 	protected String mainInstructions = "";
 	protected static boolean eachQuestionHasItsOwnInstructions = true;
 	protected static int numberOfColumns=1;
-	protected int customNumberOfProblems = 4;
+	protected int customNumberOfProblems = 2;
 	protected static boolean problemTypesAreSorted = true;
-	protected static int difficulty =1;
+	protected static int difficulty =4;
 	protected static boolean problemsIncreaseInDifficulty = false;
 	protected static boolean customDifficulty = false;
 	protected static int[] customDifficulties = {3,3,4,3,4};
@@ -69,8 +69,11 @@ public class DebugProblemSet extends MathPage{
 	protected  String[] problemTypes;
 	
 	protected static final String[] allTypes = {
-			"Trig: Right Triangle Angles"
-//			"Trig: Right Triangle Sides",
+			"Trig: Law of Cosines (Sides)",
+			"Trig: Law of Cosines (Angles)"
+//			"Trig: Law of Sines",
+//			"Trig: Right Triangle Angles",
+//			"Trig: Right Triangle Sides"
 //			"Similarity: Triangle Angle Bisector Theorem"
 //			"Similarity: Side Splitter Theorem with Quadratics"
 //			"Similarity: Side Splitter Theorem"

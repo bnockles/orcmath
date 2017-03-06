@@ -498,7 +498,21 @@ public class Problem {
 			TrigInverseBasic newProblem = new TrigInverseBasic(diff);
 			getProblemData(newProblem);
 		}
-
+		
+		else if (string.equals("Trig: Law of Sines")){
+			LawOfSines newProblem = new LawOfSines(diff);
+			getProblemData(newProblem);
+		}
+		
+		else if (string.equals("Trig: Law of Cosines (Sides)")){
+			LawOfCosines newProblem = new LawOfCosines(diff,true);
+			getProblemData(newProblem);
+		}
+		else if (string.equals("Trig: Law of Cosines (Angles)")){
+			LawOfCosines newProblem = new LawOfCosines(diff,false);
+			getProblemData(newProblem);
+		}
+		
 		else if (string.equals("Rational Expressions: Simplify polynomials")){
 			SimplifyExpression newProblem = new SimplifyExpression(diff);
 			getProblemData(newProblem);

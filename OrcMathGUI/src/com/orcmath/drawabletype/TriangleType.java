@@ -46,6 +46,7 @@ public abstract class TriangleType extends DynamicType {
 	
 	public abstract char[] initLabels();
 
+
 	public static int[] createUniqueSideLengths(int difficulty, int min, int max){
 		int side1 = Ops.randomInt(min, max);
 		int side2 = Ops.randomInt(min, max);
@@ -75,14 +76,16 @@ public abstract class TriangleType extends DynamicType {
 		return duplicate || impossible;
 	}
 
-	
+	protected void drawAngleLabels(CoordinateImage image){
+		image.drawAngleVertexLabel(labels[0]+"", triangle.getVertexB(), triangle.getVertexA(), triangle.getVertexC());
+		image.drawAngleVertexLabel(labels[1]+"", triangle.getVertexA(), triangle.getVertexB(), triangle.getVertexC());
+		image.drawAngleVertexLabel(labels[2]+"", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
+	}
 	
 	protected void drawDynamicImage(CoordinateImage image){
 		//names of points
 		image.drawTriangle(triangle);
-		image.drawAngleVertexLabel(labels[0]+"", triangle.getVertexB(), triangle.getVertexA(), triangle.getVertexC());
-		image.drawAngleVertexLabel(labels[1]+"", triangle.getVertexA(), triangle.getVertexB(), triangle.getVertexC());
-		image.drawAngleVertexLabel(labels[2]+"", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
+		drawAngleLabels(image);
 		drawExtras(image);
 		dynamicImage = image.getImage();
 	}

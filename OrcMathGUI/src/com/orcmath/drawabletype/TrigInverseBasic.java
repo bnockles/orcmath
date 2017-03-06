@@ -58,7 +58,13 @@ public class TrigInverseBasic extends TrigBasic {
 		if(triangle.isUnknown(sideIndex)){
 			return "";
 		}else{
-			return triangle.getSideExpression(sideIndex).toString();
+			if(difficulty<3){
+				return triangle.getSideExpressionRounded(sideIndex,1)+"";
+
+			}else{
+				
+				return triangle.getSideExpression(sideIndex).toString();
+			}
 		}
 	}
 	
@@ -75,9 +81,9 @@ public class TrigInverseBasic extends TrigBasic {
 		image.drawAngleVertexLabel(labels[2]+"", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
 	}
 	
-	public void makeStepsForUnknown(WorkTable answerWork, int oppIndex, String opp, String adj,  Expression oppLength, Expression adjLength, double answer){
+	public void makeStepsForUnknown(WorkTable answerWork, int oppIndex, String opp, String adj,  String oppLength, String adjLength, double answer){
 		String hyp = (labels[1]+"")+(labels[0]+"");
-		Expression hypLength = triangle.getSideExpression(2);
+		String hypLength =(difficulty<3)?triangle.getSideExpressionRounded(2, 1): triangle.getSideExpression(2).toString();
 		if(triangle.isUnknown(2)){
 			answerWork.addTanInverseSteps(vars[0]+"",opp,adj,oppLength,adjLength,answer);
 		}else{
@@ -98,10 +104,13 @@ public class TrigInverseBasic extends TrigBasic {
 //		double aar = aa*Math.PI/180;//angle A rounded
 		double ab = Ops.roundDouble(triangle.getAngleB()*180/Math.PI,1);
 //		double abr = ab*Math.PI/180;//angle B rounded
+		String side0 = (difficulty < 3)?triangle.getSideExpressionRounded(0,1):triangle.getSideExpression(0).toString();
+		String side1 = (difficulty < 3)?triangle.getSideExpressionRounded(1,1):triangle.getSideExpression(1).toString();
+		
 		if(vertexToFind == 0){
-			makeStepsForUnknown(answerWork, 0,(labels[1]+"")+(labels[2]+""), (labels[2]+"")+(labels[0]+""), triangle.getSideExpression(0), triangle.getSideExpression(1), aa);
+			makeStepsForUnknown(answerWork, 0,(labels[1]+"")+(labels[2]+""), (labels[2]+"")+(labels[0]+""), side0, side1, aa);
 		}else{
-			makeStepsForUnknown(answerWork, 1,(labels[2]+"")+(labels[0]+""), (labels[2]+"")+(labels[1]+""), triangle.getSideExpression(1), triangle.getSideExpression(0), ab);
+			makeStepsForUnknown(answerWork, 1,(labels[2]+"")+(labels[0]+""), (labels[2]+"")+(labels[1]+""), side1, side0, ab);
 		}
 	}
 

@@ -774,6 +774,18 @@ public class CoordinateImage {
 		drawAngleVertexLabel(""+m+"°", reflectP1, vertex, reflectP2);
 	}
 
+	public void labelTriangleSide(Triangle triangle, String label, int sideIndex) {
+		CoordinateSegment side = triangle.getSide(sideIndex);
+		
+		if(side.getLinearEquationCoefficients()[0] > 0 ){
+
+				drawSegmentLatex(label, side.getEndpoint1(),side.getEndpoint2(), true, triangle.getSide((sideIndex+1)%3).getLinearEquationCoefficients()[0] < 0);
+
+		}else{
+			drawSegmentLatex(label, side.getEndpoint1(),side.getEndpoint2(), true, triangle.getSide((sideIndex+1)%3).getLinearEquationCoefficients()[0] > 0);
+		}
+	}
+
 
 
 

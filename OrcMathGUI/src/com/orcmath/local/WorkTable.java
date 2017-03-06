@@ -101,17 +101,17 @@ public class WorkTable {
 		latexTabular+="\\hline ";
 	}
 	
-	public void addSinInverseSteps(String var, String opp, String hyp, Expression oppLength, Expression hypLength,
+	public void addSinInverseSteps(String var, String opp, String hyp, String oppLength, String hypLength,
 			double answer) {
 		plugIntoTrigInverse("sin", "Sine = \\frac{opp}{hyp}", var, opp, hyp, oppLength, hypLength, answer);
 	}
 	
-	public void addCosInverseSteps(String var, String adj, String hyp, Expression adjLength, Expression hypLength,
+	public void addCosInverseSteps(String var, String adj, String hyp, String adjLength, String hypLength,
 			double answer) {
 		plugIntoTrigInverse("cos", "Cosine = \\frac{adj}{hyp}", var, adj, hyp, adjLength, hypLength, answer);
 	}
 	
-	private void plugIntoTrigInverse(String function,String definition, String var, String numName, String denName, Expression numerator, Expression denominator, double answer){
+	private void plugIntoTrigInverse(String function,String definition, String var, String numName, String denName, String numerator, String denominator, double answer){
 		newLine("\\"+function+" "+var, "\\frac{"+numName+"}{"+denName+"}", definition);
 		newLine("\\"+function+" "+var, "\\frac{"+numerator+"}{"+denominator+"}", "Substitute.");
 		newLine(var+"", "\\"+function+"^{-1}\\left(\\frac{"+numerator+"}{"+denominator+"}\\right)", "Simplify.");
@@ -119,7 +119,7 @@ public class WorkTable {
 		newLine(var+"", answer+"^{\\circ}", "Evaluate.");
 	}
 	
-	public void addTanInverseSteps(String var, String opp, String adj, Expression oppLength, Expression adjLength, double answer) {
+	public void addTanInverseSteps(String var, String opp, String adj, String oppLength, String adjLength, double answer) {
 		plugIntoTrigInverse("tan", "Tangent = \\frac{opp}{adj}", var, opp, adj, oppLength, adjLength, answer);
 		
 	}
@@ -1546,6 +1546,63 @@ public class WorkTable {
 				Format.termArrayToString(squared),
 				"Distribute.");
 		addQuadraticEquationSteps(new Expression(distributed), new Expression(squared), ""+variable, actualMeasure);
+		
+	}
+
+	public double addLawOfSinesSteps(String a, String A, String b, String B, double knownSide, double knownAngle,
+			double unknownSide, double unknownAngle, boolean findSide, String var) {
+		if(findSide){
+			newLine("\\frac{"+a+"}{\\sin\\left(m\\angle "+A+"\\right)}", "\\frac{"+b+"}{\\sin\\left(m\\angle "+B+"\\right)}", "Law of sines");
+			newLine("\\frac{"+knownSide+"}{\\sin\\left("+knownAngle+"\\right)}", "\\frac{"+var+"}{\\sin"+unknownAngle+"}", "Substitute");
+			newLine("\\frac{"+knownSide+"}{\\sin\\left("+knownAngle+"\\right)}\\left(\\sin"+unknownAngle+"\\right)", var, "Multiply by \\left(\\sin"+unknownAngle+"\\right)");
+			double result = Ops.roundDouble(knownSide/Math.sin(knownAngle*Math.PI/180)*Math.sin(unknownAngle*Math.PI/180), 1); 
+			newLine(result+"", var, "Evaluate.");
+			return result;
+		}else{
+			newLine("\\frac{\\sin\\left(m\\angle "+A+"\\right)}{"+a+"}", "\\frac{\\sin\\left(m\\angle "+B+"\\right)}{"+b+"}", "Law of sines");
+			newLine("\\frac{\\sin\\left( "+knownAngle+"\\right)}{"+knownSide+"}", "\\frac{\\sin "+var+"}{"+unknownSide+"}", "Substitute.");
+			newLine("\\frac{\\sin\\left( "+knownAngle+"\\right)}{"+knownSide+"}\\left("+unknownSide+"\\right)", "\\sin "+var, "Multiply by \\left("+unknownSide+"\\right)");
+			double val = Ops.roundDouble(Math.sin(knownAngle*Math.PI/180)/knownSide*unknownSide,4); 
+			newLine(val+"", "\\sin "+var, "Evaluate.");
+			double result = Ops.roundDouble(Math.asin(val)*180/Math.PI, 1);
+			newLine(result+"", var, "Take \\sin^{-1} of both sides.");
+			return result;
+		}
+		
+	}
+
+	public double addLawOfCosineSteps(String a, String b,  String c, String C, double aLength, double bLength,
+			double cLength, double cMeasure, boolean findSide, String var) {
+		newLine("a^2+b^2-2ab\\cosC","c^2","Law of Cosines (General form)");
+		newLine("\\left("+a+"\\right)^2+\\left("+b+"\\right)^2-2\\left("+a+"\\right)\\left("+b+"\\right)\\cos\\left("+C+"\\right)","\\left("+c+"\\right)^2","Law of Cosines");
+		if(findSide){
+			newLine("\\left("+aLength+"\\right)^2+\\left("+bLength+"\\right)^2-2\\left("+aLength+"\\right)\\left("+bLength+"\\right)\\cos\\left("+cMeasure+"\\right)","\\left("+c+"\\right)^2","Substitute.");
+			double part1 = Ops.roundDouble(2*aLength*bLength*Math.cos(cMeasure*Math.PI/180),4);
+			String opp =(part1<0)?"+":"-";
+			newLine((aLength*aLength)+"+"+bLength*bLength+opp+Math.abs(part1),"\\left("+c+"\\right)^2","Evaluate.");
+			double part2 = aLength*aLength+bLength*bLength-part1;
+			newLine((part2)+"","\\left("+c+"\\right)^2","Simplify.");
+			double result = Ops.roundDouble(Math.sqrt(part2), 1);
+			newLine(result+"",c,"Square root.");
+			return result;
+		}else{
+			newLine("\\left("+aLength+"\\right)^2+\\left("+bLength+"\\right)^2-2\\left("+aLength+"\\right)\\left("+bLength+"\\right)\\cos\\left("+C+"\\right)","\\left("+cLength+"\\right)^2","Substitute.");
+			double part1 = 2*aLength*bLength;
+			newLine((aLength*aLength)+"+"+bLength*bLength+"- "+part1+"\\left(\\cos \\left("+C+"\\right)\\right)",cLength*cLength+"","Evaluate.");
+			setSymbol("\\hspace{1}");
+			newLine("-"+(aLength*aLength)+"-"+bLength*bLength,"-"+(aLength*aLength)+"-"+bLength*bLength,"Subtract");
+			setSymbol("=");
+			double part2 = (cLength*cLength - (aLength*aLength)-bLength*bLength);
+			newLine("- "+part1+"\\left(\\cos \\left("+C+"\\right)\\right)",part2+"","Simplify");
+			setSymbol("\\hspace{1}");
+			newLine("\\overline{-"+part1+"}","\\overline{-"+part1+"}","Divide");
+			setSymbol("=");
+			newLine("\\cos \\left("+C+"\\right)",Ops.roundDouble(-part2/part1,4)+"","Simplify");
+			double result = Ops.roundDouble(Math.acos(Ops.roundDouble(-part2/part1,4))*180/Math.PI,1);
+			newLine(C,"\\cos^{-1}\\left("+Ops.roundDouble(-part2/part1,4)+"\\right)","Take \\cos^{-1} of both sides.");
+			newLine(C,result+"","Simplify");
+			return result;
+		}
 		
 	}
 
