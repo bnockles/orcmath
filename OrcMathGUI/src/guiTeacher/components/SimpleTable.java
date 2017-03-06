@@ -24,6 +24,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import guiTeacher.interfaces.Clickable;
@@ -41,6 +42,9 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	private ArrayList<SimpleTableRow> rows;
 	private SimpleTableRow hoveredRow;
 	
+	
+	private BufferedImage trashClosed;
+	private BufferedImage trashOpen;
 	private SimpleTableRow movingRow;
 	private Component movementGhost;
 	private int hoverStartY;
@@ -65,6 +69,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		parentScreen =fc;
 		trashHovered = false;
 		this.columns = columns;
+		initTrashIcons();
 		movementGhost = new Component(0,0,w,columns.getRowHeight()) {
 			
 			@Override
@@ -78,6 +83,13 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		update();
 	}
 
+	private void initTrashIcons(){
+		trashClosed = new BufferedImage(EDIT_COLUMN,columns.getRowHeight(),BufferedImage.TYPE_INT_ARGB);
+		trashOpen = new BufferedImage(EDIT_COLUMN,columns.getRowHeight(),BufferedImage.TYPE_INT_ARGB);
+		drawTrash(trashClosed.createGraphics(), false);
+		drawTrash(trashOpen.createGraphics(), true);
+	}
+	
 	public void addRow(String[] values) {
 		if(values.length == columns.getColumnDescriptions().length){	
 			rows.add(new SimpleTableRow(this, values, columns.getColumnEditable(), columns.getColumnWidths(), columns.getRowHeight()));
@@ -105,7 +117,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		}
 	}
 
-	private void drawTrash(Graphics2D g){
+	private void drawTrash(Graphics2D g, boolean trashHovered){
 		g.setColor(new Color(122,124,139));
 		
 		
@@ -135,7 +147,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 			int lx = bx-1;
 			int ly = by-1;
 			int[] xls = {lx,lx+lidWidth+2,lx+lidWidth,lx+lidWidth/2+1,lx+1};
-			int[] yls = {ly,ly,ly-2,ly-3,ly-2};
+			int[] yls = {ly,ly,ly-2,ly-4,ly-2};
 			Polygon trashLid = new Polygon(xls, yls, xls.length);
 			g.fill(trashLid);
 			
@@ -143,7 +155,9 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	}
 	
 	@Override
-	public void update(Graphics2D g) {	
+	public void update(Graphics2D g2) {	
+		BufferedImage buffer = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = buffer.createGraphics();
 		if(getHeight() < lastHeight){
 			//if rows have been deleted, this clears the residual ghost of their image
 			clear();
@@ -152,7 +166,10 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,	RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
-		drawTrash(g);
+		if(trashOpen != null){
+			if(trashHovered) g.drawImage(trashOpen, 0, 0, null);
+			else g.drawImage(trashClosed, 0, 0, null);
+		}
 		g.setColor(getTabColor());
 		g.fillRect(EDIT_COLUMN, 0, getWidth(), columns.getRowHeight());
 		g.setColor(getForeground());
@@ -241,6 +258,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		if(borderY>getHeight() && tBorder>0){
 			g.drawLine(EDIT_COLUMN, getHeight()-tBorder, getWidth(), getHeight()-tBorder);
 		}
+		g2.drawImage(buffer, 0, 0, null);
 	}
 
 

@@ -46,7 +46,11 @@ public abstract class TriangleType extends DynamicType {
 	
 	public abstract char[] initLabels();
 
-
+	public boolean anglesExceed(Triangle triangle, double minAngle){
+		
+		return triangle.getAngleA()>minAngle && triangle.getAngleB() > minAngle && triangle.getAngleC() > minAngle;
+	}
+	
 	public static int[] createUniqueSideLengths(int difficulty, int min, int max){
 		int side1 = Ops.randomInt(min, max);
 		int side2 = Ops.randomInt(min, max);

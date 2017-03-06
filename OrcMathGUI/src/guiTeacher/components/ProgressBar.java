@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
+import data.Worksheet;
 import guiTeacher.Utilities;
 import guiTeacher.interfaces.Task;
 
@@ -13,12 +14,12 @@ public class ProgressBar extends StyledComponent {
 	private Color barColor;
 	private Color incompleteColor;
 
-	public ProgressBar(int x, int y, int w, int h, Task task) {
+	public ProgressBar(int x, int y, int w, int h) {
 		super(x, y, w, h);
 		setVisible(false);//does not appear until task begins
 		barColor = getTabColor();
 		incompleteColor = getBackgroundColor();
-		this.task = task;
+
 		update();
 	}
 
@@ -75,32 +76,41 @@ public class ProgressBar extends StyledComponent {
 	}
 
 	public void startTask(Action toDoOnCompletion){
-		setVisible(true);
-		Thread runTask = new Thread(new Runnable() {
+		if(task!=null){
+			setVisible(true);
+			Thread runTask = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				task.start();
-				while(!task.isFinished()){
+				@Override
+				public void run() {
+					task.start();
+					while(!task.isFinished()){
+						update();
+						try {
+							Thread.sleep(30);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					task.reset();
+
+					setVisible(false);
 					update();
-					try {
-						Thread.sleep(30);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if(toDoOnCompletion != null){
+						toDoOnCompletion.act();
 					}
 				}
-				task.reset();
-				
-				setVisible(false);
-				update();
-				if(toDoOnCompletion != null){
-					toDoOnCompletion.act();
-				}
-			}
-		});
-		runTask.start();
+			});
+			runTask.start();
+		}
 	}
-	
+
+
+
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+
 
 }

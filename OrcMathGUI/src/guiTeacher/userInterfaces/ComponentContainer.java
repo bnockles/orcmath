@@ -84,13 +84,16 @@ public abstract class ComponentContainer {
 //		gi.drawImage(buffer, getWidth(), getHeight(), null);
 	}
 	
-	public void update(Graphics2D g){
-		g.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
+	public void update(Graphics2D g2){
+//		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+//		Graphics2D g2 = buffer.createGraphics();
+		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
 	             RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(Color.white);
-		g.fillRect(0, 0, image.getWidth(), image.getHeight());
-		g.setColor(Color.black);
-		drawObjects(g);
+		g2.setColor(Color.white);
+		g2.fillRect(0, 0, image.getWidth(), image.getHeight());
+		g2.setColor(Color.black);
+		drawObjects(g2);
+//		g.drawImage(buffer, 0, 0, null);
 	}
 	
 	public void drawObjects(Graphics2D g){

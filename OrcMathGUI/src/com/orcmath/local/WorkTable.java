@@ -1573,7 +1573,7 @@ public class WorkTable {
 
 	public double addLawOfCosineSteps(String a, String b,  String c, String C, double aLength, double bLength,
 			double cLength, double cMeasure, boolean findSide, String var) {
-		newLine("a^2+b^2-2ab\\cosC","c^2","Law of Cosines (General form)");
+		newLine("a^2+b^2-2ab\\cos C","c^2","Law of Cosines (General form)");
 		newLine("\\left("+a+"\\right)^2+\\left("+b+"\\right)^2-2\\left("+a+"\\right)\\left("+b+"\\right)\\cos\\left("+C+"\\right)","\\left("+c+"\\right)^2","Law of Cosines");
 		if(findSide){
 			newLine("\\left("+aLength+"\\right)^2+\\left("+bLength+"\\right)^2-2\\left("+aLength+"\\right)\\left("+bLength+"\\right)\\cos\\left("+cMeasure+"\\right)","\\left("+c+"\\right)^2","Substitute.");

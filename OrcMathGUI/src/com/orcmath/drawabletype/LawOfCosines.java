@@ -62,6 +62,8 @@ public class LawOfCosines extends TriangleType {
 		return (int) (10+Math.pow(2, difficulty));
 	}
 	
+	
+	
 	@Override
 	public Triangle createTriangle() {
 		triangleSides = new double[3];
@@ -73,13 +75,13 @@ public class LawOfCosines extends TriangleType {
 			triangleSides[1] = sides[1];
 			triangleSides[2] = sides[2];
 
+			triangle = new Triangle(triangleSides[0], triangleSides[1], triangleSides[2]);
 
-		}while(hasDuplicateOrImpossibleLengths(triangleSides));
+		}while(hasDuplicateOrImpossibleLengths(triangleSides) || !anglesExceed(triangle, Math.PI/12));
 		
 		
 
 
-		triangle = new Triangle(triangleSides[0], triangleSides[1], triangleSides[2]);
 
 		var = "x";
 

@@ -69,7 +69,7 @@ public class CreateScreen extends OrcMathScreen {
 	private SimpleTable outputTable;
 	private ScrollableDragablePane tableScroll;
 	private ProgressBar progressBar;
-	private Worksheet cps;
+
 	private Graphic orcWorker;
 	private SearchBox search;
 	
@@ -88,7 +88,6 @@ public class CreateScreen extends OrcMathScreen {
 
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) {
-		cps = new Worksheet();
 		search = new SearchBox(MARGIN, MARGIN+30, _ACCORDION_WIDTH, 30);
 		viewObjects.add(search);
 		questionsByTopic = new TopicAccordion(this, MARGIN,MARGIN+65,_ACCORDION_WIDTH, search);
@@ -111,7 +110,7 @@ public class CreateScreen extends OrcMathScreen {
 		orcWorker = new Graphic(generate.getX()-60, getHeight()-MARGIN-UpdateNotification.NOTIFICATION_HEIGHT-generate.getHeight(), .35, "resources/doing homework.jpg");
 		orcWorker.setVisible(false);
 		int progressBarWidth = orcWorker.getX()-mb.getX()-mb.getWidth()-space*2;
-		progressBar = new ProgressBar(MARGIN + mb.getWidth()+space, getHeight() - UpdateNotification.NOTIFICATION_HEIGHT-progressBarHeight, progressBarWidth, progressBarHeight, cps);
+		progressBar = new ProgressBar(MARGIN + mb.getWidth()+space, getHeight() - UpdateNotification.NOTIFICATION_HEIGHT-progressBarHeight, progressBarWidth, progressBarHeight);
 		
 		
 		viewObjects.add(questionsByTopic);
@@ -180,6 +179,7 @@ public class CreateScreen extends OrcMathScreen {
 					}
 
 					Settings s = OrcMath.settings;
+					Worksheet cps = new Worksheet();
 					cps.setNumberOfPages(s.getPages());
 					cps.setNumberOfProblems(sum);
 					cps.setNumberOfColumns(s.getColumns());
@@ -199,6 +199,7 @@ public class CreateScreen extends OrcMathScreen {
 					cps.setOverrideVerticalSpacing(OrcMath.settings.getOverrideVerticalSpacing());
 					cps.setVerticalSpacingStatic(OrcMath.settings.getVSpacing());
 					//						cps.createPdf();
+					progressBar.setTask(cps);
 					progressBar.startTask(new Action() {
 						
 						@Override
@@ -227,7 +228,7 @@ public class CreateScreen extends OrcMathScreen {
 		for(int i: widths){
 			widthSum+=i;
 		}
-		widths[1] = _FIELD_WIDTH-widthSum;
+		widths[1] = _FIELD_WIDTH-widthSum-SimpleTable.EDIT_COLUMN;
 		outputTable = new SimpleTable(this, 0, 0, _FIELD_WIDTH, 100, new TableHeader(columns, widths,editable, 30));
 		outputTable.setInputType(0,TextField.INPUT_TYPE_NUMERIC);
 		outputTable.setInputType(2,TextField.INPUT_TYPE_NUMERIC);

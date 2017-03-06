@@ -18,10 +18,14 @@
  *******************************************************************************/
 package guiTeacher.userInterfaces;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import guiTeacher.interfaces.Visible;
@@ -39,7 +43,17 @@ public abstract class Screen extends ComponentContainer{
 		
 	}
 
-
+	public void update(Graphics2D g){
+		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = buffer.createGraphics();
+		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
+	             RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setColor(Color.white);
+		g2.fillRect(0, 0, getImage().getWidth(), getImage().getHeight());
+		g2.setColor(Color.black);
+		drawObjects(g2);
+		g.drawImage(buffer, 0, 0, null);
+	}
 
 	public MouseListener getMouseListener() {
 		return null;
