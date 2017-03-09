@@ -185,6 +185,13 @@ public class Worksheet implements Task{
 		Image image=null;
 		try {
 			image = Image.getInstance(filename);
+			scaleFactorPercent=(float)scaleFactor*100;
+			
+			if(image.getHeight()*scaleFactor>600){
+				scaleFactorPercent=(float)60000/(float)image.getHeight();
+				//				scaleFactor=scaleFactorPercent/100;
+			}
+			image.scalePercent(scaleFactorPercent);
 		} catch (BadElementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -194,14 +201,10 @@ public class Worksheet implements Task{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}catch (NullPointerException e) {
+			
+			e.printStackTrace();
 		}
-		scaleFactorPercent=(float)scaleFactor*100;
-
-		if(image.getHeight()*scaleFactor>600){
-			scaleFactorPercent=(float)60000/(float)image.getHeight();
-			//				scaleFactor=scaleFactorPercent/100;
-		}
-		image.scalePercent(scaleFactorPercent);
 		return image;
 	}
 
@@ -404,12 +407,12 @@ public class Worksheet implements Task{
 	
 	protected void showProblemSpecificError(String[] problemOrder, int index){
 		if(OrcMath.createScreen != null){
-			int maxChar = 12;
+			int maxChar = 20;
 			String description = problemOrder[index];
 			if(maxChar < description.length()){
 				description = description.substring(0, maxChar)+"...";
 			}
-			OrcMath.createScreen.presentNotification("There is a bug in the \""+description+"\" module, difficulty "+difficulty+". Either try again or use a different module.");
+			OrcMath.createScreen.presentNotification("There was a bug in the \""+description+"\" module, (diff="+difficulty+"). Try again or use a different module. Question omitted.");
 		}
 	}
 
@@ -421,10 +424,11 @@ public class Worksheet implements Task{
 		int numberOfRemainingColumnsInRow=2*columns;
 		//TODO 550 is currently used as an approximation of the tableWidth. Figure this out another way
 		int cellWidthLimit = (530-(15*columns))/(columns);
+		int itemNumber = 0;
 		for (int index=0; index<data.length; index++){
 			QuestionData q = data[index];
-			if(q != null){
-				int itemNumber=index+1;//starts counting at 1
+			if(q != null && q.getQuestionAddresses() != null){
+				itemNumber++;
 				System.out.println("Worksheet.java "+q.getQuestionAddresses()+", index = "+index);
 				Image image = prepareLatexImage(q.getAddress(),q.getScaleFactors());
 				//sets all of cell preferences to the defaults
@@ -438,8 +442,8 @@ public class Worksheet implements Task{
 
 				//makes image of instructions and places question according to where it must go.
 				int scaledInstructionsImageWidth=0;
-				System.out.println("1. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions());
-
+	
+				System.out.println("Adding an image of height "+image.getHeight());
 				if (eachQuestionHasItsOwnInstructions && !q.neverIncludeInstructions()) {
 					System.out.println("2. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions()+", scaleFactor = "+q.getScaleFactors());
 					Image instructionsImage = prepareAndAddInstructions(cell, q.getInstructions(), cellWidthLimit, q.getScaleFactors(),(int)(image.getScaledHeight()));
@@ -448,6 +452,7 @@ public class Worksheet implements Task{
 					//add the image of the question under the instructions
 					cell.addElement(new Chunk(image,0,-scaledInstructionsImageHeight));		
 				}else{
+					
 					cell.addElement(new Chunk(image,0,0));				
 				}
 

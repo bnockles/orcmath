@@ -136,7 +136,7 @@ public class Accordion extends StyledComponent implements Clickable {
 	@Override
 	public void update(Graphics2D g) {
 		int tabY= 0;
-		g.setColor(Color.blue);
+		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		for(AccordionTab ac: tabs){
 			ac.update();

@@ -18,6 +18,7 @@
  *******************************************************************************/
 package screens;
 
+import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,7 @@ public class CreateScreen extends OrcMathScreen {
 		orcWorker.setVisible(false);
 		int progressBarWidth = orcWorker.getX()-mb.getX()-mb.getWidth()-space*2;
 		progressBar = new ProgressBar(MARGIN + mb.getWidth()+space, getHeight() - UpdateNotification.NOTIFICATION_HEIGHT-progressBarHeight, progressBarWidth, progressBarHeight);
-		
+		progressBar.setBarColor(new Color(8,246,198));
 		
 		viewObjects.add(questionsByTopic);
 		viewObjects.add(fileName);
@@ -159,6 +160,7 @@ public class CreateScreen extends OrcMathScreen {
 				String[] types = outputTable.getAllColumnValuesAtIndex(_INDEX_OF_QUESTION_TYPE);
 				if(types.length >=0){
 					//						new BuildCounter(types);
+					
 					int[] difficultyValues = outputTable.getAllColumnIntValuesAtIndex(_INDEX_OF_DIFFICULTY);
 					String[] quantitiesTexts = outputTable.getAllColumnValuesAtIndex(_INDEX_OF_QUANTITY);
 					int[] quantities = new int[quantitiesTexts.length]; 
