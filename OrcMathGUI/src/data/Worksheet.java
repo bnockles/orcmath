@@ -20,12 +20,15 @@ package data;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+
+import org.scilab.forge.jlatexmath.ParseException;
 
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
@@ -77,7 +80,7 @@ public class Worksheet implements Task{
 	private boolean includeTeacherNameInHeader;
 	private int identifier;//used to match sheets with answer keys
 	private  boolean keepQuestionOrder;
-	
+
 	//task related
 	private boolean finished;
 
@@ -341,55 +344,74 @@ public class Worksheet implements Task{
 			int j = (pageNumber-1)*numberOfProblems+index;
 			QuestionData q = new QuestionData(questionFileNameStem+(j+1)+".png");
 
+			try{
+				Problem p;
 
-			Problem p;
+				if(difficultyMode == Settings.DIFFICULT_MODE_CUSTOM){
+					p = new Problem(problemOrder[index],customDifficulties[index%customDifficulties.length]);
+				}else{
+					if (difficultyMode == Settings.DIFFICULT_MODE_INCREMENTAL){
+						p = new Problem(problemOrder[index],difficultyStep);
+						difficultyStep=1;
+						difficultyStep=(int)(difficultyStep+stepInterval);
+						stepInterval=stepInterval+d;
+					}
+					else{
+						//static difficulty
 
-			if(difficultyMode == Settings.DIFFICULT_MODE_CUSTOM){
-				p = new Problem(problemOrder[index],customDifficulties[index%customDifficulties.length]);
-			}else{
-				if (difficultyMode == Settings.DIFFICULT_MODE_INCREMENTAL){
-					p = new Problem(problemOrder[index],difficultyStep);
-					difficultyStep=1;
-					difficultyStep=(int)(difficultyStep+stepInterval);
-					stepInterval=stepInterval+d;
+						p = new Problem(problemOrder[index],difficulty);	  
+
+
+					}
 				}
-				else{
-					//static difficulty
-					p = new Problem(problemOrder[index],difficulty);	  
+				File file = new File(q.getAddress());
+				//TODO: This is saving images to a PDF folder that is static. Make this dynamic
+				//				System.out.println("Creating problem "+problemOrder[index]);
+				try {
+					if ((new File(getImagesFolder())).mkdirs()){
+						System.out.println("Created folder "+getImagesFolder());
+					}
+					ImageIO.write(p.getQuestionImage(), "png", file.getAbsoluteFile());
+				} catch (Exception e) {
+					e.printStackTrace();
+					if(OrcMath.createScreen != null){
+						OrcMath.createScreen.presentNotification("Incountered an error while attempting to save the file "+file.getAbsolutePath());
+					}
 				}
+				q.setImageMargin(p.getQuestionNeedsThisMuchExtraSpaceOnTop());//when this was zero, it worked for one line problms
+				q.setScaleFactors(p.getScaleFactor());
+				q.setNeverIncludeInstructions(p.getWhetherInstructionsAreNeverIncluded());
+				q.setVerticalSpace(p.getVerticalSpacing());
+				questions[index]=q;
+				count++;
+
+				//setup answers
+				answers[j].setQuestionAddresses(getFolder()+"/"+SUBFOLDER_IMAGES+"/answer"+(j+1)+".png");
+				answers[j].setImageMargin(p.getAnswerNeedsThisMuchExtraSpaceOnTop());
+				answers[j].setScaleFactors(p.getScaleFactor());
+				p.makeAnswerImage(answers[j].getQuestionAddresses());
+				count++;
+				q.setInstructions(p.getInstructions());
+			}catch(ParseException pe){
+				showProblemSpecificError(problemOrder, index);
+			}catch(NullPointerException e){
+				showProblemSpecificError(problemOrder, index);
 			}
-			File file = new File(q.getAddress());
-			//TODO: This is saving images to a PDF folder that is static. Make this dynamic
-			//				System.out.println("Creating problem "+problemOrder[index]);
-			try {
-				if ((new File(getImagesFolder())).mkdirs()){
-					System.out.println("Created folder "+getImagesFolder());
-				}
-				ImageIO.write(p.getQuestionImage(), "png", file.getAbsoluteFile());
-			} catch (Exception e) {
-				e.printStackTrace();
-				if(OrcMath.createScreen != null){
-					OrcMath.createScreen.presentNotification("Incountered an error while attempting to save the file "+file.getAbsolutePath());
-				}
-			}
-			q.setImageMargin(p.getQuestionNeedsThisMuchExtraSpaceOnTop());//when this was zero, it worked for one line problms
-			q.setScaleFactors(p.getScaleFactor());
-			q.setNeverIncludeInstructions(p.getWhetherInstructionsAreNeverIncluded());
-			q.setVerticalSpace(p.getVerticalSpacing());
-			questions[index]=q;
-			count++;
-
-			//setup answers
-			answers[j].setQuestionAddresses(getFolder()+"/"+SUBFOLDER_IMAGES+"/answer"+(j+1)+".png");
-			answers[j].setImageMargin(p.getAnswerNeedsThisMuchExtraSpaceOnTop());
-			answers[j].setScaleFactors(p.getScaleFactor());
-			p.makeAnswerImage(answers[j].getQuestionAddresses());
-			count++;
-			q.setInstructions(p.getInstructions());
 		}
 		return questions;
 	}
 
+	
+	protected void showProblemSpecificError(String[] problemOrder, int index){
+		if(OrcMath.createScreen != null){
+			int maxChar = 12;
+			String description = problemOrder[index];
+			if(maxChar < description.length()){
+				description = description.substring(0, maxChar)+"...";
+			}
+			OrcMath.createScreen.presentNotification("There is a bug in the \""+description+"\" module, difficulty "+difficulty+". Either try again or use a different module.");
+		}
+	}
 
 	//this method is also used by Answer sheet
 	protected void addNumberedTableOfImages(PdfPTable table, QuestionData[] data, int columns){
@@ -401,79 +423,83 @@ public class Worksheet implements Task{
 		int cellWidthLimit = (530-(15*columns))/(columns);
 		for (int index=0; index<data.length; index++){
 			QuestionData q = data[index];
-			int itemNumber=index+1;//starts counting at 1
-			System.out.println("Worksheet.java "+q.getQuestionAddresses()+", index = "+index);
-			Image image = prepareLatexImage(q.getAddress(),q.getScaleFactors());
-			//sets all of cell preferences to the defaults
-			PdfPCell cell = new PdfPCell();
-			cell.setBorder(0);
-			float verticalSpacing = q.getVerticalSpace();
-			if (overrideVerticalSpacing){
-				verticalSpacing = this.verticalSpacingStatic;
-			}
-			cell.setPaddingBottom(verticalSpacing);
-
-			//makes image of instructions and places question according to where it must go.
-			int scaledInstructionsImageWidth=0;
-			System.out.println("1. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions());
-
-			if (eachQuestionHasItsOwnInstructions && !q.neverIncludeInstructions()) {
-				System.out.println("2. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions()+", scaleFactor = "+q.getScaleFactors());
-				Image instructionsImage = prepareAndAddInstructions(cell, q.getInstructions(), cellWidthLimit, q.getScaleFactors(),(int)(image.getScaledHeight()));
-				int scaledInstructionsImageHeight = (int)(instructionsImage.getHeight()*q.getScaleFactors());
-				scaledInstructionsImageWidth = (int)(instructionsImage.getWidth()*q.getScaleFactors());
-				//add the image of the question under the instructions
-				cell.addElement(new Chunk(image,0,-scaledInstructionsImageHeight));		
-			}else{
-				cell.addElement(new Chunk(image,0,0));				
-			}
-
-
-			//this is carried out when a row is finished. resets the number of columns remaining
-			if(numberOfRemainingColumnsInRow==0) numberOfRemainingColumnsInRow=2*columns;
-
-			int scaledImageWidth=(int)image.getScaledWidth();
-			if(scaledInstructionsImageWidth>scaledImageWidth)scaledImageWidth=scaledInstructionsImageWidth;
-			/**
-			 * I have found there is a margin at the top of each graphic that is inversely proportional to what seems to be approximately the square of the 
-			 * scale factor. The next two lines are an attempt to remedy it.
-			 */
-			float littleRemainingSpace=(float) (1/Math.pow((q.getScaleFactors()),1.7));
-			float topPadding = (float)((q.getImageMargin()-littleRemainingSpace)*q.getScaleFactors());
-			cell.setPaddingTop(topPadding);
-
-
-			/**
-			 * This last part is used to determine if there is space for the cell to fit into the current row. If
-			 * the image is too wide, it is added to the next row
-			 */
-			if (scaledImageWidth>=cellWidthLimit){
-				if (numberOfRemainingColumnsInRow>=4){
-					//if the current cell is extra long, add cell that expands over many columns
-					PdfPCell numberCell=addNumbering(itemNumber, table);
-					table.addCell(numberCell);//-1 column
-					cell.setColspan(3);
-					table.addCell(cell);
-					numberOfRemainingColumnsInRow=numberOfRemainingColumnsInRow-4;
-
+			if(q != null){
+				int itemNumber=index+1;//starts counting at 1
+				System.out.println("Worksheet.java "+q.getQuestionAddresses()+", index = "+index);
+				Image image = prepareLatexImage(q.getAddress(),q.getScaleFactors());
+				//sets all of cell preferences to the defaults
+				PdfPCell cell = new PdfPCell();
+				cell.setBorder(0);
+				float verticalSpacing = q.getVerticalSpace();
+				if (overrideVerticalSpacing){
+					verticalSpacing = this.verticalSpacingStatic;
 				}
-				else{
-					//if there is no room, add cells until a new row is made
-					for(int countBlanks=0;countBlanks<numberOfRemainingColumnsInRow;countBlanks++){
-						table.addCell("");
+				cell.setPaddingBottom(verticalSpacing);
+
+				//makes image of instructions and places question according to where it must go.
+				int scaledInstructionsImageWidth=0;
+				System.out.println("1. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions());
+
+				if (eachQuestionHasItsOwnInstructions && !q.neverIncludeInstructions()) {
+					System.out.println("2. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions()+", scaleFactor = "+q.getScaleFactors());
+					Image instructionsImage = prepareAndAddInstructions(cell, q.getInstructions(), cellWidthLimit, q.getScaleFactors(),(int)(image.getScaledHeight()));
+					int scaledInstructionsImageHeight = (int)(instructionsImage.getHeight()*q.getScaleFactors());
+					scaledInstructionsImageWidth = (int)(instructionsImage.getWidth()*q.getScaleFactors());
+					//add the image of the question under the instructions
+					cell.addElement(new Chunk(image,0,-scaledInstructionsImageHeight));		
+				}else{
+					cell.addElement(new Chunk(image,0,0));				
+				}
+
+
+				//this is carried out when a row is finished. resets the number of columns remaining
+				if(numberOfRemainingColumnsInRow==0) numberOfRemainingColumnsInRow=2*columns;
+
+				int scaledImageWidth=(int)image.getScaledWidth();
+				if(scaledInstructionsImageWidth>scaledImageWidth)scaledImageWidth=scaledInstructionsImageWidth;
+				/**
+				 * I have found there is a margin at the top of each graphic that is inversely proportional to what seems to be approximately the square of the 
+				 * scale factor. The next two lines are an attempt to remedy it.
+				 */
+				float littleRemainingSpace=(float) (1/Math.pow((q.getScaleFactors()),1.7));
+				float topPadding = (float)((q.getImageMargin()-littleRemainingSpace)*q.getScaleFactors());
+				cell.setPaddingTop(topPadding);
+
+
+				/**
+				 * This last part is used to determine if there is space for the cell to fit into the current row. If
+				 * the image is too wide, it is added to the next row
+				 */
+				if (scaledImageWidth>=cellWidthLimit){
+					if (numberOfRemainingColumnsInRow>=4){
+						//if the current cell is extra long, add cell that expands over many columns
+						PdfPCell numberCell=addNumbering(itemNumber, table);
+						table.addCell(numberCell);//-1 column
+						cell.setColspan(3);
+						table.addCell(cell);
+						numberOfRemainingColumnsInRow=numberOfRemainingColumnsInRow-4;
+
 					}
+					else{
+						//if there is no room, add cells until a new row is made
+						for(int countBlanks=0;countBlanks<numberOfRemainingColumnsInRow;countBlanks++){
+							table.addCell("");
+						}
+						PdfPCell numberCell=addNumbering(itemNumber, table);
+						table.addCell(numberCell);//-1 column
+						cell.setColspan(3);
+						table.addCell(cell);
+						numberOfRemainingColumnsInRow=numberOfRemainingColumnsInRow-4;
+					}
+				}
+				else{//when the image is not too wide for the column
 					PdfPCell numberCell=addNumbering(itemNumber, table);
 					table.addCell(numberCell);//-1 column
-					cell.setColspan(3);
-					table.addCell(cell);
-					numberOfRemainingColumnsInRow=numberOfRemainingColumnsInRow-4;
+					table.addCell(cell);//cell without instructions is added only if instruction cell isn't
+					numberOfRemainingColumnsInRow=numberOfRemainingColumnsInRow-2;
 				}
-			}
-			else{//when the image is not too wide for the column
-				PdfPCell numberCell=addNumbering(itemNumber, table);
-				table.addCell(numberCell);//-1 column
-				table.addCell(cell);//cell without instructions is added only if instruction cell isn't
-				numberOfRemainingColumnsInRow=numberOfRemainingColumnsInRow-2;
+			}else{
+				System.out.println("A question came up null");
 			}
 		}
 		table.completeRow();
@@ -587,7 +613,7 @@ public class Worksheet implements Task{
 	}
 
 
-	
+
 	public void setNumberOfProblems(int numberOfProblems) {
 		this.numberOfProblems = numberOfProblems;
 		resetDificulties();
@@ -668,7 +694,7 @@ public class Worksheet implements Task{
 		return 2*numberOfPages*numberOfProblems;
 	}
 
-	
+
 	public boolean isFinished(){
 		return finished;
 	}
@@ -686,7 +712,19 @@ public class Worksheet implements Task{
 					}
 					createPdf();
 					openFile();
-				} catch (Exception e) {
+				}catch (FileNotFoundException fnfe) {
+					fnfe.printStackTrace();
+					if(OrcMath.createScreen != null){
+						String error;
+						if(fnfe.getMessage().contains("The process cannot access the file because it is being used by another process")){
+							error = "A file with the same name is already open. Close the open file or change the File Name.";
+						}else{
+							error = "The Save Location is not valid. Change it in the Settings Screen.";
+						}
+						OrcMath.createScreen.presentNotification(error);
+					}
+				} 
+				catch (Exception e) {
 					e.printStackTrace();
 					if(OrcMath.createScreen != null){
 						OrcMath.createScreen.presentNotification("An error occurred while generating the file.");
@@ -715,6 +753,6 @@ public class Worksheet implements Task{
 	}
 
 
-	
+
 
 }

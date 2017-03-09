@@ -131,7 +131,7 @@ public class LawOfSines extends TriangleType {
 	public void drawExtras(CoordinateImage image) {
 		image.labelTriangleSide(triangle, ""+triangleSides[indexOfKnownSide], indexOfKnownSide);	
 
-		image.drawAngleVertexLabel(labels[indexOfKnownSide]+" = "+(knownAngle)+"°", triangle.getVertexB(), triangle.getVertexA(), triangle.getVertexC());
+		image.drawAngleVertexLabel(labels[indexOfKnownSide]+" = "+(knownAngle)+"\u00B0", triangle.getVertexB(), triangle.getVertexA(), triangle.getVertexC());
 		if(findSide){
 			if(difficulty>2){
 				image.labelTriangleSide(triangle, var, 2);
@@ -140,17 +140,17 @@ public class LawOfSines extends TriangleType {
 				image.drawAngleVertexLabel(labels[2]+"", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
 				image.labelTriangleSide(triangle, var, indexOfUnknownSide);
 			}
-			image.drawAngleVertexLabel(labels[indexOfUnknownSide]+" = "+unknownAngle+"°", triangle.getVertexA(), triangle.getVertexB(), triangle.getVertexC());
+			image.drawAngleVertexLabel(labels[indexOfUnknownSide]+" = "+unknownAngle+"\u00B0", triangle.getVertexA(), triangle.getVertexB(), triangle.getVertexC());
 			//			image.drawSegmentLatex(var, triangle.getVertexA(), triangle.getVertexC(), false, true);
 		}else{
 			image.labelTriangleSide(triangle, ""+triangleSides[indexOfUnknownSide], indexOfUnknownSide);
 			//			image.drawSegmentLatex(""+triangleSides[indexOfUnknownSide], triangle.getVertexA(), triangle.getVertexC(), false, true);
 			if(difficulty >2){
 				image.drawAngleVertexLabel(labels[1]+"", triangle.getVertexA(), triangle.getVertexB(), triangle.getVertexC());
-				image.drawAngleVertexLabel(labels[2]+" = "+var+"°", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
+				image.drawAngleVertexLabel(labels[2]+" = "+var+"\u00B0", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
 			}else{
 				image.drawAngleVertexLabel(labels[2]+"", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
-				image.drawAngleVertexLabel(labels[indexOfUnknownSide]+" = "+var+"°", triangle.getVertexA(), triangle.getVertexB(), triangle.getVertexC());
+				image.drawAngleVertexLabel(labels[indexOfUnknownSide]+" = "+var+"\u00B0", triangle.getVertexA(), triangle.getVertexB(), triangle.getVertexC());
 			}
 		}
 	}

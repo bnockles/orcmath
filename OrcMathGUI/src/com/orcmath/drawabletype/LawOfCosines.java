@@ -110,10 +110,10 @@ public class LawOfCosines extends TriangleType {
 
 		
 		if(findSide){
-			image.drawAngleVertexLabel(labels[indexOfTargetSide]+" = "+Ops.roundDouble(triangle.getAngleC()*180/Math.PI, 1), triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
+			image.drawAngleVertexLabel(labels[indexOfTargetSide]+" = "+Ops.roundDouble(triangle.getAngleC()*180/Math.PI, 1)+"\u00B0", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
 			image.labelTriangleSide(triangle, var, indexOfTargetSide);	
 		}else{
-			image.drawAngleVertexLabel(labels[indexOfTargetSide]+" = "+var+"°", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
+			image.drawAngleVertexLabel(labels[indexOfTargetSide]+" = "+var+"\u00B0", triangle.getVertexA(), triangle.getVertexC(), triangle.getVertexB());
 			image.labelTriangleSide(triangle, (int)triangleSides[indexOfTargetSide]+"", indexOfTargetSide);
 		}
 	}
