@@ -309,12 +309,14 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 	}
 
 	@Override
-	public void update(Graphics2D g) {
+	public void update(Graphics2D g2) {
 		if(contentImage != null) {
 			Graphics2D gContent  = contentImage.createGraphics();
 			gContent.setColor(Color.WHITE);
 			gContent.fillRect(0, 0, contentImage.getWidth(), contentImage.getHeight());
 			super.update(gContent);
+			BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = buffer.createGraphics();
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.drawImage(contentImage, 0, 0, getWidth(), getHeight(), contentX, contentY, contentX+getWidth(), contentY+getHeight(), null);
@@ -329,6 +331,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 				g.setColor(arrowColor);
 			}
 			if(contentY+getHeight()<contentImage.getHeight())g.fill(downArrow);
+			g2.drawImage(buffer, 0, 0, null);
 		}
 	}
 
