@@ -19,7 +19,9 @@
 package guiTeacher.components;
 
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 
 import guiTeacher.Utilities;
 
@@ -116,7 +118,12 @@ public class AccordionTab extends Component implements Runnable{
 		//only update after parent has been assigned
 		if(parent != null){
 			g.setColor(parent.getTabColor());
+			GradientPaint tTob = new GradientPaint(0,0, parent.getTabColor(), 0,parent.getTabHeight(), parent.getTabShade());
+			
+			Paint current = g.getPaint();
+			g.setPaint(tTob);
 			g.fillRect(0, 0, getWidth(), parent.getTabHeight());
+			g.setPaint(current);
 			g.setColor(parent.getHeaderColor());
 			Utilities.drawText(g, header, 5,getWidth(),parent.getTabHeight(),parent.getHeaderAlign());
 			int heightNow = getHeight();

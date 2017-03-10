@@ -186,12 +186,15 @@ public class Worksheet implements Task{
 		try {
 			image = Image.getInstance(filename);
 			scaleFactorPercent=(float)scaleFactor*100;
-			
-			if(image.getHeight()*scaleFactor>600){
-				scaleFactorPercent=(float)60000/(float)image.getHeight();
+			System.out.println("1. scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
+			if(image.getHeight()*scaleFactor>650){
+				scaleFactorPercent=(float)65000/(float)image.getHeight();
 				//				scaleFactor=scaleFactorPercent/100;
+			
 			}
+			System.out.println("2. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
 			image.scalePercent(scaleFactorPercent);
+			System.out.println("3. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
 		} catch (BadElementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -443,9 +446,8 @@ public class Worksheet implements Task{
 				//makes image of instructions and places question according to where it must go.
 				int scaledInstructionsImageWidth=0;
 	
-				System.out.println("Adding an image of height "+image.getHeight());
+
 				if (eachQuestionHasItsOwnInstructions && !q.neverIncludeInstructions()) {
-					System.out.println("2. GOING TO MAKE INSTRUCTIONS: eachQuestionHasItsOwnInstructions = "+eachQuestionHasItsOwnInstructions+", q.neverIncludeInstructions() = "+q.neverIncludeInstructions()+", instructions = "+q.getInstructions()+", scaleFactor = "+q.getScaleFactors());
 					Image instructionsImage = prepareAndAddInstructions(cell, q.getInstructions(), cellWidthLimit, q.getScaleFactors(),(int)(image.getScaledHeight()));
 					int scaledInstructionsImageHeight = (int)(instructionsImage.getHeight()*q.getScaleFactors());
 					scaledInstructionsImageWidth = (int)(instructionsImage.getWidth()*q.getScaleFactors());
@@ -466,8 +468,10 @@ public class Worksheet implements Task{
 				 * I have found there is a margin at the top of each graphic that is inversely proportional to what seems to be approximately the square of the 
 				 * scale factor. The next two lines are an attempt to remedy it.
 				 */
-				float littleRemainingSpace=(float) (1/Math.pow((q.getScaleFactors()),1.7));
-				float topPadding = (float)((q.getImageMargin()-littleRemainingSpace)*q.getScaleFactors());
+//				float littleRemainingSpace=(float) (1/Math.pow((q.getScaleFactors()),1.7));
+				float topPadding = (float)(image.getScaledHeight()-15);
+//				float topPadding = (float)((q.getImageMargin()-littleRemainingSpace)*q.getScaleFactors());
+//				System.out.println("topPadding = "+topPadding);
 				cell.setPaddingTop(topPadding);
 
 
@@ -729,12 +733,24 @@ public class Worksheet implements Task{
 						OrcMath.createScreen.presentNotification(error);
 					}
 				} 
+				catch(DocumentException de){
+					String error;
+					if(de.getMessage().contains("Infinite table loop")){
+						error = "One or more rows of the table is too large to fit on a single page. Reduce the vertical spacing.";
+					}else{
+						error = "An unknown error occurred when trying to create a document.";
+					}
+					OrcMath.createScreen.presentNotification(error);
+					de.printStackTrace();
+				}
 				catch (Exception e) {
 					e.printStackTrace();
 					if(OrcMath.createScreen != null){
 						OrcMath.createScreen.presentNotification("An error occurred while generating the file.");
 					}
-				}finally{
+				}
+				
+				finally{
 					count = (int) getTotal();
 					if(OrcMath.createScreen != null){
 						OrcMath.createScreen.setOrcWorkerVisible(false);

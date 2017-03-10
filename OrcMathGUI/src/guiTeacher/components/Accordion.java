@@ -35,11 +35,13 @@ public class Accordion extends StyledComponent implements Clickable {
 	private int relativeX;
 	private int relativeY;
 	private Color tabColor;
+	private Color tabShade;
 	
 	public Accordion(int x, int y, int w) {
 		super(x, y, w, 1);
 		setHeaderColor(new Color(255,255,255));
 		tabColor = getTabColor();
+		tabShade = getTabColor();
 		tabs = new ArrayList<AccordionTab>();
 		openTab = null;
 	}
@@ -150,6 +152,11 @@ public class Accordion extends StyledComponent implements Clickable {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void setTabShade(Color shade){
+		tabShade = shade;
+	}
+	
 
 
 }

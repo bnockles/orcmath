@@ -21,7 +21,9 @@ package guiTeacher.components;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -170,8 +172,12 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 			if(trashHovered) g.drawImage(trashOpen, 0, 0, null);
 			else g.drawImage(trashClosed, 0, 0, null);
 		}
-		g.setColor(getTabColor());
+		GradientPaint tTob = new GradientPaint(0,0, getTabColor(), 0,getTabHeight(), getTabShade());
+		
+		Paint current = g.getPaint();
+		g.setPaint(tTob);
 		g.fillRect(EDIT_COLUMN, 0, getWidth(), columns.getRowHeight());
+		g.setPaint(current);
 		g.setColor(getForeground());
 		g.setFont(getTabFont());
 		FontMetrics fm = g.getFontMetrics();
@@ -266,6 +272,8 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		FontMetrics fm = g.getFontMetrics();
 		int x = X_MARGIN+EDIT_COLUMN;
 		int[] widths = columns.getColumnWidths();
+		Color cur = g.getColor();
+		g.setColor(getHeaderColor());
 		if(widths.length == values.length){
 			for(int i = 0; i < widths.length; i++){
 				if(fm.stringWidth(values[i]) < widths[i]-X_MARGIN*2){
@@ -280,6 +288,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 				x+=widths[i];
 			}
 		}
+		g.setColor(cur);
 	}
 
 	public String[] getAllColumnValuesAtIndex(int columnIndex){

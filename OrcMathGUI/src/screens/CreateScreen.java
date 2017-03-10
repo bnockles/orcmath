@@ -112,7 +112,8 @@ public class CreateScreen extends OrcMathScreen {
 		orcWorker.setVisible(false);
 		int progressBarWidth = orcWorker.getX()-mb.getX()-mb.getWidth()-space*2;
 		progressBar = new ProgressBar(MARGIN + mb.getWidth()+space, getHeight() - UpdateNotification.NOTIFICATION_HEIGHT-progressBarHeight, progressBarWidth, progressBarHeight);
-		progressBar.setBarColor(new Color(8,246,198));
+		progressBar.setBarColor(new Color(51,204,204));
+		
 		
 		viewObjects.add(questionsByTopic);
 		viewObjects.add(fileName);

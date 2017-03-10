@@ -109,6 +109,7 @@ public class OrcMath extends GUIApplication {
 		StyledComponent.setStaticBorderColor(new Color(51,0,102));
 		StyledComponent.setTabHeight(25);
 		StyledComponent.setTabColor(new Color(0,153,153));
+		StyledComponent.setTabShadeColor(new Color(0,127,119));
 		StyledComponent.setAccentColor(ACCENT_COLOR);
 		try {
 			File fontFile = new File("resources//AdventPro-Medium.ttf");

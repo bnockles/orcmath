@@ -33,6 +33,7 @@ public abstract class StyledComponent extends Component {
 	private static int tabHeight = 60;
 	private static Font tabFont = new Font("Times Roman",Font.PLAIN,14);//also used in tables
 	private static Color tabColor = new Color(150,200,255);
+	private static Color tabShade = new Color(150,200,255);
 	
 	private static Font baseFont =new Font("Times Roman",Font.PLAIN,14);//also used in tables
 	private static Color textColor = Color.black;
@@ -207,6 +208,14 @@ public abstract class StyledComponent extends Component {
 
 	public int getAnimationTime(){
 		return animationTime;
+	}
+	
+	public Color getTabShade(){
+		return tabShade;
+	}
+
+	public static void setTabShadeColor(Color color) {
+		tabShade = color;
 	}
 	
 	
