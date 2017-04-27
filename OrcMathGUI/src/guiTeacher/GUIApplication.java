@@ -21,7 +21,9 @@ package guiTeacher;
 import java.awt.Graphics;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
+import guiTeacher.userInterfaces.ComponentContainer;
 import guiTeacher.userInterfaces.Screen;
 import guiTeacher.userInterfaces.Transition;
 
@@ -33,19 +35,9 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 	private static final long serialVersionUID = 390738816689963935L;
 	private Screen currentScreen;
 	private boolean scaleWithWindow; 
-	//variables to describe location of incoming Screen during transitions
-	private int xScreen;
-	private int yScreen;
-	private int widthScreen;
-	private int heightScreen;
-	private int xTarget;
-	private int yTarget;
+	
 
-	//this method gets deleted once generalized
-	//	public static void main(String[] args){
-	//		Thread app = new Thread(new GUIApplication(500, 500));
-	//		app.start();
-	//	}
+
 
 	public GUIApplication(int width, int height){
 		super();
@@ -54,74 +46,27 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 		initScreen();
 		setUndecorated(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		xScreen=0;
-		yScreen=0;
 	}
 
-	//this method becomes abstract once generalized
-	//	public void initScreen() {
-	//		TextScreen startScreen= new TextScreen("Hi everyone",getWidth(), getHeight());
-	//		addMouseMotionListener(new CoordinateListener(startScreen));
-	//		setScreen(startScreen);
-	//		
-	//	}
+
 
 	public abstract void initScreen();
 
 	public void setScreen(Screen screen) {
 		removeListeners();
-		xScreen = 0;
-		yScreen = 0;
-		widthScreen = screen.getWidth();
-		heightScreen = screen.getHeight();
-		xTarget = 0;
-		yTarget = 0;
 		currentScreen = screen;
+		setContentPane(currentScreen);
 		addListeners();
 	}
 
 	public void setScreen(Screen screen, Transition t) {
 		removeListeners();
-		xScreen = t.getxScreen();
-		yScreen = t.getyScreen();
-		widthScreen = t.getWidthScreen();
-		heightScreen = t.getHeightScreen();
-		xTarget = t.getxTarget();
-		yTarget = t.getxTarget();
+		ComponentContainer oldScreen = currentScreen;
+		screen.transitionWith(t, oldScreen.getImage());
+		setContentPane(screen);
 		currentScreen = screen;
 		addListeners();
-		Thread transition = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				long moveTime = System.currentTimeMillis();
-				while(t.getTime()>0){
-
-					try {
-						Thread.sleep(20);
-						t.step(20+System.currentTimeMillis()-moveTime);
-						moveTime = System.currentTimeMillis();
-						xScreen = t.getxScreen();
-						yScreen = t.getyScreen();
-						widthScreen = t.getWidthScreen();
-						heightScreen = t.getHeightScreen();
-						xTarget = t.getxTarget();
-						yTarget = t.getyTarget();
-						repaint();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				xScreen =0;
-				yScreen =0;
-				widthScreen=getWidth();
-				heightScreen=getHeight();
-				xTarget=0;
-				yTarget=0;
-			}
-		});
-		transition.start();
+		
 	}
 
 
@@ -143,26 +88,22 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 		}
 	}
 
-	public void paint(Graphics g){
-//		g.drawImage(currentScreen.getImage(), xScreen, yScreen, widthScreen,heightScreen,xTarget,yTarget,widthScreen,heightScreen,null);
-		g.drawImage(currentScreen.getImage(), xScreen, yScreen, xScreen+widthScreen,yScreen+heightScreen,xTarget,yTarget,xTarget+widthScreen,yTarget+heightScreen,null);
-		//		if(scaleWithWindow){
-//					g.drawImage(currentScreen.getImage(), xScreen, yScreen, getWidth(),getHeight(),null);
-		//		}else{
-		//
-		//			g.drawImage(currentScreen.getImage(), xScreen, yScreen, null);
-		//		}
-	}
 
 	public void run() {
+		long updateTime;
+		long timeAfterUpdate;
 		while(true){
+			updateTime = System.currentTimeMillis();
 			currentScreen.update();
 			repaint();
+			timeAfterUpdate = 30-(System.currentTimeMillis()-updateTime);
 			try {
-				Thread.sleep(30);
+				if(timeAfterUpdate > 0)
+				Thread.sleep(timeAfterUpdate);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
+	
 }

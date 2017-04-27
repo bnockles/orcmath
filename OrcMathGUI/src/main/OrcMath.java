@@ -19,6 +19,7 @@
 
 package main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -35,6 +36,7 @@ import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import data.SettingsData;
 import guiTeacher.GUIApplication;
@@ -224,21 +226,21 @@ public class OrcMath extends GUIApplication {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 
 		@Override
 		public void mouseExited(MouseEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 
@@ -253,7 +255,7 @@ public class OrcMath extends GUIApplication {
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 
@@ -267,12 +269,20 @@ public class OrcMath extends GUIApplication {
 	public static void main(String[] args) {
 		OpeningImage open = new OpeningImage();
 		open.setVisible(true);
-		
-		app = new OrcMath(SCREEN_WIDTH, SCREEN_HEIGHT);
-		open.setVisible(false);
-		app.setVisible(true);
-		Thread go = new Thread(app);
-		go.start();
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				
+				app = new OrcMath(SCREEN_WIDTH, SCREEN_HEIGHT);
+				open.setVisible(false);
+				app.setVisible(true);
+				Thread go = new Thread(app);
+				go.start();
+
+
+			}
+		});
 	}
 
 }
