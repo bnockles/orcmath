@@ -73,6 +73,16 @@ public class Graphic implements Visible {
 		loadedImages = false;
 		loadImages(imageLocation, 0,0);
 	}
+	
+	public Graphic(int x, int y, BufferedImage image){
+		this.x = x;
+		this.y = y;
+		visible = true;
+		loadedImages = true;
+		this.image = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = this.image.createGraphics();
+		g.drawImage(image, 0, 0, null);
+	}
 
 	private void loadImages(String imageLocation, int w, int h) {
 		try{

@@ -35,7 +35,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	//FIELDS
 	private String text;
 	private Font font;
-	private int size;
+	private float size;
 	
 	public static final int CURSOR_INTERVAL = 500;
 	public static final int DESCRIPTION_SPACE = 15;
@@ -258,20 +258,22 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		return text;
 	}
 	
-	public void setSize(int size){
+	public void setSize(float size){
 		this.size = size;
+		font = font.deriveFont(size);
 		update();
 	}
 	
 	public void setFont(Font font){
 		this.font = font;
+		update();
 	}
 	
 	public Font getFont(){
 		return font;
 	}
 	
-	public int getSize(){
+	public float getSize(){
 		return size;
 	}
 	

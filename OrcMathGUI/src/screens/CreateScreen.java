@@ -23,18 +23,23 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.orcmath.local.Problem;
+
 import components.MenuButton;
 import components.TopicAccordion;
 import components.UpdateNotification;
+import data.CustomProblemData;
 import data.Worksheet;
 import guiTeacher.components.Accordion;
 import guiTeacher.components.Action;
 import guiTeacher.components.Button;
 import guiTeacher.components.Graphic;
+import guiTeacher.components.Link;
 import guiTeacher.components.ProgressBar;
 import guiTeacher.components.ScrollableDragablePane;
 import guiTeacher.components.SearchBox;
 import guiTeacher.components.SimpleTable;
+import guiTeacher.components.SimpleTable.MatchingLengthException;
 import guiTeacher.components.TableHeader;
 import guiTeacher.components.TextBox;
 import guiTeacher.components.TextField;
@@ -57,7 +62,8 @@ public class CreateScreen extends OrcMathScreen {
 	private static int identifier;//TODO once applet is made, this is no longer static
 
 
-
+	private ArrayList<CustomProblemData> customProblems;
+	private int customProblemIndex;
 
 	private static final int BUTTON_WIDTH = 90;
 	private static final int BUTTON_HEIGHT = 40;
@@ -66,7 +72,7 @@ public class CreateScreen extends OrcMathScreen {
 	private TextField heading;
 	private TextBox instructionsField;
 	public Button generate;
-	private Accordion questionsByTopic;
+	private TopicAccordion questionsByTopic;
 	private SimpleTable outputTable;
 	private ScrollableDragablePane tableScroll;
 	private ProgressBar progressBar;
@@ -89,6 +95,8 @@ public class CreateScreen extends OrcMathScreen {
 
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) {
+		customProblems = new ArrayList<CustomProblemData>();
+		customProblemIndex = 0;
 		search = new SearchBox(MARGIN, MARGIN+30, _ACCORDION_WIDTH, 30);
 		viewObjects.add(search);
 		questionsByTopic = new TopicAccordion(this, MARGIN,MARGIN+65,_ACCORDION_WIDTH, search);
@@ -183,6 +191,7 @@ public class CreateScreen extends OrcMathScreen {
 
 					Settings s = OrcMath.settings;
 					Worksheet cps = new Worksheet();
+					cps.setCustomProblems(customProblems);
 					cps.setNumberOfPages(s.getPages());
 					cps.setNumberOfProblems(sum);
 					cps.setNumberOfColumns(s.getColumns());
@@ -245,6 +254,35 @@ public class CreateScreen extends OrcMathScreen {
 
 	public void addQuestion(String[] data){
 		outputTable.addRow(data);
+		tableScroll.setUpContentImage();
+		tableScroll.update();
+	}
+
+	//called when a custom problem is created
+	public void addQuestion(String problemLaTeX, String solutionLaTeX) {
+		String solution = (solutionLaTeX.equals(LaTeXEditor.PLACEHOLDER_TEXT))?"":solutionLaTeX;
+		customProblems.add(new CustomProblemData(problemLaTeX, solution));
+		
+		String[] data = new String[3];
+		data[_INDEX_OF_DIFFICULTY] = "N/A";
+		data[_INDEX_OF_QUANTITY] = "1";
+		data[_INDEX_OF_QUESTION_TYPE] = Problem.CUSTOM_TAG+ " ";
+		outputTable.addRow(data);
+		boolean[] edit = {false,false,false};
+		try{
+			outputTable.setRowEdit(edit);
+			outputTable.update();
+		}catch(MatchingLengthException e){
+			e.printStackTrace();
+		}
+		outputTable.setColumnContent(_INDEX_OF_QUESTION_TYPE, new Link(0,0,70,20,Problem.CUSTOM_TAG+ " "+(++customProblemIndex), new Action() {
+			
+			@Override
+			public void act() {
+				System.out.println("Link clicked");
+				questionsByTopic.viewCustomProblem(problemLaTeX, solutionLaTeX);
+			}
+		} ));
 		tableScroll.setUpContentImage();
 		tableScroll.update();
 	}

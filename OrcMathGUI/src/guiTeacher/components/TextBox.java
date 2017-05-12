@@ -23,6 +23,13 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+
+/**
+ * A text editor for multiple-lines of text
+ * @author bnockles
+ *
+ */
 
 public class TextBox extends TextField {
 
@@ -45,8 +52,12 @@ public class TextBox extends TextField {
 	}
 
 	
-	public void update(Graphics2D g){
-		clear();
+	public void update(Graphics2D g2){
+		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = buffer.createGraphics();
+		g.setColor(Color.WHITE);
+		g.fillRoundRect(BORDER,BORDER+DESCRIPTION_SPACE,getWidth()-2*BORDER,getHeight()-2*BORDER-DESCRIPTION_SPACE,8,8);
+//		clear();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setFont(getFont());
 		FontMetrics fm = g.getFontMetrics();
@@ -105,6 +116,7 @@ public class TextBox extends TextField {
 			}
 		}
 		drawBorder(fm, g);
+		g2.drawImage(buffer, 0, 0, null);
 	}
 	
 	@Override

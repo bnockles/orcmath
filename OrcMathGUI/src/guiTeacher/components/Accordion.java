@@ -28,8 +28,8 @@ import guiTeacher.interfaces.Clickable;
 
 public class Accordion extends StyledComponent implements Clickable {
 
-	private ArrayList<AccordionTab> tabs;
-	private AccordionTab openTab;
+	protected ArrayList<AccordionTab> tabs;
+	protected AccordionTab openTab;
 	
 	//mouse listening
 	private int relativeX;
@@ -129,10 +129,19 @@ public class Accordion extends StyledComponent implements Clickable {
 	 * Accordion image is dynamic (height changes based on open tabs)
 	 * so when update is called, a new image is always created
 	 */
+	
+	private int lastWidth = 0;
+	private int lastHeight = 0;
 	public void update(){
-		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-		update(buffer.createGraphics());
-		resize().drawImage(buffer, 0, 0, null);
+		if(getWidth() != lastWidth || getHeight() != lastHeight){
+			lastWidth = getWidth();
+			lastHeight = getHeight();
+			BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+			update(buffer.createGraphics());
+			resize().drawImage(buffer, 0, 0, null);
+		}else{
+			super.update();
+		}
 	}
 	
 	@Override

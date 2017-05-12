@@ -58,7 +58,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 	private int x;
 	private int y;
 	private final FocusController parentScreen;
-	private Component containingComponent;//some components like Accordion contain ScrollapblePanes
+	protected Component containingComponent;//some components like Accordion contain ScrollapblePanes
 	//	private Scrollable content;
 	private int contentX;
 	private int contentY;
@@ -67,6 +67,14 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 	protected int yRelative;
 	private int scrollValue;
 
+	/**
+	 * Use this constructor when this is the primary content of the JFrame
+	 * @param focusController
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
 	public ScrollablePane(FocusController focusController, int x, int y, int w, int h) {
 		super(w, h);
 		this.x = x;
@@ -94,6 +102,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 		setUpContentImage();
 		update();
 	}
+	
 
 	public ScrollablePane(FocusController focusController, Component container, ArrayList<Visible> initWithObjects, int x, int y, int w, int h) {
 		super(w, h,initWithObjects);
@@ -250,6 +259,9 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 
 	//x and y are relative to the pane
 	public void act() {
+		//disable scrolling in other panels
+		parentScreen.moveScrollFocus(this);	
+		
 		if(upArrow.contains(xRelative, yRelative)){
 			scrollY(-25);
 		}
@@ -260,6 +272,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 				if(c.isHovered(xRelative+contentX, yRelative+contentY)){
 					c.act();
 					update();
+					if(containingComponent != null)containingComponent.update();
 					break;
 				}
 			}

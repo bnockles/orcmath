@@ -33,12 +33,15 @@ public class Button extends TextLabel implements Clickable{
 	private BufferedImage hoverImage;
 	private boolean hovered;
 	private boolean enabled;
+	private int curveX;
+	private int curveY;
 	
 	public Button(int x, int y, int w, int h, String text, Color color, Action action) {
 		super(x, y, w, h, text);
 		setBackground(color);
 		enabled = true;
 		this.action = action;
+		setCurve(35,25);
 		update();
 		
 	}
@@ -47,15 +50,26 @@ public class Button extends TextLabel implements Clickable{
 		super(x, y, w, h, text);
 		this.action = action;
 		enabled = true;
+		setCurve(35,25);
 		update();
 
 	}
 	
-	
+	/**
+	 * set the roundness of the curve. Default is 35,25 pixels
+	 * @param pixels
+	 */
+	public void setCurve(int xPixels, int yPixels){
+		clear();
+		this.curveX = xPixels;
+		this.curveY = yPixels;
+		update();
+	}
 	
 	public boolean isEnabled() {
 		return enabled;
 	}
+	
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
@@ -88,12 +102,12 @@ public class Button extends TextLabel implements Clickable{
 				g.setColor(Utilities.lighten(getBackground(), .4f));
 //				g.setColor(getBackground());
 			}
-			g.fillRoundRect(0, 0, getWidth(), getHeight(), 35, 25);
+			g.fillRoundRect(0, 0, getWidth(), getHeight(), curveX, curveY);
 		}else{
 			clear();
 		}
 		g.setColor(Color.BLACK);
-		g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 35, 25);
+		g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, curveX, curveY);
 		g.setColor(getForeground());
 		g.setFont(getFont());
 		FontMetrics fm = g.getFontMetrics();

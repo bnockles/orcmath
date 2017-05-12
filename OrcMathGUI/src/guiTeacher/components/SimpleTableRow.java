@@ -21,6 +21,7 @@ package guiTeacher.components;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.TextComponent;
 
 
@@ -28,6 +29,7 @@ public class SimpleTableRow {
 
 	private SimpleTable table;
 	private TextComponent[] values;
+	private boolean[] editable;
 	private HoverButton hoverButton;
 	private boolean hovered;
 	
@@ -35,6 +37,7 @@ public class SimpleTableRow {
 		this.table = table;
 		this.values = new TextComponent[values.length];
 		this.hoverButton = new HoverButton();
+		this.editable = editable;
 		for(int i=0; i < this.values.length; i++ ){
 			if(editable[i]){
 				this.values[i] = new TextField(0, 0, widths[i], height, values[i]);
@@ -46,13 +49,36 @@ public class SimpleTableRow {
 		}
 	}
 	
+	/**
+	 * if false, changes textFields to TextLabels
+	 * vice-versa if true
+	 * @param column index of column being changed
+	 * @param canEdit
+	 */
+	public void resetEdit(int column, boolean canEdit){
+		TextComponent former = this.values[column];
+		if(editable[column] && !canEdit){
+			this.values[column] = new TextLabel(former.getX(),former.getY(),former.getWidth(),former.getHeight(),former.getText());
+		}else if(!editable[column] && canEdit){
+			this.values[column] = new TextField(former.getX(),former.getY(),former.getWidth(),former.getHeight(),former.getText());
+		}
+	}
 	
+	/**
+	 * Can make the input at this column accept integers or strings
+	 * @param column
+	 * @param type
+	 */
 	public void setInputType(int column, int type){
 		TextField tf = (TextField)(values[column]);
 		tf.setInputType(type);
 		
 	}
 
+	public void setColumn(int column, TextComponent component){
+		values[column] = component;
+	}
+	
 	public String getValue(int i){
 		return values[i].getText();
 	}
@@ -62,7 +88,7 @@ public class SimpleTableRow {
 	}
 
 	public void columnClicked(int clickedColumn, int contextX, int contextY) {
-		if(values[clickedColumn].isEditable()){
+		if(values[clickedColumn] instanceof TextField && values[clickedColumn].isEditable()){
 			table.getFocusController().moveFocus((TextField)values[clickedColumn]);
 			//updates the table while the element is being edited
 			Thread tableUpdate = new Thread(new Runnable() {
@@ -81,6 +107,9 @@ public class SimpleTableRow {
 				}
 			});
 			tableUpdate.start();
+		}else if (values[clickedColumn] instanceof Clickable){
+			Clickable c = (Clickable)values[clickedColumn];
+			c.act();
 		}
 		
 	}

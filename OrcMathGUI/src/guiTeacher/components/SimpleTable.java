@@ -99,7 +99,47 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 			update();
 		}
 	}
+	
+	/**
+	 * Sets the content of a row to a custom text element. 
+	 * This method changes the most recently-added row
+	 * It is intended primarily to change text labels into links
+	 * @param column
+	 * @param component
+	 */
+	public void setColumnContent(int column, TextComponent component) {
+		SimpleTableRow row = rows.get(rows.size()-1);
+		row.setColumn(column, component);
+		update();
+	}
+	
+	/**
+	 * changes the editable value of the last-added row
+	 * @param edit
+	 */
+	public void setRowEdit(boolean[] edit) throws MatchingLengthException{
+		if(edit.length == columns.getColumnEditable().length){
+			SimpleTableRow row = rows.get(rows.size()-1);
+			for(int i = 0; i< edit.length; i++){
+				row.resetEdit(i, edit[i]);
+			}
+		}else{
+			throw new MatchingLengthException("You cannot change the mutability of a row using a boolean array of length "+edit.length+" because there are "+columns.getColumnEditable().length+" columns. ");
+		}
+	}
 
+	public class MatchingLengthException extends Exception{
+
+		public MatchingLengthException(String string) {
+			super(string);
+		}
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2264179106739745725L;
+		
+	}
 	
 	
 	public Color getHighlight() {
@@ -230,12 +270,17 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 			for(int i = 0; i < row.getValues().length; i++){
 				TextComponent tc = row.getValues()[i];
 				int useY = y;
+				int increase = columns.getColumnWidths()[i];
 				if(tc instanceof TextField){
 					useY-=TextField.DESCRIPTION_SPACE;
+				}else if(tc instanceof TextLabel){
+					x+=2;
+					increase-=2;
+					
 				}
 				
 				g.drawImage(tc.getImage(), x, useY, null);
-				x+=columns.getColumnWidths()[i];
+				x+=increase;
 			}
 			//			drawRow(g, str.getValues(), y);
 			borderY+=rh;
@@ -307,7 +352,11 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		int i=0;
 		for(SimpleTableRow r: rows)
 		{
-			values[i]=Integer.parseInt(r.getValue(columnIndex));
+			try{
+				values[i]=Integer.parseInt(r.getValue(columnIndex));
+			}catch(NumberFormatException e){
+				values[i] = 1;
+			}
 			i++;
 		}
 		return values;
