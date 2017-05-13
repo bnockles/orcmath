@@ -56,7 +56,7 @@ public class TextBox extends TextField {
 		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = buffer.createGraphics();
 		g.setColor(Color.WHITE);
-		g.fillRoundRect(BORDER,BORDER+DESCRIPTION_SPACE,getWidth()-2*BORDER,getHeight()-2*BORDER-DESCRIPTION_SPACE,8,8);
+		g.fillRoundRect(BORDER+2,BORDER+DESCRIPTION_SPACE+2,getWidth()-2*BORDER-4,getHeight()-2*BORDER-DESCRIPTION_SPACE-4,8,8);
 //		clear();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setFont(getFont());
