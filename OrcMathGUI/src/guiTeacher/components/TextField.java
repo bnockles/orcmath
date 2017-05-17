@@ -23,15 +23,23 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import guiTeacher.interfaces.Clickable;
+import guiTeacher.interfaces.Dragable;
 import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.TextComponent;
 
-public class TextField extends StyledComponent implements KeyedComponent,Clickable, Runnable, TextComponent{
+public class TextField extends StyledComponent implements KeyedComponent,Clickable, Runnable, Dragable, TextComponent{
 
 	//FIELDS
 	private String text;
@@ -42,6 +50,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	private int historyCount;//number of intervals since last update of history. Once count == _HISTORY_UPDATE_LIMIT, an update of history is performed
 	private int historyIndex;//index of where we are in history, (AKA number of times command-Z is pressed)
 	private boolean commandHeld;//used to identify whether a shortcut is used
+	private boolean shiftHeld;
 
 	private static final int _HISTORY_LIMIT = 10;
 	private static final int _HISTORY_UPDATE_LIMIT = 3;//how many intervals of _CURSOR_INTERVAL to wait before updating history
@@ -88,7 +97,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		update();
 	}
 
-	private void setDefaults(){
+	protected void setDefaults(){
 		updateDescription = true;
 		history=new ArrayList<TextFieldSaveState>();
 		historyCount = 0;
@@ -171,26 +180,43 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		}
 	}
 
+	public int calculateIndexOfClick(String s, FontMetrics fm, int x){
+		int check = 0;
+		while(check < s.length() && fm.stringWidth(s.substring(0,check+1)) < x){
+			check++;
+		}
+		return check;
+	}
+
 	@Override
 	public void update(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(getBackgroundColor());
-		g.fillRoundRect(BORDER+2,BORDER+DESCRIPTION_SPACE+2,getWidth()-2*BORDER-4,getHeight()-2*BORDER-DESCRIPTION_SPACE-4,8,8);
-		g.setColor(getForeground());
+		int spaceHeight = getHeight()-2*BORDER-DESCRIPTION_SPACE-2;
+		g.fillRoundRect(BORDER+1,BORDER+DESCRIPTION_SPACE+1,getWidth()-2*BORDER-2,spaceHeight,8,8);
 		g.setFont(getFont());
 		FontMetrics fm = g.getFontMetrics();
-		if(getText() != null) g.drawString(getText(), X_MARGIN, getHeight()-fm.getDescent());
 		if(findCursor){
-			int check = 0;
-			while(check < getText().length() && fm.stringWidth(getText().substring(0,check+1)) < relativeX){
-				check++;
-			}
-			cursorIndex = check;
+			cursorIndex = calculateIndexOfClick(getText(), fm, relativeX);
+			if(!shiftHeld)selectIndex = cursorIndex;
 			findCursor = false;
 			cursorShowing  = true;
 		}
-		if(cursorShowing && running){
+		if(selectIndex != cursorIndex){
+			g.setColor(new Color(200,200,255));
+			int xStart = (selectIndex< cursorIndex)?fm.stringWidth(getText().substring(0,selectIndex)):fm.stringWidth(getText().substring(0,cursorIndex));
+			//			xStart+=X_MARGIN;
+			int xEnd = (selectIndex< cursorIndex)?fm.stringWidth(getText().substring(0,cursorIndex))+X_MARGIN:fm.stringWidth(getText().substring(0,selectIndex));
+			xStart+=X_MARGIN;
+			int top = BORDER+DESCRIPTION_SPACE+1;
+			g.fillRect(xStart, top, xEnd-xStart, spaceHeight);
+
+		}
+		g.setColor(getForeground());
+		if(getText() != null) g.drawString(getText(), X_MARGIN, getHeight()-fm.getDescent());
+
+		if(cursorShowing && running && selectIndex == cursorIndex){
 			g.setColor(Color.black);
 			int base = getHeight()-fm.getDescent();
 			//			if(cursorIndex> getText().length())cursorIndex = getText().length();
@@ -221,14 +247,88 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			cursorIndex = state.cursorPoint;
 			selectIndex= state.selectPoint;
 			setText(state.text);
-			
+
+		}else if(c == 'v'){
+			try {
+				String data = (String) Toolkit.getDefaultToolkit()
+						.getSystemClipboard().getData(DataFlavor.stringFlavor);
+				insert(data);
+			} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
+				//only thrown if text is not pastable. Does not need to be reported
+				e.printStackTrace();
+			} 
+
+		}else if(c == 'a'){
+			selectIndex = 0;
+			cursorIndex = getText().length();
+		}else if(c =='c'){
+			int low = (selectIndex < cursorIndex)?selectIndex:cursorIndex;
+			int high = (selectIndex > cursorIndex)?selectIndex:cursorIndex;
+			if(low != high){
+
+				StringSelection stringSelection = new StringSelection(getText().substring(low,high));
+				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clpbrd.setContents(stringSelection, null);
+			}
 		}
+
+	}
+
+
+	protected void increaseCursor(){
+		if(!shiftHeld){
+
+			cursorIndex++;
+			selectIndex++;
+		}else{
+			selectIndex = (selectIndex+1>getText().length())?getText().length():selectIndex+1;
+
+		}
+	}
+
+	protected void increaseCursor(int spaces){
+		if(!shiftHeld){
+
+			cursorIndex+=spaces;
+			if(cursorIndex>getText().length())cursorIndex = getText().length()-1;
+			selectIndex=cursorIndex;
+		}else{
+			selectIndex = (selectIndex+spaces>getText().length())?getText().length():selectIndex+spaces;
+
+		}
+	}
+
+	public void insert(String c){
+
+		int low = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
+		int high = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
+		String t = getText();
+		text = t.substring(0,low)+c+t.substring(high,t.length());
+		if(high-low > 0) {
+			cursorIndex = cursorIndex-(high-low);
+		}
+		selectIndex = cursorIndex;
+		increaseCursor(c.length());
+		update();
+	}
+	public void remove(int low, int high){
+		String t = getText();
+
+		text = t.substring(0, low)+t.substring(high,t.length());
+		if(selectIndex<cursorIndex){
+			cursorIndex = cursorIndex-(high-low);
+			selectIndex = cursorIndex;
+		}else{
+			decreaseCursor();
+		}
+
+		update();
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		char c = e.getKeyChar();
-
+		shiftHeld = false;//disable shift held, otherwise cursor behaves like arrow key function
 
 
 
@@ -237,58 +337,71 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		historyIndex = 0;
 		historyIndex=0;
 		if(inputType == INPUT_TYPE_PLAIN && c >=32 && c <127){
+			insert(""+c);
 
-			text = t.substring(0,cursorIndex)+c+t.substring(cursorIndex,t.length());
-			cursorIndex++;
-			update();
 		}else if(inputType == INPUT_TYPE_NUMERIC && (c== 46 || c >=48 && c <57)){
 
-			text = t.substring(0,cursorIndex)+c+t.substring(cursorIndex,t.length());
-			cursorIndex++;
-			update();
+			insert(""+c);
 
 		}else if(c==127 || c==8){
 			//delete is pressed
-			//			System.out.println("Delete was pressed while cursor was at position "+cursorIndex);
-			if(cursorIndex-1 >=0){
-				text = t.substring(0, cursorIndex-1)+t.substring(cursorIndex,t.length());
-				cursorIndex= (cursorIndex >0)?cursorIndex-1:0;
-				//				System.out.println("Cursor now at position "+cursorIndex);
+			int low = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
+			int high = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
+			if(low == high && low>0){
+				low=high-1;
 			}
-			update();
+			remove(low,high);
+
 		}else if(inputType == INPUT_TYPE_CUSTOM && t.length()<inputLength && c>=inputRangeMin && c<=inputRangeMax){
-			text = t.substring(0,cursorIndex)+c+t.substring(cursorIndex,t.length());
-			cursorIndex++;
-			update();
+			insert(c+"");
 		}
 
 	}
 
+	/**
+	 * 
+	 * @return index of cursor after delete key is pressed. In TexTBoxes, this returns the last index of the previous line
+	 */
+	protected void decreaseCursor() {
+		if(!shiftHeld){
+			cursorIndex = (cursorIndex >0)?cursorIndex-1:0;
+			selectIndex = cursorIndex;
+		}else{
+			selectIndex = (selectIndex >0)?selectIndex-1:0;
+		}
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-//		System.out.println(e.getKeyChar());
+		//		System.out.println(e.getKeyChar());
 		if(commandHeld){
 			shortcut(e.getKeyChar());
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_META){
 			commandHeld = true;
+		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){
+			shiftHeld = true;
 		}else{
 			if(e.getKeyCode() == KeyEvent.VK_LEFT){
-				cursorIndex = (cursorIndex >0)?cursorIndex-1:0;
+				decreaseCursor();
 				update();
 			}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-				cursorIndex = (cursorIndex <getText().length())?cursorIndex+1:getText().length();
-				update();
+				if(cursorIndex <getText().length()){
+					increaseCursor();
+					update();
+				}
+
 			}
 		}
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_META){
 			commandHeld = false;
+		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){
+			shiftHeld = false;
 		}
 	}
 
@@ -296,6 +409,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		if(x<0)cursorIndex = 0;
 		else if(x>getText().length())cursorIndex = getText().length();
 		else cursorIndex = x;
+		System.out.println("Setting cursor to"+(x));
 	}
 
 	public boolean isHovered(int x, int y) {
@@ -358,7 +472,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void act() {
-		findCursor = true;
+		findCursor = true;//when updating, calls the method that checks for the location of the cursor
 	}
 
 	public boolean isRunning(){
@@ -383,6 +497,27 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			this.selectPoint = selectPoint;
 		}
 
+	}
+
+	@Override
+	public boolean setStart(int x, int y) {
+		findCursor = true;
+		update();
+		return editable;
+	}
+
+	@Override
+	public void setFinish(int x, int y) {
+		FontMetrics fm = getImage().createGraphics().getFontMetrics();
+		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
+		update();
+	}
+
+	@Override
+	public void setHeldLocation(int x, int y) {
+		FontMetrics fm = getImage().createGraphics().getFontMetrics();
+		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
+		update();
 	}
 
 }
