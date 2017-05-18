@@ -178,7 +178,7 @@ public class TextBox extends TextField {
 			int addLineIndex = 0;//add complete lines to lines ArrayList as they are drawn
 
 			//draw all lines that are above the cursor
-			while(addLineIndex< cursorLine && addLineIndex < selectLine){
+			while(addLineIndex< cursorLine){
 				//				System.out.println(addLineIndex+", Auto-printing "+lines.get(addLineIndex).getLine());
 				g.drawString(lines.get(addLineIndex).getLine(), X_MARGIN, y);
 
@@ -250,7 +250,7 @@ public class TextBox extends TextField {
 							}else{
 								//								cursorIndexInLine =(position!=0)? getCursorIndex()%position: getCursorIndex();//minue 1 to compensate for auto-increase
 
-								if(cursorIndexInLine > line.length()){
+								if(getCursorIndex()-position > line.length()){
 //									cursorIndexInLine = getCursorIndex()-position;
 									//									setCursor(cursorIndexInLine+position);
 									//									cursorIndexInLine = (cursorIndexInLine%line.length());
@@ -260,7 +260,7 @@ public class TextBox extends TextField {
 									//									cursorLine++;
 								}
 								else{
-									cursorIndexInLine = (position>0)? getCursorIndex()%(position) : getCursorIndex();
+									cursorIndexInLine = getCursorIndex()-(position);
 //									System.out.println("Line does not skip");
 //									cursorLine = addLineIndex;
 								}
