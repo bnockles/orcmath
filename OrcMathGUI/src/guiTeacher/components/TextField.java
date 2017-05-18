@@ -274,17 +274,22 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	}
 
-
-	protected void increaseCursor(){
-		if(!shiftHeld){
-
-			cursorIndex++;
-			selectIndex++;
-		}else{
-			selectIndex = (selectIndex+1>getText().length())?getText().length():selectIndex+1;
-
-		}
-	}
+//
+//	protected boolean increaseCursor(){
+//		if(!shiftHeld){
+//			if(cursorIndex+1>getText().length()){
+//				cursorIndex = getText().length();
+//				return false;
+//			}else{
+//				cursorIndex++;
+//				selectIndex++;
+//				return true;
+//			}
+//		}else{
+//			selectIndex = (selectIndex+1>getText().length())?getText().length():selectIndex+1;
+//			return false;
+//		}
+//	}
 
 	protected void increaseCursor(int spaces){
 		if(!shiftHeld){
@@ -305,7 +310,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		String t = getText();
 		text = t.substring(0,low)+c+t.substring(high,t.length());
 		if(high-low > 0) {
-			cursorIndex = cursorIndex-(high-low);
+			setCursor(cursorIndex-(high-low));
 		}
 		selectIndex = cursorIndex;
 		increaseCursor(c.length());
@@ -358,6 +363,14 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	}
 
+	public int getSelectIndex(){
+		return selectIndex;
+	}
+	
+	public boolean isShiftHeld(){
+		return shiftHeld;
+	}
+	
 	/**
 	 * 
 	 * @return index of cursor after delete key is pressed. In TexTBoxes, this returns the last index of the previous line
@@ -387,7 +400,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 				update();
 			}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
 				if(cursorIndex <getText().length()){
-					increaseCursor();
+					increaseCursor(1);
 					update();
 				}
 
@@ -403,6 +416,10 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){
 			shiftHeld = false;
 		}
+	}
+	
+	protected void setSelect(int x){
+		selectIndex = x;
 	}
 
 	protected void setCursor(int x){
