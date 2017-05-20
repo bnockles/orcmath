@@ -38,6 +38,7 @@ public class TextBox extends TextField {
 	private int cursorLine;//the index of the line in which the cursor is
 	private int selectIndexInLine;
 	private int selectLine;//the index of the line in which the selectIndex is
+	private boolean selectOnly;//true when dragging (keeps cursorIndex fixed)
 	private int lengthOfLineBeforeCursorLine;
 	private int lengthOfLineAfterCursorLine;
 	private ArrayList<Line> lines;//The number of characters in each line of the box
@@ -45,14 +46,14 @@ public class TextBox extends TextField {
 
 	public TextBox(int x, int y, int w, int h, String text) {
 		super(x,y,w,h,text);
-		cursorIndexInLine = getCursorIndex();
+		resetInline();
 		lengthOfLineAfterCursorLine = -1;
 		lengthOfLineBeforeCursorLine = -1;
 	}
 
 	public TextBox(int x, int y, int w, int h, String text, String description) {
 		super(x,y,w,h,text, description);
-		cursorIndexInLine = getCursorIndex();
+		resetInline();
 		lengthOfLineAfterCursorLine = -1;
 		lengthOfLineBeforeCursorLine = -1;
 	}
@@ -104,53 +105,124 @@ public class TextBox extends TextField {
 	}
 
 	/**
+	 * sets cursorInLine and selectInLine to correspond with cursor
+	 */
+	protected void resetInline(){
+		String allText = getText();
+		String[] words = allText.split(" ");
+		FontMetrics fm = getImage().createGraphics().getFontMetrics();
+		int lineCount = 0;
+
+		int lastCompleteLines = 0;
+		if(words.length >0){
+			int i = 0;
+			String line = "";
+			A:while(i < words.length){
+				line+=words[i++];
+				while(i < words.length && lineFits(fm,line+" "+words[i])){
+					line += " "+words[i];
+					i++;
+				}
+				
+
+				System.out.println("Last complete line was of length "+lastCompleteLines+" and the line being added is \""+line+"\" with length "+line.length()+". The cursor is "+getCursorIndex()+".");
+				System.out.println("The combined length is "+(lastCompleteLines + line.length())+".");
+				if(lastCompleteLines + line.length()+lineCount >= getCursorIndex()){
+					setCursorInLine(lineCount, getCursorIndex()-lastCompleteLines);
+					
+					System.out.println("Last complete line had length "+lastCompleteLines+"Cursor on line"+cursorLine+". selectIndexInLine = "+selectIndexInLine+" moved");
+					break A;
+				}
+				lineCount++;
+				lastCompleteLines+=line.length();
+
+				line = "";
+			}
+//			if(getCursorIndex() >= lastCompleteLines){
+//				setCursorInLine(lineCount, getCursorIndex()-lastCompleteLines);
+//			}
+
+
+		}
+
+
+	}
+
+	private void setCursorInLine(int line, int index){
+		cursorLine = line;
+		cursorIndexInLine = index;
+		if(!isShiftHeld()){
+		selectLine = line;
+		selectIndexInLine = index;
+		}
+	}
+
+	private boolean lineFits(FontMetrics fm, String line) {
+		return fm.stringWidth(line) < getWidth()-X_MARGIN*2;
+	}
+
+	public void remove(int low, int high){
+		super.remove(low, high);
+		resetInline();
+	}
+
+	/**
 	 * 
 	 * @return index of cursor after delete key is pressed. In TexTBoxes, this returns the last index of the previous line
 	 */
-	protected void decreaseCursor() {
-		super.decreaseCursor();
-		cursorIndexInLine--;
-		if (cursorIndexInLine < 0){
-			if(cursorLine >0){
-				cursorLine--;
-				cursorIndexInLine = lines.get(cursorLine).getLength()-1; 
-
-			}else{
-				cursorIndexInLine = 0;
-			}
-		}
-		if(!isShiftHeld()){
-			selectIndexInLine = cursorIndexInLine;
-			selectLine= cursorLine;
-		}
+	protected void decreaseCursor(int spaces) {
+		super.decreaseCursor(spaces);
+		//		if(spaces > 1){
+//		resetInline();//manages deletion of multiple lines
+		//		}else{
+						cursorIndexInLine--;
+						if (cursorIndexInLine < 0){
+							if(cursorLine >0){
+								cursorLine--;
+								cursorIndexInLine = lines.get(cursorLine).getLength()-1; 
+				
+							}else{
+								cursorIndexInLine = 0;
+							}
+						}
+						if(!isShiftHeld()){
+							selectIndexInLine = cursorIndexInLine;
+							selectLine= cursorLine;
+						}
+		//		}
 	}
 
 	protected void increaseCursor(int spaces){
 		super.increaseCursor(spaces);
-		if(!isShiftHeld()){
-			cursorIndexInLine+=spaces;
-			selectIndexInLine+=spaces;
-		}else{
-			selectIndexInLine += spaces;
-
-		}
-//		//note: In update method, out of bounds cursor automatically shifts to next line
+		//int prior = selectIndexInLine;
+//		resetInline();
+		//		if(Math.abs(prior - selectIndexInLine) > 1){
+		//			System.out.println("selectIndex is larger than expected "+prior+" and "+selectIndexInLine);
+		//		}
+				if(!isShiftHeld()){
+					cursorIndexInLine+=spaces;
+					selectIndexInLine+=spaces;
+				}else{
+					selectIndexInLine += spaces;
+		
+				}
+		//		//note: In update method, out of bounds cursor automatically shifts to next line
 
 	}
-	
-//	protected boolean increaseCursor(){
-//		boolean canIncrease = super.increaseCursor();
-//		if(canIncrease){
-//			cursorIndexInLine++;
-//			selectIndexInLine++;
-//			return true;
-//		}else{
-//			return false;
-//		}
-//		
-//		
-//		
-//	}
+
+	//	protected boolean increaseCursor(){
+	//		boolean canIncrease = super.increaseCursor();
+	//		if(canIncrease){
+	//			cursorIndexInLine++;
+	//			selectIndexInLine++;
+	//			return true;
+	//		}else{
+	//			return false;
+	//		}
+	//		
+	//		
+	//		
+	//	}
 
 	private void prepare(Graphics2D g){
 
@@ -162,9 +234,9 @@ public class TextBox extends TextField {
 		g.setColor(Color.black);
 	}
 
-	
-	
-	
+
+
+
 	public void update(Graphics2D g2){
 		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = buffer.createGraphics();
@@ -179,7 +251,15 @@ public class TextBox extends TextField {
 
 			//draw all lines that are above the cursor
 			while(addLineIndex< cursorLine){
+
+				if(selectLine <= addLineIndex){
+					int start = (addLineIndex>selectLine)?0:selectIndexInLine;
+					String line = lines.get(addLineIndex).getLine();
+					int end = line.length();
+					highlight(g, fm, start,end, line, y);
+				}
 				//				System.out.println(addLineIndex+", Auto-printing "+lines.get(addLineIndex).getLine());
+				g.setColor(getForeground());
 				g.drawString(lines.get(addLineIndex).getLine(), X_MARGIN, y);
 
 				position+=lines.get(addLineIndex).getLength();
@@ -188,52 +268,67 @@ public class TextBox extends TextField {
 			}
 
 
-			
+
 			String remainingText ="";
-			try{
-				remainingText = getText().substring(position);
-			}catch(StringIndexOutOfBoundsException e){
-				System.out.println("The line has length < 0, "+lines.get(addLineIndex).getLine());
-			}
+			remainingText = getText().substring(position);
 			String[] words = remainingText.split(" ");
-
-//			addLineIndex+= highlightSelectedLinesAboveCursor(g, words);
-
-			//			int count = 0;//keeps track of the number of characters that have been inserted
-			//			lengthOfLineBeforeCursorLine= -1;//-1 signifies there is no line above the cursor
-			//			lengthOfLineAfterCursorLine = -1;//-1 signifies there is no line below the cursor
 
 
 
 			if(words.length >0){
 				int i = 0;
 				String line = "";
+				line+= words[i++];
 				while(i < words.length){
-					while(i < words.length && fm.stringWidth(line) + fm.stringWidth(words[i]) < getWidth()-X_MARGIN*2){
-						line += words[i]+" ";
+
+
+					while(i < words.length && lineFits(fm,line+" "+words[i])){
+						line += " "+words[i];
 						i++;
 					}
 
 
 					if(findCursor && relativeY < y && relativeY > y - fm.getHeight()-SPACING-DESCRIPTION_SPACE){
 
-						cursorIndexInLine = calculateIndexOfClick(line, fm, relativeX);
+						if(!selectOnly){//when NOT DRAGGING
+							cursorIndexInLine = calculateIndexOfClick(line, fm, relativeX);
+							setCursor(cursorIndexInLine+position);
+							if(!isShiftHeld()){
+								setSelect(getCursorIndex());
+								selectIndexInLine = cursorIndexInLine;
+							}
+						}else{//when DRAGGING (i.e.only selector is moving)
 
-						setCursor(cursorIndexInLine+position);
-						if(!isShiftHeld())setSelect(getCursorIndex());
+							selectIndexInLine = calculateIndexOfClick(line, fm, relativeX);
+							setSelect(selectIndexInLine+position);
+							selectOnly = false;
+						}
+
+
+
+
 						//						System.out.println("In line, cursor is at "+cursorIndexInLine+", but in body cursor at "+getCursorIndex());
 						findCursor = false;
 						cursorShowing  = true;
 					}
 
 					if(y < getHeight()){
+						if(selectIndexInLine!=cursorIndexInLine){
+							int xStart = (selectIndexInLine< cursorIndexInLine)?selectIndexInLine:cursorIndexInLine;
+							//			xStart+=X_MARGIN;
+							int xEnd = (selectIndexInLine> cursorIndexInLine)?selectIndexInLine:cursorIndexInLine;
+//							System.out.println("Select Index is "+selectIndexInLine);
+
+							highlight(g,fm,xStart,xEnd,getText(),y-fm.getHeight());
+						}
+						g.setColor(Color.black);
 						g.drawString(line, X_MARGIN, y);
 						//						if(!cursorDrawn){
 						//							System.out.println("Cursor not drawn but index = "+cursorIndexInLine+" and line length is "+line.length());
 						//						}
-						if(addLineIndex == cursorLine && isCursorShowing()  && !cursorDrawn){
+						if(addLineIndex == cursorLine && isCursorShowing()  && !cursorDrawn && getSelectIndex() == getCursorIndex()){
 							if(cursorIndexInLine <= line.length()){
-								g.setColor(Color.black);
+
 								////							if(cursorIndex> getText().length())cursorIndex = getText().length();
 
 								//check to see if cursor has reached a new line
@@ -251,18 +346,18 @@ public class TextBox extends TextField {
 								//								cursorIndexInLine =(position!=0)? getCursorIndex()%position: getCursorIndex();//minue 1 to compensate for auto-increase
 
 								if(getCursorIndex()-position > line.length()){
-//									cursorIndexInLine = getCursorIndex()-position;
+									//									cursorIndexInLine = getCursorIndex()-position;
 									//									setCursor(cursorIndexInLine+position);
 									//									cursorIndexInLine = (cursorIndexInLine%line.length());
 									System.out.println("Line does skip");
-//									cursorIndexInLine-= line.length();
+									//									cursorIndexInLine-= line.length();
 									cursorLine++;
 									//									cursorLine++;
 								}
 								else{
 									cursorIndexInLine = getCursorIndex()-(position);
-//									System.out.println("Line does not skip");
-//									cursorLine = addLineIndex;
+									//									System.out.println("Line does not skip");
+									//									cursorLine = addLineIndex;
 								}
 
 							}
@@ -296,6 +391,8 @@ public class TextBox extends TextField {
 	}
 
 
+
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
@@ -311,6 +408,22 @@ public class TextBox extends TextField {
 			setCursor(newc);
 			update();
 		}
+	}
+
+
+
+	@Override
+	public void setFinish(int x, int y) {
+		findCursor = true;
+		selectOnly = true;
+		super.setFinish(x, y);
+	}
+
+	@Override
+	public void setHeldLocation(int x, int y) {
+		findCursor = true;
+		selectOnly = true;
+		super.setHeldLocation(x, y);
 	}
 
 	protected class Line{

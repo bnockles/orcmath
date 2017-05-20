@@ -33,6 +33,7 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 	 * 
 	 */
 	private static final long serialVersionUID = 390738816689963935L;
+	public static JFrame mainFrame;
 	private Screen currentScreen;
 	private boolean scaleWithWindow; 
 	
@@ -46,6 +47,7 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 		initScreen();
 		setUndecorated(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame = this;
 	}
 
 

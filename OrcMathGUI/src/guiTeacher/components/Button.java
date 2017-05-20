@@ -19,11 +19,13 @@
 package guiTeacher.components;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import guiTeacher.GUIApplication;
 import guiTeacher.Utilities;
 import guiTeacher.interfaces.Clickable;
 
@@ -134,6 +136,13 @@ public class Button extends TextLabel implements Clickable{
 //			
 //		}
 		hovered = b && enabled;
+		if(hovered){
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			setLeft(false);
+		}else if (!hasLeft()){
+			setLeft(true);
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
 		return hovered;
 	}
 	

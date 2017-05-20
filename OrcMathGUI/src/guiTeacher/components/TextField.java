@@ -20,6 +20,7 @@ package guiTeacher.components;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -34,15 +35,17 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import guiTeacher.GUIApplication;
 import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.Dragable;
 import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.TextComponent;
+import main.OrcMath;
 
 public class TextField extends StyledComponent implements KeyedComponent,Clickable, Runnable, Dragable, TextComponent{
 
 	//FIELDS
-	private String text;
+	protected String text;
 	private Font font;
 	private float size;
 	private ArrayList<TextFieldSaveState> history;//keeps track of recent changes
@@ -185,9 +188,20 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		while(check < s.length() && fm.stringWidth(s.substring(0,check+1)) < x){
 			check++;
 		}
+//		System.out.println(check + " for string "+s+" with length "+s.length());
 		return check;
 	}
 
+	protected void highlight(Graphics2D g, FontMetrics fm, int startIndex, int endIndex, String line, int y) {
+		g.setColor(new Color(200,200,255));
+		startIndex = (startIndex < line.length())?startIndex:line.length();
+		int xStart = fm.stringWidth(line.substring(0,startIndex));
+		int xEnd =fm.stringWidth(line.substring(0,endIndex));
+		xStart+=X_MARGIN;
+		xEnd+=X_MARGIN;
+		g.fillRect(xStart, y, xEnd-xStart, fm.getHeight());
+	}
+	
 	@Override
 	public void update(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -204,13 +218,14 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			cursorShowing  = true;
 		}
 		if(selectIndex != cursorIndex){
-			g.setColor(new Color(200,200,255));
-			int xStart = (selectIndex< cursorIndex)?fm.stringWidth(getText().substring(0,selectIndex)):fm.stringWidth(getText().substring(0,cursorIndex));
+			
+			int xStart = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
 			//			xStart+=X_MARGIN;
-			int xEnd = (selectIndex< cursorIndex)?fm.stringWidth(getText().substring(0,cursorIndex))+X_MARGIN:fm.stringWidth(getText().substring(0,selectIndex));
-			xStart+=X_MARGIN;
-			int top = BORDER+DESCRIPTION_SPACE+1;
-			g.fillRect(xStart, top, xEnd-xStart, spaceHeight);
+			int xEnd = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
+			
+			int top = BORDER+DESCRIPTION_SPACE+fm.getDescent();
+			highlight(g,fm,xStart,xEnd,getText(),top);
+			
 
 		}
 		g.setColor(getForeground());
@@ -320,12 +335,20 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		String t = getText();
 
 		text = t.substring(0, low)+t.substring(high,t.length());
-		if(selectIndex<cursorIndex){
+		
+		//check to see if cursor moves back or stays in place
+		if(selectIndex <= cursorIndex){
 			cursorIndex = cursorIndex-(high-low);
-			selectIndex = cursorIndex;
+			selectIndex = cursorIndex;			
 		}else{
-			decreaseCursor();
+			selectIndex = cursorIndex;	
 		}
+		
+//		if(low<high-1){
+//			//when deleting more than one 
+//		}else{
+//			decreaseCursor();
+//		}
 
 		update();
 	}
@@ -352,6 +375,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			//delete is pressed
 			int low = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
 			int high = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
+			//when selector is not over more than one letter
 			if(low == high && low>0){
 				low=high-1;
 			}
@@ -375,12 +399,12 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	 * 
 	 * @return index of cursor after delete key is pressed. In TexTBoxes, this returns the last index of the previous line
 	 */
-	protected void decreaseCursor() {
+	protected void decreaseCursor(int spaces) {
 		if(!shiftHeld){
-			cursorIndex = (cursorIndex >0)?cursorIndex-1:0;
+			cursorIndex = (cursorIndex -spaces >0)?cursorIndex-spaces:0;
 			selectIndex = cursorIndex;
 		}else{
-			selectIndex = (selectIndex >0)?selectIndex-1:0;
+			selectIndex = (selectIndex -spaces > 0 )?selectIndex-spaces:0;
 		}
 	}
 
@@ -396,7 +420,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			shiftHeld = true;
 		}else{
 			if(e.getKeyCode() == KeyEvent.VK_LEFT){
-				decreaseCursor();
+				decreaseCursor(1);
 				update();
 			}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
 				if(cursorIndex <getText().length()){
@@ -434,6 +458,11 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		if(b){
 			relativeX = x - getX();
 			relativeY = y - getY();
+			setLeft(false);
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+		}else if(!hasLeft()){
+			setLeft(true);
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		}
 		return b;
 	}
@@ -516,9 +545,14 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	}
 
+	public void setShiftHeld(boolean b){
+		shiftHeld = b;
+	}
+	
 	@Override
 	public boolean setStart(int x, int y) {
 		findCursor = true;
+		
 		update();
 		return editable;
 	}
@@ -527,6 +561,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public void setFinish(int x, int y) {
 		FontMetrics fm = getImage().createGraphics().getFontMetrics();
 		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
+		relativeX = x - getX();
 		update();
 	}
 
@@ -534,6 +569,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public void setHeldLocation(int x, int y) {
 		FontMetrics fm = getImage().createGraphics().getFontMetrics();
 		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
+		relativeX = x - getX();
 		update();
 	}
 

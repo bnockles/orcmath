@@ -42,6 +42,7 @@ import guiTeacher.components.SimpleTable;
 import guiTeacher.components.SimpleTable.MatchingLengthException;
 import guiTeacher.components.TableHeader;
 import guiTeacher.components.TextBox;
+import guiTeacher.components.TextBoxReplacement;
 import guiTeacher.components.TextField;
 import guiTeacher.interfaces.Visible;
 import main.OrcMath;
@@ -70,7 +71,7 @@ public class CreateScreen extends OrcMathScreen {
 	private File saveDirectory;
 	private TextField fileName;
 	private TextField heading;
-	private TextBox instructionsField;
+	private TextBoxReplacement instructionsField;
 	public Button generate;
 	private TopicAccordion questionsByTopic;
 	private SimpleTable outputTable;
@@ -104,7 +105,7 @@ public class CreateScreen extends OrcMathScreen {
 		int vertSpace = 5+TextField.DESCRIPTION_SPACE;
 		fileName = new TextField(fieldMargin, MARGIN+25+vertSpace, _FIELD_WIDTH, textFieldHeight, "Worksheet","File Name");
 		heading = new TextField(fieldMargin, fileName.getY()+fileName.getHeight()+vertSpace, _FIELD_WIDTH, textFieldHeight, "Practice","Header");
-		instructionsField = new TextBox(fieldMargin,heading.getY()+heading.getHeight()+vertSpace,_FIELD_WIDTH,200,"Show your work as if your life depended on it.","Main Instructions");
+		instructionsField = new TextBoxReplacement(fieldMargin,heading.getY()+heading.getHeight()+vertSpace,_FIELD_WIDTH,200,"Show your work as if your life depended on it.","Main Instructions");
 
 		//output table
 		addTable(viewObjects);

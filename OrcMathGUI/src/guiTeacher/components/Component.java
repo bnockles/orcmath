@@ -38,6 +38,7 @@ public abstract class Component implements Visible {
 	private Visible containingComponent;
 	private boolean visible;
 	private Action hoverAction;
+	private boolean left;//a boolean to keep track of when a pointer leaves this object
 	
 	public Component(int x, int y, int w, int h){
 		this.x = x;
@@ -51,6 +52,16 @@ public abstract class Component implements Visible {
 	}
 	
 	
+	public boolean hasLeft() {
+		return left;
+	}
+
+
+	public void setLeft(boolean left) {
+		this.left = left;
+	}
+
+
 	public BufferedImage getImage() {
 		return image;
 	}
