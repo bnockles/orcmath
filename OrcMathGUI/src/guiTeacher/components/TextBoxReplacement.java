@@ -74,21 +74,6 @@ public class TextBoxReplacement extends TextField{
 	}
 
 
-	/**
-	 * 
-	 * @param i
-	 * @return index in context of text that contains TextLine i
-	 */
-	private int indexStartingFromLine(int i) {
-		if (i-1<0){
-			return 0;
-		}else{
-			String previousLine = lines.get(i-1).getLine();
-			int start = getText().indexOf(previousLine)+previousLine.length();
-			return start;
-		}
-	}
-
 
 	private void deleteLinesAfter(int i) {
 		while (lines.size() > i){
@@ -109,7 +94,7 @@ public class TextBoxReplacement extends TextField{
 
 
 	private int getInitialY(FontMetrics fm){
-		return 0 + fm.getHeight()+SPACING+DESCRIPTION_SPACE;
+		return 0 + fm.getHeight()+SPACING+BORDER+DESCRIPTION_SPACE;
 	}
 	private int getLineSpace(FontMetrics fm){
 		final int SPACING = 2;
@@ -132,8 +117,29 @@ public class TextBoxReplacement extends TextField{
 		}
 	}
 
+	protected void setIndicesToCursor(){
+		int cursor = getCursorIndex();
+		int i=0;
+		while(i < lines.size() && cursor > lines.get(i).getLength()){
+			cursor-=lines.get(i).getLength();
+			i++;
+		}
+		cursorIndexInLine = cursor;
+		cursorLine = i;
+		int sCursor = getSelectIndex();
+		int j=0;
+		while(j < lines.size() && sCursor > lines.get(j).getLength()){
+			sCursor-=lines.get(j).getLength();
+			j++;
+		}
+		selectIndexInLine = sCursor;
+		selectLine = j;
+	}
+	
 	public void setText(String s){
 		text = s;
+		setIndicesToCursor();
+		
 		resetLinesAfter(cursorLine);
 		update();
 		//does not automatically update for the sake of 
@@ -184,10 +190,10 @@ public class TextBoxReplacement extends TextField{
 			selectIndexInLine = cursorIndexInLine;
 			selectLine = cursorLine;
 		}else{
-			selectIndexInLine+=spaces;
-			int[] values = adjustCursor(selectLine, selectIndexInLine);
-			selectLine = values[0];
-			selectIndexInLine = values[1];
+			cursorIndexInLine+=spaces;
+			int[] values = adjustCursor(cursorLine, cursorIndexInLine);
+			cursorLine = values[0];
+			cursorIndexInLine = values[1];
 		}
 	}
 
@@ -348,7 +354,7 @@ public class TextBoxReplacement extends TextField{
 
 	private void drawCursor(Graphics2D g, FontMetrics fm, int y) {
 		g.setColor(Color.black);
-		//			if(cursorIndex> getText().length())cursorIndex = getText().length();
+					if(cursorIndexInLine> lines.get(cursorLine).getLine().length())cursorIndexInLine = lines.get(cursorLine).getLine().length();
 		int x = fm.stringWidth(lines.get(cursorLine).getLine().substring(0,cursorIndexInLine))+X_MARGIN;
 		g.drawLine(x, y-fm.getHeight(), x, y);
 	}

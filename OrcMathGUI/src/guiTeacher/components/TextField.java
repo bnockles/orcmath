@@ -289,32 +289,13 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	}
 
-//
-//	protected boolean increaseCursor(){
-//		if(!shiftHeld){
-//			if(cursorIndex+1>getText().length()){
-//				cursorIndex = getText().length();
-//				return false;
-//			}else{
-//				cursorIndex++;
-//				selectIndex++;
-//				return true;
-//			}
-//		}else{
-//			selectIndex = (selectIndex+1>getText().length())?getText().length():selectIndex+1;
-//			return false;
-//		}
-//	}
 
 	protected void increaseCursor(int spaces){
+		cursorIndex+=spaces;
+		if(cursorIndex>getText().length())cursorIndex = getText().length()-1;
 		if(!shiftHeld){
 
-			cursorIndex+=spaces;
-			if(cursorIndex>getText().length())cursorIndex = getText().length()-1;
 			selectIndex=cursorIndex;
-		}else{
-			selectIndex = (selectIndex+spaces>getText().length())?getText().length():selectIndex+spaces;
-
 		}
 	}
 
@@ -378,6 +359,8 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			//when selector is not over more than one letter
 			if(low == high && low>0){
 				low=high-1;
+			}else{//save after deleting multiple characters
+				history.add(0,new TextFieldSaveState(text, cursorIndex, selectIndex));
 			}
 			remove(low,high);
 
@@ -400,11 +383,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	 * @return index of cursor after delete key is pressed. In TexTBoxes, this returns the last index of the previous line
 	 */
 	protected void decreaseCursor(int spaces) {
+		cursorIndex = (cursorIndex -spaces >0)?cursorIndex-spaces:0;
 		if(!shiftHeld){
-			cursorIndex = (cursorIndex -spaces >0)?cursorIndex-spaces:0;
 			selectIndex = cursorIndex;
-		}else{
-			selectIndex = (selectIndex -spaces > 0 )?selectIndex-spaces:0;
 		}
 	}
 
