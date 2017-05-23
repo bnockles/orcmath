@@ -223,7 +223,7 @@ public class TopicAccordion extends Accordion implements KeyedComponent{
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		latexEditor.keyPressed(e);
+		latexEditor.keyReleased(e);
 		
 	}
 

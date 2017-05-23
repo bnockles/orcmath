@@ -29,7 +29,7 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 	private KeyedComponent activeKeyedComponent;
 	private boolean running;
 	private Dragable draggedItem;
-	
+
 	public FullFunctionPane(FocusController focusController, Component parentComponent, int x, int y, int w, int h) {
 		super(focusController, parentComponent, new ArrayList<Visible>(),x, y, w, h);
 		// TODO Auto-generated constructor stub
@@ -46,7 +46,7 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 		}
 
 	}
-	
+
 	public void addObject(Visible v){
 		super.addObject(v);
 		if(v instanceof KeyedComponent){
@@ -60,59 +60,43 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 		super.remove(v);
 		keyedComponents.remove(v);
 	}
-	
+
 	public void act() {
 		super.act();
 		for(KeyedComponent kc: keyedComponents){
 			if(kc.isHovered(xRelative, yRelative)){
-				kc.setFocus(true);
-				if(activeKeyedComponent!= null) activeKeyedComponent.setFocus(false);
-				activeKeyedComponent = kc;
-				break;
+				moveFocus(kc);
+				
 			}
 		}
 
 	}
-	
-	
+
+
 	public void moveFocus(KeyedComponent k){
-		if(activeKeyedComponent!=null)activeKeyedComponent.setFocus(false);
-		k.setFocus(true);
-		activeKeyedComponent = k;
+		if(k != activeKeyedComponent){
+
+			if(activeKeyedComponent!=null)activeKeyedComponent.setFocus(false);
+			k.setFocus(true);
+			activeKeyedComponent = k;
+		}
 	}
-	
-//	@Override
-//	public void mouseDragged(MouseEvent m) {
-//		for(KeyedComponent k: keyedComponents){
-//			if(k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
-//				moveFocus(k);
-//				break;
-//			}
-//		}
-//		if(draggedItem != null)draggedItem.setHeldLocation(m.getX()-getX(),m.getY()-getY());
-//	}
-	
-//	@Override
-//	public void mouseMoved(MouseEvent m) {
-//		xRelative = m.getX() - getX();
-//		yRelative = m.getY() - getY();
-//		for(Clickable c: clickables){
-//			if(c.isHovered(xRelative, yRelative)){
-//				c.hoverAction();
-//			}
-//		}
-//	}
+
 	@Override
 	public boolean setStart(int x, int y) {
-		
+
 		boolean hoverOverDragable = false;
 		for(Clickable c: clickables){
 			if(c.isHovered(x-getX(), y-getY())){
 				if(c instanceof Dragable){
 					Dragable item = (Dragable)c;
-					if(item.setStart(x-getX()-containingComponent.getX(),y-getY()-containingComponent.getY())){
+					if(item.setStart(x-getX(),y-getY())){
 						draggedItem = item;
 						hoverOverDragable = true;
+					}
+					if(item instanceof KeyedComponent){
+						KeyedComponent kc = (KeyedComponent)item;
+						moveFocus(kc);
 					}
 					break;
 				}
@@ -123,18 +107,18 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 
 	@Override
 	public void setFinish(int x, int y) {
-		if(draggedItem != null)draggedItem.setFinish(x - getX()-containingComponent.getX(), y - getY()-containingComponent.getY());
+		if(draggedItem != null)draggedItem.setFinish(x - getX(), y - getY());
 	}
 
 	@Override
 	public void setHeldLocation(int x, int y) {
-		System.out.println("Coordinates of drag are "+(x - getX()-containingComponent.getX())+", "+(y - getY()-containingComponent.getY()));
+		//		System.out.println("<FullFunctionPane> Coordinates of drag are "+(x - getX())+", "+(y - getY()));
 		if(draggedItem != null){
 			draggedItem.setHeldLocation(x-getX(),y-getY());
 		}
-		
+
 	}
-	
+
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -160,7 +144,6 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 	public void setFocus(boolean b) {
 		super.setFocus(b);
 		if(b && !running){
-			
 			running = true;
 			Thread updatePanel = new Thread(this);
 			updatePanel.start();
@@ -169,7 +152,7 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 			if(activeKeyedComponent != null) activeKeyedComponent.setFocus(false);
 		}
 	}
-	
+
 	public void run(){
 		while(running){
 			update();		
@@ -182,7 +165,7 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 		}
 		update();
 	}
-	
-	
+
+
 
 }

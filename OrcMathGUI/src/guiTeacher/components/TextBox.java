@@ -42,11 +42,16 @@ public class TextBox extends TextField{
 		identifyCursorLineUnderMouse();
 		super.act();
 	}
+	
+	public void resetSelect(){
+		selectIndexInLine = cursorIndexInLine;
+		selectLine = cursorLine;
+		super.resetSelect();
+	}
 
 	private void resetLinesAfter(int i) {
 		//		int index = indexStartingFromLine(i);
 		int index = (lines.size()>0)?lines.get(i).getStartIndex():0;
-		System.out.println("index starts at "+index+"entire text is "+getText());
 		deleteLinesAfter(i);
 		String remainingText = getText().substring(index);
 		String[] words = remainingText.split(" ");
@@ -117,6 +122,9 @@ public class TextBox extends TextField{
 		}
 	}
 
+	/**
+	 * Sets the cursorLine and selectLine to the location of the cursor
+	 */
 	protected void setIndicesToCursor(){
 		int cursor = getCursorIndex();
 		int i=0;
@@ -263,19 +271,6 @@ public class TextBox extends TextField{
 		text = t.substring(0, low)+t.substring(high);
 		if(getSelectIndex() == getCursorIndex()){
 			decreaseCursor(1);
-			//			if(cursorLine > 0 && cursorIndexInLine==0){
-			//				cursorLine--;
-			//				cursorIndexInLine = lines.get(cursorLine).getLength();
-			//				selectLine = cursorLine;
-			//				selectIndexInLine = cursorIndexInLine;
-			//				setCursor(getCursorIndex()-1);
-			//				setSelect(getCursorIndex());
-			//			}else if(cursorIndexInLine > 0){
-			//				cursorIndexInLine--;
-			//				selectLine--;
-			//				setCursor(getCursorIndex()-1);
-			//				setSelect(getCursorIndex());
-			//			}
 		}else{
 			selectLine = cursorLine;
 			selectIndexInLine = cursorIndexInLine;
@@ -397,7 +392,6 @@ public class TextBox extends TextField{
 		protected TextLine(String s, int startIndex){
 			this.line = s;
 			this.startIndex = startIndex;
-			System.out.println("Line created with startIndex = "+startIndex);
 		}
 
 		public String getLine() {

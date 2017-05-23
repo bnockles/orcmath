@@ -431,7 +431,6 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		if(x<0)cursorIndex = 0;
 		else if(x>getText().length())cursorIndex = getText().length();
 		else cursorIndex = x;
-		System.out.println("Setting cursor to"+(x));
 	}
 
 	public boolean isHovered(int x, int y) {
@@ -449,7 +448,12 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	}
 
 
+	public String toString(){
+		return "TextBox with description + \""+description+"\"";
+	}
+	
 	public void setFocus(boolean b) {
+		System.out.println("setting focus to "+this);
 		updateDescription = true;
 		if(b && !running && editable){
 
@@ -458,7 +462,17 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			cursor.start();
 		}else if(!b){
 			running = false;
+			resetSelect();
 		}
+	}
+	
+	/**
+	 * sets the select cursor to the cursor
+	 */
+	public void resetSelect(){
+		selectIndex = cursorIndex;
+		shiftHeld = false;
+		update();
 	}
 
 	public void setText(String s){
@@ -499,6 +513,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void act() {
+		shiftHeld = false;
 		findCursor = true;//when updating, calls the method that checks for the location of the cursor
 	}
 
