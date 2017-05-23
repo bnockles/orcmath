@@ -2,9 +2,13 @@ package guiTeacher.components;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import guiTeacher.interfaces.Clickable;
+import guiTeacher.interfaces.Dragable;
 import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.Visible;
@@ -15,7 +19,7 @@ import guiTeacher.interfaces.Visible;
  * 
  */
 
-public abstract class FullFunctionPane extends ScrollablePane implements KeyedComponent, KeyListener, Runnable{
+public abstract class FullFunctionPane extends ScrollablePane implements KeyedComponent, KeyListener, Dragable, Runnable{
 
 	/**
 	 * 
@@ -24,6 +28,7 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 	private ArrayList<KeyedComponent> keyedComponents;
 	private KeyedComponent activeKeyedComponent;
 	private boolean running;
+	private Dragable draggedItem;
 	
 	public FullFunctionPane(FocusController focusController, Component parentComponent, int x, int y, int w, int h) {
 		super(focusController, parentComponent, new ArrayList<Visible>(),x, y, w, h);
@@ -68,6 +73,68 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 		}
 
 	}
+	
+	
+	public void moveFocus(KeyedComponent k){
+		if(activeKeyedComponent!=null)activeKeyedComponent.setFocus(false);
+		k.setFocus(true);
+		activeKeyedComponent = k;
+	}
+	
+//	@Override
+//	public void mouseDragged(MouseEvent m) {
+//		for(KeyedComponent k: keyedComponents){
+//			if(k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
+//				moveFocus(k);
+//				break;
+//			}
+//		}
+//		if(draggedItem != null)draggedItem.setHeldLocation(m.getX()-getX(),m.getY()-getY());
+//	}
+	
+//	@Override
+//	public void mouseMoved(MouseEvent m) {
+//		xRelative = m.getX() - getX();
+//		yRelative = m.getY() - getY();
+//		for(Clickable c: clickables){
+//			if(c.isHovered(xRelative, yRelative)){
+//				c.hoverAction();
+//			}
+//		}
+//	}
+	@Override
+	public boolean setStart(int x, int y) {
+		
+		boolean hoverOverDragable = false;
+		for(Clickable c: clickables){
+			if(c.isHovered(x-getX(), y-getY())){
+				if(c instanceof Dragable){
+					Dragable item = (Dragable)c;
+					if(item.setStart(x-getX()-containingComponent.getX(),y-getY()-containingComponent.getY())){
+						draggedItem = item;
+						hoverOverDragable = true;
+					}
+					break;
+				}
+			}
+		}
+		return hoverOverDragable;
+	}
+
+	@Override
+	public void setFinish(int x, int y) {
+		if(draggedItem != null)draggedItem.setFinish(x - getX()-containingComponent.getX(), y - getY()-containingComponent.getY());
+	}
+
+	@Override
+	public void setHeldLocation(int x, int y) {
+		System.out.println("Coordinates of drag are "+(x - getX()-containingComponent.getX())+", "+(y - getY()-containingComponent.getY()));
+		if(draggedItem != null){
+			draggedItem.setHeldLocation(x-getX(),y-getY());
+		}
+		
+	}
+	
 
 	@Override
 	public void keyTyped(KeyEvent e) {

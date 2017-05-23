@@ -110,6 +110,17 @@ public abstract class FullFunctionScreen extends ClickableScreen implements KeyL
 			activeScrollPane = sp;			
 		}
 	}
+	
+	@Override
+	public void mouseDragged(MouseEvent m) {
+		for(KeyedComponent k: keyedComponents){
+			if(k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
+				moveFocus(k);
+				break;
+			}
+		}
+		super.mouseDragged(m);
+	}
 
 	public void mousePressed(MouseEvent m) {
 		super.mousePressed(m);

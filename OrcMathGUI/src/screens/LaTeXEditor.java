@@ -141,4 +141,5 @@ public class LaTeXEditor extends FullFunctionPane{
 
 
 
+
 }
