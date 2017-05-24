@@ -434,7 +434,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	}
 
 	public boolean isHovered(int x, int y) {
-		boolean b =  x > getX() && x < getX() + getWidth() && y > getY() && y < getY() + getHeight();
+		boolean b =  x > getX() && x < getX() + getWidth() && y > getY()+DESCRIPTION_SPACE && y < getY() + getHeight();
 		if(b){
 			relativeX = x - getX();
 			relativeY = y - getY();

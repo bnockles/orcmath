@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -54,6 +55,7 @@ public class TextBox extends TextField{
 		int index = (lines.size()>0)?lines.get(i).getStartIndex():0;
 		deleteLinesAfter(i);
 		String remainingText = getText().substring(index);
+//		String paragraphs = 
 		String[] words = remainingText.split(" ");
 		int j = 0;
 		while(j < words.length){
@@ -225,6 +227,14 @@ public class TextBox extends TextField{
 		setSelect(selectIndex);
 	}
 
+	public void keyPressed(KeyEvent e) {
+		super.keyPressed(e);
+		if(e.getKeyCode() == KeyEvent.VK_ENTER){
+			System.out.println("Inserting a new line");
+			insert("\n");
+		}
+	}
+	
 	public void insert(String c){
 		putCursorBeforeSelect();
 		int selectIndex = getSelectIndex();
@@ -251,7 +261,7 @@ public class TextBox extends TextField{
 	private boolean canInsert(String s) {
 		String currentLine = lines.get(cursorLine).getLine();
 		String newContent = currentLine.substring(0,cursorIndexInLine)+s+currentLine.substring(selectIndexInLine);
-		return lineFits(newContent);
+		return lineFits(newContent) && !s.equals("\n");
 	}
 
 	/**

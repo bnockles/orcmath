@@ -3,12 +3,21 @@ package screens;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageFilter;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 
 import org.scilab.forge.jlatexmath.ParseException;
 
@@ -18,11 +27,13 @@ import components.QuestionPreview;
 import guiTeacher.components.Action;
 import guiTeacher.components.Button;
 import guiTeacher.components.Component;
+import guiTeacher.components.CustomImageButton;
 import guiTeacher.components.FullFunctionPane;
 import guiTeacher.components.Link;
 import guiTeacher.components.ScrollablePane;
 import guiTeacher.components.TextBox;
 import guiTeacher.components.TextLabel;
+import guiTeacher.interfaces.DrawInstructions;
 import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.Visible;
@@ -39,6 +50,7 @@ public class LaTeXEditor extends FullFunctionPane{
 	private boolean showPreview;
 	private TextBox problem;
 	private TextBox solution;
+	private ImageIcon imageToAdd;//for uploading images
 
 	/**
 	 * 
@@ -62,6 +74,7 @@ public class LaTeXEditor extends FullFunctionPane{
 
 		problem = new TextBox(margin, 2*hSpace+labelHeight, boxWidth, boxHeight, "Sample: x^{\\frac{1}{2}}=\\sqrt{x}");
 		solution = new TextBox(margin, 4*hSpace+2*labelHeight+boxHeight, getWidth()-2*margin, boxHeight, PLACEHOLDER_TEXT);
+		
 		Button add = new Button(getWidth()-margin-buttonWidth, hSpace, buttonWidth, buttonHeight, "Add", new Color(0,153,70),new Action() {
 
 			@Override
@@ -72,7 +85,39 @@ public class LaTeXEditor extends FullFunctionPane{
 		});
 		add.setSize(12);
 		add.setCurve(1, 1);
-		preview = new Link(getWidth()-2*(margin+buttonWidth), hSpace, buttonWidth, buttonHeight, "Preview",new Action() {
+		Button addImage = new CustomImageButton(getWidth()-2*(margin+buttonWidth), hSpace, 20, 20, new DrawInstructions() {
+			
+			@Override
+			public void draw(Graphics2D g, boolean highlight) {
+				Color color = highlight ? Color.blue : Color.black;
+				g.setColor(color);
+				g.drawRect(1, 1, 18, 18);
+				g.drawOval(4, 4, 14, 14);
+			}
+		}, new Action() {
+			
+			@Override
+			public void act() {
+				final JFileChooser fc = new JFileChooser();
+//				fc.addChoosableFileFilter(new ImageFilter());
+				//In response to a button click:
+                int result = fc.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    try {
+                        imageToAdd = (new ImageIcon(ImageIO.read(file)));
+                        System.out.println("Loaded an image with width = "+imageToAdd.getIconWidth());
+                        String imageCode = "\\begin{array}{l}\\includegraphics[width=40cm,interpolation=bicubic]{"+file.getAbsolutePath()+"}\\end{array}";
+                        problem.insert(imageCode);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+			}
+		});
+		viewObjects.add(addImage);
+		
+		preview = new Link(getWidth()-3*(margin+buttonWidth), hSpace, buttonWidth, buttonHeight, "Preview",new Action() {
 
 			@Override
 			public void act() {
@@ -88,13 +133,13 @@ public class LaTeXEditor extends FullFunctionPane{
 				}
 				try{
 					Problem.toImage(testSolution);
+					Problem sample = new Problem(testProblem, testSolution);
+					qp.setImage(sample.getAnswerImage());
+					if(sample.getAnswerImage()==null){
+						System.out.println("No image exists");
+					}
 				}catch(ParseException e){
 					testSolution = "\\text{Parse Error: "+e.getLocalizedMessage().replaceAll("{", "\\{").replaceAll("}", "\\}")+"}";
-				}
-				Problem sample = new Problem(testProblem, testSolution);
-				qp.setImage(sample.getAnswerImage());
-				if(sample.getAnswerImage()==null){
-					System.out.println("No image exists");
 				}
 				String previewText = (showPreview)?"Preview":"Hide";
 				preview.setText(previewText);
