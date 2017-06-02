@@ -144,6 +144,7 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 	public void setFocus(boolean b) {
 		super.setFocus(b);
 		if(b && !running){
+			if(activeKeyedComponent!= null) activeKeyedComponent.setFocus(b);
 			running = true;
 			Thread updatePanel = new Thread(this);
 			updatePanel.start();

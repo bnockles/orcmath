@@ -107,7 +107,7 @@ public class LaTeXEditor extends FullFunctionPane{
                     try {
                         imageToAdd = (new ImageIcon(ImageIO.read(file)));
                         System.out.println("Loaded an image with width = "+imageToAdd.getIconWidth());
-                        String imageCode = "\\begin{array}{l}\\includegraphics[width=40cm,interpolation=bicubic]{"+file.getAbsolutePath()+"}\\end{array}";
+                        String imageCode = "\\begin{array}{l} \\includegraphics[width=40cm, interpolation=bicubic] {"+file.getAbsolutePath()+"} \\end{array}";
                         problem.insert(imageCode);
                     } catch (IOException e) {
                         e.printStackTrace();

@@ -196,7 +196,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		g.setColor(new Color(200,200,255));
 		startIndex = (startIndex < line.length())?startIndex:line.length();
 		int xStart = fm.stringWidth(line.substring(0,startIndex));
-		int xEnd =fm.stringWidth(line.substring(0,endIndex));
+		int xEnd =(endIndex < line.length())?fm.stringWidth(line.substring(0,endIndex)):fm.stringWidth(line);
 		xStart+=X_MARGIN;
 		xEnd+=X_MARGIN;
 		g.fillRect(xStart, y, xEnd-xStart, fm.getHeight());
@@ -316,7 +316,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		String t = getText();
 
 		text = t.substring(0, low)+t.substring(high,t.length());
-		
+		System.out.println("(TextFiled.java) Deleting. seectIndex = "+selectIndex+", cursoIndex = "+cursorIndex+", low = "+low+", high = "+high);
 		//check to see if cursor moves back or stays in place
 		if(selectIndex <= cursorIndex){
 			cursorIndex = cursorIndex-(high-low);
@@ -513,7 +513,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void act() {
-		shiftHeld = false;
+		
 		findCursor = true;//when updating, calls the method that checks for the location of the cursor
 	}
 

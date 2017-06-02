@@ -43,7 +43,7 @@ public class TextBox extends TextField{
 		identifyCursorLineUnderMouse();
 		super.act();
 	}
-	
+
 	public void resetSelect(){
 		selectIndexInLine = cursorIndexInLine;
 		selectLine = cursorLine;
@@ -51,27 +51,50 @@ public class TextBox extends TextField{
 	}
 
 	private void resetLinesAfter(int i) {
-		//		int index = indexStartingFromLine(i);
-		int index = (lines.size()>0)?lines.get(i).getStartIndex():0;
-		deleteLinesAfter(i);
-		String remainingText = getText().substring(index);
-//		String paragraphs = 
-		String[] words = remainingText.split(" ");
-		int j = 0;
-		while(j < words.length){
+			//		int index = indexStartingFromLine(i);
+			int index = (lines.size()>0)?lines.get(i).getStartIndex():0;
+			//DEBUG
+//			if (lines.size()>0)System.out.println("Attempthing to remove all lines after (and including) \""+lines.get(i).getLine()+"\" which starts at "+lines.get(i).getStartIndex());
+				
+			deleteLinesAfter(i);
+			String remainingText;
+			try{
+				remainingText = getText().substring(index);				
+			}catch(StringIndexOutOfBoundsException e){
+				remainingText = getText().substring(--index);	
+			}
+			//remaining text always starts a new line, so including a leading '\n' is unecessary
+			if(remainingText.startsWith("\n")){
+				remainingText = remainingText.replaceFirst("\n", "");
+				index+=1;
+			}
+			String[] paragraphs = remainingText.split("\n",-1);
+			for(int pIndex = 0; pIndex < paragraphs.length; pIndex++){
+				String paragraph = paragraphs[pIndex]; 
+				String[] words = paragraph.split(" ");
+				String line = "";
+				int j = 0;
+//				if(words.length>0)System.out.println("First word in line is \""+words[0]+"\"");
+				while(j < words.length){
 
-			//don't print first space on a new line (unless there are many)
-			if(words[j] == ""){
-				j++;
+					//don't print first space on a new line (unless there are many)
+					if(words[j].equals(" ")|| words[j].equals("")){
+						j++;
+					}
+					if(j < words.length){
+						
+						line = words[j++];
+					}
+					while(j < words.length && lineFits(line+" "+words[j])){
+						line += " "+words[j];
+						j++;
+					}
+					lines.add(new TextLine(line, index));
+					index+=line.length();
+				}
+				index +=1;//add 2 to accommodate newline char
 			}
-			String line = words[j++];
-			while(j < words.length && lineFits(line+" "+words[j])){
-				line += " "+words[j];
-				j++;
-			}
-			lines.add(new TextLine(line, index));
-			index+=line.length();
-		}
+		
 	}
 
 
@@ -114,7 +137,9 @@ public class TextBox extends TextField{
 				cursorIndexInLine = calculateIndexOfClick(lines.get(lineIndex).getLine(), fm, relativeX);
 				if(!isShiftHeld())selectIndexInLine = cursorIndexInLine;
 				findCursor = false;
-				int cursor = cursorIndexInLine+lines.get(cursorLine).getStartIndex();
+				String[] paragraphs = getText().substring(lines.get(cursorLine).getStartIndex()).split("\n",-1);
+				System.out.println(paragraphs.length+ " paragraphs beign deleted");
+				int cursor = cursorIndexInLine+lines.get(cursorLine).getStartIndex()+paragraphs.length-1;
 				setCursor(cursor);
 				if(!isShiftHeld()){
 					setSelect(cursor);
@@ -134,6 +159,7 @@ public class TextBox extends TextField{
 			cursor-=lines.get(i).getLength();
 			i++;
 		}
+		if(i == lines.size())i = lines.size()-1;
 		cursorIndexInLine = cursor;
 		cursorLine = i;
 		int sCursor = getSelectIndex();
@@ -142,19 +168,26 @@ public class TextBox extends TextField{
 			sCursor-=lines.get(j).getLength();
 			j++;
 		}
+		if(j == lines.size())j = lines.size()-1;
 		selectIndexInLine = sCursor;
 		selectLine = j;
 	}
-	
+
 	public void setText(String s){
 		text = s;
 		setIndicesToCursor();
-		
+
 		resetLinesAfter(cursorLine);
 		update();
 		//does not automatically update for the sake of 
 	}
 
+	/**
+	 * 
+	 * @param line line where cursor was
+	 * @param index index of cursor relative to this line
+	 * @return an array with the index of the newLine and newIndex on that line. Does not go out of bounds
+	 */
 	private int[] adjustCursor(int line, int index){
 		while(line < lines.size()-1 && index > lines.get(line).getLength()){
 			index-=lines.get(line).getLength();
@@ -171,6 +204,7 @@ public class TextBox extends TextField{
 	protected void decreaseCursor(int spaces) {
 		super.decreaseCursor(spaces);
 		cursorIndexInLine -= spaces;
+		System.out.println("TextBox.java cursor = "+getCursorIndex()+" while cursorIndexInLine = "+cursorIndexInLine);
 		while(cursorLine > 0 && cursorIndexInLine<0){
 			cursorLine--;
 			cursorIndexInLine += lines.get(cursorLine).getLength();
@@ -231,10 +265,12 @@ public class TextBox extends TextField{
 		super.keyPressed(e);
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			System.out.println("Inserting a new line");
+			//			cursorLine++;
+			//			lines.add(cursorLine,new TextLine("", lines.get(cursorLine-1).getStartIndex()+lines.get(cursorLine-1).getLength()));
 			insert("\n");
 		}
 	}
-	
+
 	public void insert(String c){
 		putCursorBeforeSelect();
 		int selectIndex = getSelectIndex();
@@ -249,6 +285,10 @@ public class TextBox extends TextField{
 			text = t.substring(0,cursorIndex)+c+t.substring(selectIndex);
 			resetLinesAfter(cursorLine);
 			increaseCursor(c.length());
+			//			if(c.indexOf("\n") >=0){
+			//				System.out.println("The insertion contains a newline character");
+			//				setIndicesToCursor();
+			//			}
 		}
 		update();
 	}
@@ -259,9 +299,15 @@ public class TextBox extends TextField{
 	 * @return
 	 */
 	private boolean canInsert(String s) {
+		if (s.equals("\n"))return false;
+		
 		String currentLine = lines.get(cursorLine).getLine();
-		String newContent = currentLine.substring(0,cursorIndexInLine)+s+currentLine.substring(selectIndexInLine);
-		return lineFits(newContent) && !s.equals("\n");
+		int checki = (cursorIndexInLine>=0)?cursorIndexInLine:0;
+		int checkj = (selectIndexInLine>=0)?selectIndexInLine:0;
+		checki = (checki <= currentLine.length())?checki:currentLine.length();
+		checkj = (checkj <= currentLine.length())?checkj:currentLine.length();
+		String newContent = currentLine.substring(0,checki)+s+currentLine.substring(checkj);
+		return lineFits(newContent);
 	}
 
 	/**
@@ -276,12 +322,22 @@ public class TextBox extends TextField{
 	}
 
 	public void remove(int low, int high){
+
 		String t = getText();
+		String removal = t.substring(low,high);
+		System.out.println("Deletion is \""+removal+"\"");
 		putCursorBeforeSelect();
 		text = t.substring(0, low)+t.substring(high);
+		System.out.println("Value will become \""+text+"\"");
 		if(getSelectIndex() == getCursorIndex()){
+			System.out.println("SelectIndexInLine used to be "+selectIndexInLine+" and cursorIndexInLine was "+cursorIndexInLine);
 			decreaseCursor(1);
+			System.out.println("NOW, selectIndexInLine is "+selectIndexInLine+" and cursorIndexInLine is "+cursorIndexInLine);
+			if(removal.contains("\n")){
+				setIndicesToCursor();
+			}
 		}else{
+			System.out.println("SelectIndexInLien used to be "+selectIndexInLine+" and will become "+cursorIndexInLine);
 			selectLine = cursorLine;
 			selectIndexInLine = cursorIndexInLine;
 			setSelect(getCursorIndex());
@@ -359,8 +415,8 @@ public class TextBox extends TextField{
 
 	private void drawCursor(Graphics2D g, FontMetrics fm, int y) {
 		g.setColor(Color.black);
-					if(cursorIndexInLine> lines.get(cursorLine).getLine().length())cursorIndexInLine = lines.get(cursorLine).getLine().length();
-		int x = fm.stringWidth(lines.get(cursorLine).getLine().substring(0,cursorIndexInLine))+X_MARGIN;
+		int location = (cursorIndexInLine> lines.get(cursorLine).getLine().length())?lines.get(cursorLine).getLine().length():cursorIndexInLine;
+		int x = fm.stringWidth(lines.get(cursorLine).getLine().substring(0,location))+X_MARGIN;
 		g.drawLine(x, y-fm.getHeight(), x, y);
 	}
 
@@ -381,7 +437,7 @@ public class TextBox extends TextField{
 		relativeY = y - getY();
 		identifyCursorLineUnderMouse();
 		update();
-//		setShiftHeld(false);
+		//		setShiftHeld(false);
 	}
 
 	@Override

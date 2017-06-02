@@ -35,8 +35,8 @@ public class Button extends TextLabel implements Clickable{
 	private BufferedImage hoverImage;
 	private boolean hovered;
 	private boolean enabled;
-	private int curveX;
-	private int curveY;
+	protected int curveX;
+	protected int curveY;
 	
 	public Button(int x, int y, int w, int h, String text, Color color, Action action) {
 		super(x, y, w, h, text);
@@ -83,6 +83,13 @@ public class Button extends TextLabel implements Clickable{
 		else return super.getImage();
 	}
 	
+	public BufferedImage getHoveredImage(){
+		return hoverImage;
+	}
+	
+	public BufferedImage getNonhoveredImage(){
+		return super.getImage();
+	} 
 	public void update(Graphics2D g){
 		drawButton(g, false);
 	}
@@ -95,9 +102,7 @@ public class Button extends TextLabel implements Clickable{
 	}
 	
 	
-	public void drawButton(Graphics2D g, boolean hover){
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+	public void drawShape(Graphics2D g, boolean hover){
 		if(getBackground() != null){
 			if(!hover)g.setColor(getBackground());
 			else{
@@ -110,6 +115,12 @@ public class Button extends TextLabel implements Clickable{
 		}
 		g.setColor(Color.BLACK);
 		g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, curveX, curveY);
+	}
+	
+	public void drawButton(Graphics2D g, boolean hover){
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		drawShape(g, hover);
 		g.setColor(getForeground());
 		g.setFont(getFont());
 		FontMetrics fm = g.getFontMetrics();
@@ -147,7 +158,7 @@ public class Button extends TextLabel implements Clickable{
 	}
 	
 	public void act(){
-		action.act();
+		if(action != null) action.act();
 	}
 	
 	public void setAction(Action a){
