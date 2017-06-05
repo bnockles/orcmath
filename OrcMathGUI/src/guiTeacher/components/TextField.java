@@ -69,8 +69,10 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	protected boolean cursorShowing;
 	private int cursorIndex;
 	private int selectIndex;
-	protected int relativeX;
-	protected int relativeY;
+	protected int relativeX;//used during hover
+	protected int relativeY;//used during hover
+	protected int relativeXClick;//used for finding cursor
+	protected int relativeYClick;//used for finding cursor
 	protected boolean findCursor;//turns true when the update method is required to look for where a click corresponds to the cursor
 	private boolean editable;
 	private int inputType;
@@ -212,7 +214,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		g.setFont(getFont());
 		FontMetrics fm = g.getFontMetrics();
 		if(findCursor){
-			cursorIndex = calculateIndexOfClick(getText(), fm, relativeX);
+			cursorIndex = calculateIndexOfClick(getText(), fm, relativeXClick);
 			if(!shiftHeld)selectIndex = cursorIndex;
 			findCursor = false;
 			cursorShowing  = true;
@@ -513,7 +515,8 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void act() {
-		
+		relativeXClick = relativeX;
+		relativeYClick = relativeY;
 		findCursor = true;//when updating, calls the method that checks for the location of the cursor
 	}
 

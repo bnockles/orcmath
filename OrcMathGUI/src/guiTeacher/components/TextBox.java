@@ -37,7 +37,7 @@ public class TextBox extends TextField{
 
 	protected void identifyCursorLineUnderMouse(){
 		FontMetrics fm = getImage().createGraphics().getFontMetrics(getFont());
-		cursorLine = (relativeY-getInitialY(fm)+fm.getAscent())/getLineSpace(fm);
+		cursorLine = (relativeYClick-getInitialY(fm)+fm.getAscent())/getLineSpace(fm);
 		cursorLine = (cursorLine>=lines.size())?lines.size()-1:cursorLine;
 		if(!isShiftHeld())selectLine = cursorLine;
 	}
@@ -151,7 +151,7 @@ public class TextBox extends TextField{
 		for(int lineIndex = 0; lineIndex < lines.size(); lineIndex++){
 			if(cursorLine == lineIndex){
 				String line = lines.get(lineIndex).getLine();
-				cursorIndexInLine = calculateIndexOfClick(line, fm, relativeX);
+				cursorIndexInLine = calculateIndexOfClick(line, fm, relativeXClick);
 				
 				if(!isShiftHeld())selectIndexInLine = cursorIndexInLine;
 				findCursor = false;
@@ -164,7 +164,7 @@ public class TextBox extends TextField{
 					System.out.println("Adjusting for deleted space");
 				}
 				setCursor(cursor);
-				System.out.println("FOund curson in line at "+cursorIndexInLine);
+				System.out.println("Found curson in line at "+cursorIndexInLine);
 				if(!isShiftHeld()){
 					setSelect(cursor);
 				}
@@ -368,7 +368,7 @@ public class TextBox extends TextField{
 
 		String t = getText();
 		String removal = t.substring(low,high);
-		System.out.println("Deletion is \""+removal+"\"");
+//		System.out.println("Deletion is \""+removal+"\"");
 		putCursorBeforeSelect();
 		text = t.substring(0, low)+t.substring(high);
 		
@@ -392,16 +392,17 @@ public class TextBox extends TextField{
 			selectIndexInLine = cursorIndexInLine;
 			setSelect(getCursorIndex());
 		}
-		resetLinesAfter(cursorLine);
+		int resetFrom = (cursorLine>0)?cursorLine-1:cursorLine;
+		resetLinesAfter(resetFrom);
 		//finally, check to see if cursor is out of bounds
-//		if(cursorIndexInLine > lines.get(cursorLine).getLength()){
-//			cursorIndexInLine-=lines.get(cursorLine).getLength()+1;
-//			cursorLine++;
-//			selectLine=cursorLine;
-//			selectIndexInLine = cursorIndexInLine;
-//		}
+		if(cursorIndexInLine > lines.get(cursorLine).getLength()){
+			cursorIndexInLine-=lines.get(cursorLine).getLength();
+			cursorLine++;
+			selectLine=cursorLine;
+			selectIndexInLine = cursorIndexInLine;
+		}
 		update();
-		System.out.println("This is the text body: \""+getText()+"\"");
+//		System.out.println("This is the text body: \""+getText()+"\"");
 	}
 
 	private void highlight(Graphics2D g, FontMetrics fm, int y, String line, int lineIndex, int highlightLineStart, int highlightLineEnd, int highlightStart,int highlightEnd){
@@ -488,6 +489,19 @@ public class TextBox extends TextField{
 	}
 	private void drawCursor(Graphics2D g, FontMetrics fm, int y) {
 		g.setColor(Color.black);
+//		if(cursorIndexInLine < 0){
+//			cursorLine--;
+//			cursorIndexInLine+=lines.get(cursorLine).getLength();
+//			selectLine = cursorLine;
+//			selectIndexInLine = cursorIndexInLine;
+//
+//		}
+//		if(cursorIndexInLine > lines.get(cursorLine).getLength()){
+//			cursorIndexInLine-=lines.get(cursorLine).getLength()-1;
+//			cursorLine++;
+//			selectLine = cursorLine;
+//			selectIndexInLine = cursorIndexInLine;
+//		}
 		int x = fm.stringWidth(lines.get(cursorLine).getLine().substring(0,cursorIndexInLine))+X_MARGIN;
 		g.drawLine(x, y-fm.getHeight(), x, y);
 	}

@@ -105,7 +105,7 @@ public class CreateScreen extends OrcMathScreen {
 		int vertSpace = 5+TextField.DESCRIPTION_SPACE;
 		fileName = new TextField(fieldMargin, MARGIN+25+vertSpace, _FIELD_WIDTH, textFieldHeight, "Worksheet","File Name");
 		heading = new TextField(fieldMargin, fileName.getY()+fileName.getHeight()+vertSpace, _FIELD_WIDTH, textFieldHeight, "Practice","Header");
-		instructionsField = new TextBox(fieldMargin,heading.getY()+heading.getHeight()+vertSpace,_FIELD_WIDTH,200,"a\nb\nc","Main Instructions");
+		instructionsField = new TextBox(fieldMargin,heading.getY()+heading.getHeight()+vertSpace,_FIELD_WIDTH,200,"Somewhere, far away from here, I saw stars... start that I could reach, yeah.","Main Instructions");
 
 		//output table
 		addTable(viewObjects);
