@@ -35,6 +35,7 @@ public class TextBox extends TextField{
 		update();
 	}
 
+	//used when dragging
 	protected void identifyCursorLineUnderMouse(){
 		FontMetrics fm = getImage().createGraphics().getFontMetrics(getFont());
 		cursorLine = (relativeYClick-getInitialY(fm)+fm.getAscent())/getLineSpace(fm);
@@ -401,10 +402,11 @@ public class TextBox extends TextField{
 			setIndicesToCursor();
 		}
 		//finally, check to see if cursor is out of bounds
-//		if(cursorLine >= lines.size()){
-//			cursorLine = lines.size()-1;
-//		}
-//		else 
+		if(cursorLine >= lines.size()){
+			System.out.println("Used a line of code you thought was worthless. Line 405");
+			cursorLine = lines.size()-1;
+		}
+		else 
 			if(cursorIndexInLine > lines.get(cursorLine).getLength()){
 			cursorIndexInLine-=lines.get(cursorLine).getLength();
 			cursorLine++;
@@ -501,7 +503,6 @@ public class TextBox extends TextField{
 		g.setColor(Color.black);
 		
 //		try{
-		System.out.println("DRAWCURSOR "+cursorIndexInLine);
 		int x = fm.stringWidth(lines.get(cursorLine).getShownLine().substring(0,cursorIndexInLine-lines.get(cursorLine).getDiff()))+X_MARGIN;			
 			g.drawLine(x, y-fm.getHeight(), x, y);
 //		}catch(StringIndexOutOfBoundsException e){
@@ -512,8 +513,10 @@ public class TextBox extends TextField{
 	@Override
 	public boolean setStart(int x, int y) {
 		findCursor = true;
-		relativeX = x - getX();
-		relativeY = y - getY();
+		relativeXClick = x - getX();
+		relativeYClick = y - getY();
+		relativeX = relativeXClick;
+		relativeY = relativeXClick;
 		identifyCursorLineUnderMouse();
 		update();
 		return isEditable();
@@ -522,8 +525,10 @@ public class TextBox extends TextField{
 	@Override
 	public void setFinish(int x, int y) {
 		findCursor = true;
-		relativeX = x - getX();
-		relativeY = y - getY();
+		relativeXClick = x - getX();
+		relativeYClick = y - getY();
+		relativeX = relativeXClick;
+		relativeY = relativeXClick;
 		identifyCursorLineUnderMouse();
 		update();
 		//		setShiftHeld(false);
@@ -531,8 +536,10 @@ public class TextBox extends TextField{
 
 	@Override
 	public void setHeldLocation(int x, int y) {
-		relativeX = x - getX();
-		relativeY = y - getY();
+		relativeXClick = x - getX();
+		relativeYClick = y - getY();
+		relativeX = relativeXClick;
+		relativeY = relativeXClick;
 		setShiftHeld(true);
 		identifyCursorLineUnderMouse();
 		findCursor = true;
