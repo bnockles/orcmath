@@ -54,6 +54,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	private int historyIndex;//index of where we are in history, (AKA number of times command-Z is pressed)
 	private boolean commandHeld;//used to identify whether a shortcut is used
 	private boolean shiftHeld;
+	protected boolean ignoreDismiss;//when true, does not turn off shift held when clicked
 
 	private static final int _HISTORY_LIMIT = 10;
 	private static final int _HISTORY_UPDATE_LIMIT = 3;//how many intervals of _CURSOR_INTERVAL to wait before updating history
@@ -402,6 +403,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			commandHeld = true;
 		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){
 			shiftHeld = true;
+			ignoreDismiss=true;
 		}else{
 			if(e.getKeyCode() == KeyEvent.VK_LEFT){
 				decreaseCursor(1);
@@ -423,6 +425,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			commandHeld = false;
 		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){
 			shiftHeld = false;
+			ignoreDismiss=false;
 		}
 	}
 	
@@ -516,6 +519,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void act() {
+		if(!ignoreDismiss){
+			shiftHeld = false;			
+		}
 		relativeXClick = relativeX;
 		relativeYClick = relativeY;
 		findCursor = true;//when updating, calls the method that checks for the location of the cursor
@@ -562,6 +568,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		FontMetrics fm = getImage().createGraphics().getFontMetrics();
 		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
 		relativeX = x - getX();
+		ignoreDismiss = false;
 		update();
 	}
 
