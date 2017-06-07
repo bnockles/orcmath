@@ -79,11 +79,9 @@ public class TextBox extends TextField{
 			String[] words = paragraph.split(" ",-1);
 			String line = "";
 			int j = 0;
-			int add = 0;
 			if(j < words.length){
 				if(beganWithNewline || pIndex != start){
 					line = "\n"+words[j++];
-					add++;
 				}else{
 					line = words[j++];	
 				}
@@ -93,13 +91,12 @@ public class TextBox extends TextField{
 					line += " "+words[j];
 					j++;
 				}			
-				TextLine toAdd = new TextLine(line, index);
-				lines.add(toAdd);
+				lines.add(new TextLine(line, index));
 				index+=line.length();
 				line ="";
 			}while(j< words.length);
 		}
-		System.out.println("Lines are "+lines);
+//		System.out.println("Lines are "+lines);
 	}
 
 
@@ -150,7 +147,7 @@ public class TextBox extends TextField{
 				if(!isShiftHeld())selectIndexInLine = cursorIndexInLine;
 				findCursor = false;
 				setCursorToIndices();
-				System.out.println("Found cursor at index "+getCursorIndex()+", on line that starts at "+lines.get(lineIndex).getStartIndex()+" and cursorIndex on line is "+cursorIndexInLine);
+//				System.out.println("Found cursor at index "+getCursorIndex()+", on line that starts at "+lines.get(lineIndex).getStartIndex()+" and cursorIndex on line is "+cursorIndexInLine);
 				break;
 			}
 		}

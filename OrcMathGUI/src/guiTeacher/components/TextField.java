@@ -360,7 +360,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			int low = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
 			int high = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
 			if(high > text.length())high = text.length();//work around THIS IS A WORK AROUND. IT SHOULDN'T BE NECESSARY. WHY iS HIGH OUTTA BOUNDS?
-			System.out.println("(TextField) deleting with low "+low+", high "+high);
+//			System.out.println("(TextField) deleting with low "+low+", high "+high);
 			//when selector is not over more than one letter
 			if(low == high && low>0){
 				low=high-1;
