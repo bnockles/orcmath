@@ -93,12 +93,13 @@ public class TextBox extends TextField{
 					line += " "+words[j];
 					j++;
 				}			
-				lines.add(new TextLine(line, index));
-				index+=line.length()+add;
+				TextLine toAdd = new TextLine(line, index);
+				lines.add(toAdd);
+				index+=line.length();
 				line ="";
 			}while(j< words.length);
 		}
-
+		System.out.println("Lines are "+lines);
 	}
 
 
@@ -149,7 +150,7 @@ public class TextBox extends TextField{
 				if(!isShiftHeld())selectIndexInLine = cursorIndexInLine;
 				findCursor = false;
 				setCursorToIndices();
-
+				System.out.println("Found cursor at index "+getCursorIndex()+", on line that starts at "+lines.get(lineIndex).getStartIndex()+" and cursorIndex on line is "+cursorIndexInLine);
 				break;
 			}
 		}
@@ -527,7 +528,11 @@ public class TextBox extends TextField{
 
 	private void drawCursor(Graphics2D g, FontMetrics fm, int y) {
 		g.setColor(Color.black);
-		int x = fm.stringWidth(lines.get(cursorLine).getShownLine().substring(0,cursorIndexInLine-lines.get(cursorLine).getDiff()))+X_MARGIN;			
+		int end = cursorIndexInLine-lines.get(cursorLine).getDiff();
+		if(end < 0){
+			System.out.println("Cursor needs to be shown behind invisible characters");
+		}
+		int x = fm.stringWidth(lines.get(cursorLine).getShownLine().substring(0,end))+X_MARGIN;			
 		g.drawLine(x, y-fm.getHeight(), x, y);
 	}
 
@@ -611,7 +616,7 @@ public class TextBox extends TextField{
 		}
 
 		public String toString(){
-			return "\""+line+"\" -starts at index "+startIndex;
+			return "\""+line+"\" -starts at index "+startIndex+", length "+line.length();
 		}
 	}
 }
