@@ -504,7 +504,7 @@ public class TextBox extends TextField{
 				y += getLineSpace(fm);
 			}
 		}
-		drawBorder(fm, g);
+		drawBorder(g);
 		g2.drawImage(buffer, 0, 0, null);
 	}
 

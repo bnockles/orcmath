@@ -35,6 +35,12 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 		// TODO Auto-generated constructor stub
 	}
 
+	public FullFunctionPane(FocusController focusController, int x, int y, int w, int h) {
+		super(focusController, null, new ArrayList<Visible>(),x, y, w, h);
+		// TODO Auto-generated constructor stub
+	}
+
+	
 	@Override
 	public void initObjects(List<Visible> viewObjects) {
 		super.initObjects(viewObjects);
@@ -157,7 +163,7 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 	public void run(){
 		while(running){
 			update();		
-			containingComponent.update();
+			if(containingComponent != null) containingComponent.update();
 			try {
 				Thread.sleep(30);
 			} catch (InterruptedException e) {

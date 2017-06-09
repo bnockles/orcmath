@@ -85,7 +85,7 @@ public abstract class FullFunctionScreen extends ClickableScreen implements KeyL
 	public void mouseClicked(MouseEvent m) {
 		super.mouseClicked(m);
 		for(KeyedComponent k: keyedComponents){
-			if(k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
+			if(k.isVisible() && k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
 				moveFocus(k);
 				break;
 			}

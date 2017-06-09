@@ -4,6 +4,7 @@ package screens;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -31,6 +32,7 @@ import guiTeacher.components.CustomImageButton;
 import guiTeacher.components.FullFunctionPane;
 import guiTeacher.components.Link;
 import guiTeacher.components.ScrollablePane;
+import guiTeacher.components.StyledComponent;
 import guiTeacher.components.TextBox;
 import guiTeacher.components.TextLabel;
 import guiTeacher.interfaces.DrawInstructions;
@@ -74,7 +76,7 @@ public class LaTeXEditor extends FullFunctionPane{
 
 		problem = new TextBox(margin, 2*hSpace+labelHeight, boxWidth, boxHeight, "Sample: x^{\\frac{1}{2}}=\\sqrt{x}");
 		solution = new TextBox(margin, 4*hSpace+2*labelHeight+boxHeight, getWidth()-2*margin, boxHeight, PLACEHOLDER_TEXT);
-		
+
 		Button add = new Button(getWidth()-margin-buttonWidth, hSpace, buttonWidth, buttonHeight, "Add", new Color(0,153,70),new Action() {
 
 			@Override
@@ -85,38 +87,95 @@ public class LaTeXEditor extends FullFunctionPane{
 		});
 		add.setSize(12);
 		add.setCurve(1, 1);
-		Button addImage = new CustomImageButton(getWidth()-2*(margin+buttonWidth), hSpace, 20, 20, new DrawInstructions() {
-			
+		Button helpImage = new CustomImageButton(getWidth()-2*(margin+buttonWidth), hSpace, 21, 21, new  DrawInstructions() {
+
 			@Override
 			public void draw(Graphics2D g, boolean highlight) {
-				Color color = highlight ? Color.blue : Color.black;
+				Color color = !highlight ? new Color(214,226,238) : new Color(234,243,250);//a light blue background
+				Color line = !highlight ? new Color(76,95,112) : new Color(113,132,149);//a dark blue line
+				try{
+					File fontFile = new File("resources/Baumans-Regular.ttf");
+					//			File fontFile = new File("resources//DayRoman.ttf");
+					Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+					Font baseFont=font.deriveFont(18f);
+					g.setFont(baseFont);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 				g.setColor(color);
-				g.drawRect(1, 1, 18, 18);
-				g.drawOval(4, 4, 14, 14);
+				g.fillOval(0, 0, 20, 20);
+				g.setColor(line);
+				g.drawString("?", 6, 17);
+				g.drawOval(0, 0, 20, 20);
+			}
+		},new Action() {
+
+			@Override
+			public void act() {
+				OrcMath.createScreen.showGuide(!OrcMath.createScreen.getReference().isVisible());
+			}
+		});
+		viewObjects.add(helpImage);
+
+		Button addImage = new CustomImageButton(getWidth()-(int)(1.5*(margin+buttonWidth)), hSpace, 21, 21, new DrawInstructions() {
+
+			@Override
+			public void draw(Graphics2D g, boolean highlight) {
+				Color lcolor = !highlight ? new Color(234,240,246) : new Color(245,248,252);//a LIGHT blue background
+				Color color = !highlight ? new Color(214,226,238) : new Color(234,243,250);//a light blue background
+				Color line = !highlight ? new Color(76,95,112) : new Color(113,132,149);//a dark blue line
+				Color accentColor= !highlight ? new Color(109,193,193) : new Color(141,210,210);//a green blue
+				g.setColor(color);
+				int[] x = {0,6,20,20,0};
+				int[] y = {4,0,0,20,20};
+				Polygon clipping = new Polygon(x, y, 5);
+				int[] cx = {0,6,4};
+				int[] cy = {4,0,6};
+				Polygon corner = new Polygon(cx, cy, 3);
+				g.fill(clipping);
+				g.setColor(accentColor);
+				int min = 5;
+				int max = 10;
+				g.fillRect(min, min, max, max);
+				g.setColor(line);
+				g.draw(clipping);
+				g.drawRect(min, min, max, max);
+				for(int r = min; r<max+min; r+=2){
+					g.drawLine(r, min, r, max);
+					g.drawLine(min, r, max, r);
+				}
+				g.setColor(lcolor);
+				g.fillOval(7, 7, 10, 10);
+				g.setColor(line);
+				g.drawOval(7, 7, 10, 10);
+				g.setColor(lcolor);
+				g.fill(corner);
+				g.setColor(line);
+				g.draw(corner);
 			}
 		}, new Action() {
-			
+
 			@Override
 			public void act() {
 				final JFileChooser fc = new JFileChooser();
-//				fc.addChoosableFileFilter(new ImageFilter());
+				//				fc.addChoosableFileFilter(new ImageFilter());
 				//In response to a button click:
-                int result = fc.showOpenDialog(null);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-                    try {
-                        imageToAdd = (new ImageIcon(ImageIO.read(file)));
-                        System.out.println("Loaded an image with width = "+imageToAdd.getIconWidth());
-                        String imageCode = "\\begin{array}{l} \\includegraphics[width=40cm, interpolation=bicubic] {"+file.getAbsolutePath()+"} \\end{array}";
-                        problem.insert(imageCode);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+				int result = fc.showOpenDialog(null);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					try {
+						imageToAdd = (new ImageIcon(ImageIO.read(file)));
+						System.out.println("Loaded an image with width = "+imageToAdd.getIconWidth());
+						String imageCode = "\\begin{array}{l} \\includegraphics[width=40cm, interpolation=bicubic] {"+file.getAbsolutePath()+"} \\end{array}";
+						problem.insert(imageCode);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		});
 		viewObjects.add(addImage);
-		
+
 		preview = new Link(getWidth()-3*(margin+buttonWidth), hSpace, buttonWidth, buttonHeight, "Preview",new Action() {
 
 			@Override
@@ -126,7 +185,7 @@ public class LaTeXEditor extends FullFunctionPane{
 				try{
 					Problem.toImage(testProblem);
 				}catch(ParseException e){
-//					e.printStackTrace();
+					//					e.printStackTrace();
 					String message = e.getLocalizedMessage().replaceAll(Pattern.quote("{"), " \\\\{ ").replaceAll(Pattern.quote("}"), " \\\\} ");
 					System.out.println(message);
 					testProblem = "\\text{Parse Error: "+message+"}";
@@ -149,8 +208,8 @@ public class LaTeXEditor extends FullFunctionPane{
 			}
 		});
 		preview.setSize(12);
-		problem.setFont(new Font("Times New Roman", Font.PLAIN,14));
-		solution.setFont(new Font("Times New Roman", Font.PLAIN,14));
+		problem.setFont(problem.getMonoFont());
+		solution.setFont(solution.getMonoFont());
 
 		TextLabel problemLabel = new TextLabel(margin,hSpace,boxWidth-2*buttonWidth-margin,labelHeight,"Problem LaTeX");
 		TextLabel solutionLabel = new TextLabel(margin,3*hSpace+labelHeight+boxHeight,boxWidth,labelHeight,"Solution LaTeX");
@@ -176,10 +235,11 @@ public class LaTeXEditor extends FullFunctionPane{
 
 	}
 
+
 	public void setProblemText(String problemLaTeX) {
 		problem.setText(problemLaTeX);
 	}
-	
+
 	public void setSolutionText(String solutionLaTeX) {
 		solution.setText(solutionLaTeX);
 	}

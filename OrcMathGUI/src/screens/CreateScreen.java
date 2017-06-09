@@ -25,6 +25,7 @@ import java.util.List;
 
 import com.orcmath.local.Problem;
 
+import components.LaTeXReference;
 import components.MenuButton;
 import components.TopicAccordion;
 import components.UpdateNotification;
@@ -69,6 +70,7 @@ public class CreateScreen extends OrcMathScreen {
 	private static final int BUTTON_WIDTH = 90;
 	private static final int BUTTON_HEIGHT = 40;
 	private File saveDirectory;
+	private LaTeXReference reference;
 	private TextField fileName;
 	private TextField heading;
 	private TextBox instructionsField;
@@ -103,6 +105,9 @@ public class CreateScreen extends OrcMathScreen {
 		questionsByTopic = new TopicAccordion(this, MARGIN,MARGIN+65,_ACCORDION_WIDTH, search);
 		int textFieldHeight = 30;
 		int vertSpace = 5+TextField.DESCRIPTION_SPACE;
+		reference = new LaTeXReference(this, fieldMargin, MARGIN+25+vertSpace, _FIELD_WIDTH, 500);
+//		reference.setVisible(false);
+		viewObjects.add(reference);
 		fileName = new TextField(fieldMargin, MARGIN+25+vertSpace, _FIELD_WIDTH, textFieldHeight, "Worksheet","File Name");
 		heading = new TextField(fieldMargin, fileName.getY()+fileName.getHeight()+vertSpace, _FIELD_WIDTH, textFieldHeight, "Practice","Header");
 		instructionsField = new TextBox(fieldMargin,heading.getY()+heading.getHeight()+vertSpace,_FIELD_WIDTH,200,"Somewhere, far away from here, I saw stars... start that I could reach, yeah.","Main Instructions");
@@ -288,6 +293,23 @@ public class CreateScreen extends OrcMathScreen {
 		tableScroll.update();
 	}
 
+	/**
+	 * called by LaTeX editor when latex is being typed
+	 */
+	public void showGuide(boolean on) {
+		String s = on?"on":"off";
+		System.out.println("Help is "+s);
+		fileName.setVisible(!on);
+		heading.setVisible(!on);
+		instructionsField.setVisible(!on);
+		tableScroll.setVisible(!on);
+		reference.setVisible(on);
+		update();		
+	}
+
+	public LaTeXReference getReference() {
+		return reference;
+	}
 
 
 

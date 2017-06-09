@@ -177,17 +177,6 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 			yRelative = y - getY();
 
 		}
-		//		else{
-		//			if(upArrowHovered || downArrowHovered){
-		//				upArrowHovered = false;
-		//				downArrowHovered = false;
-		//				
-		//				update();
-		//			}
-		//			upArrowHovered = false;
-		//			downArrowHovered = false;
-		//			
-		//		}
 		return hov;
 	}
 
@@ -321,6 +310,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 		this.arrowColor = arrowColor;
 	}
 
+
 	@Override
 	public void update(Graphics2D g2) {
 		if(contentImage != null) {
@@ -344,6 +334,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 				g.setColor(arrowColor);
 			}
 			if(contentY+getHeight()<contentImage.getHeight())g.fill(downArrow);
+			drawBorder(g);
 			g2.drawImage(buffer, 0, 0, null);
 		}
 	}

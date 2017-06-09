@@ -19,6 +19,8 @@
 package guiTeacher.components;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -56,10 +58,16 @@ public class Graphic implements Visible {
 
 			int newWidth = (int) (icon.getIconWidth() * scale);
 			int newHeight = (int) (icon.getIconHeight() * scale);
-			image = new BufferedImage(newWidth,newHeight,BufferedImage.TYPE_INT_ARGB);
+			
+			image = new BufferedImage(icon.getIconWidth(),icon.getIconHeight(),BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = image.createGraphics();
-			g.drawImage(icon.getImage(), 0, 0, newWidth, newHeight, 0,0,icon.getIconWidth(), icon.getIconHeight(), null);
-
+			g.drawImage(icon.getImage(), 0, 0, null);
+			
+			AffineTransform scaleT = new AffineTransform();
+			scaleT.scale(scale, scale);
+			AffineTransformOp scaleOp = new AffineTransformOp(scaleT, AffineTransformOp.TYPE_BILINEAR);
+			image = scaleOp.filter(image,new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB));
+			
 			loadedImages = true;
 		}catch(Exception e){
 			e.printStackTrace();
@@ -95,9 +103,15 @@ public class Graphic implements Visible {
 				Graphics2D g = image.createGraphics();
 				g.drawImage(icon.getImage(), 0, 0, null);
 			}else{
-				image = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
+				image = new BufferedImage(icon.getIconWidth(),icon.getIconHeight(),BufferedImage.TYPE_INT_ARGB);
 				Graphics2D g = image.createGraphics();
-				g.drawImage(icon.getImage(), 0, 0, w, h, 0,0,icon.getIconWidth(), icon.getIconHeight(), null);
+				g.drawImage(icon.getImage(), 0, 0, null);
+				
+				AffineTransform scale = new AffineTransform();
+				scale.scale(w/(double)icon.getIconWidth(), h/(double)icon.getIconHeight());
+				AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_BILINEAR);
+				image = scaleOp.filter(image,new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB));
+//				g.drawImage(icon.getImage(), 0, 0, w, h, 0,0,icon.getIconWidth(), icon.getIconHeight(), null);
 			}
 			loadedImages = true;
 		}catch(Exception e){

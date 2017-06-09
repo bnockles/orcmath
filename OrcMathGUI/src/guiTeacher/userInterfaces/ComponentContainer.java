@@ -18,10 +18,12 @@
  *******************************************************************************/
 package guiTeacher.userInterfaces;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,8 @@ public abstract class ComponentContainer extends JPanel{
 	private List<Visible> viewObjects;
 	private BufferedImage image;
 	private BufferedImage formerImage;//used for transitions
+	private int borderWidth;
+	private Color borderColor;
 
 	//used for animating transitions
 	private int xScreen;
@@ -47,6 +51,7 @@ public abstract class ComponentContainer extends JPanel{
 	private int heightScreen;
 	private int xTarget;
 	private int yTarget;
+
 
 	public ComponentContainer(int width, int height) {
 		viewObjects = new ArrayList<Visible>();
@@ -66,6 +71,7 @@ public abstract class ComponentContainer extends JPanel{
 	}
 
 	public void initImage(int width, int height) {
+		borderColor = Color.black;
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		formerImage = null;
 		update();
@@ -96,10 +102,7 @@ public abstract class ComponentContainer extends JPanel{
 		viewObjects.add(v);
 	}
 
-	//	public void paintComponents(Graphics g){
-	//		g.drawImage(image, 0, 0, null);
-	//	}
-	//	
+
 	public void paint(Graphics g){
 		//		g.drawImage(image, 0, -22, null);
 		int offset = -20;
@@ -112,9 +115,41 @@ public abstract class ComponentContainer extends JPanel{
 				g.drawImage(transitionBuffer, 0, offset, null);
 			}
 		}else{
-			g.drawImage(image, 0,offset,null);			
+			g.drawImage(image, 0,offset,null);	
 		}
 	}
+
+	public void drawBorder(Graphics2D g){
+		if(getBorderWidth() >0){
+			g.setColor(getBorderColor());
+			Stroke s = g.getStroke();
+			g.setStroke(new BasicStroke(getBorderWidth()));
+			g.drawRect(getBorderWidth()/2, getBorderWidth()/2, getWidth()-getBorderWidth(), getHeight()-getBorderWidth());
+			g.setStroke(s);
+		}
+	}
+
+
+
+	public Color getBorderColor() {
+		return borderColor;
+	}
+
+
+	public void setBorderColor(Color borderColor) {
+		this.borderColor = borderColor;
+	}
+
+
+	public int getBorderWidth() {
+		return borderWidth;
+	}
+
+
+	public void setBorderWidth(int borderWidth) {
+		this.borderWidth = borderWidth;
+	}
+
 
 	public void transitionWith(Transition t, BufferedImage formerScreenImage) {
 		formerImage = formerScreenImage;
@@ -157,22 +192,23 @@ public abstract class ComponentContainer extends JPanel{
 
 
 	public void update() {
-		//		buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+//				image = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 		update(g);
 		//		Graphics2D gi = buffer.createGraphics();
 		//		gi.drawImage(buffer, getWidth(), getHeight(), null);
 	}
 
-	public void update(Graphics2D g2){
-		//		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-		//		Graphics2D g2 = buffer.createGraphics();
+	public void update(Graphics2D g){
+				BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+				Graphics2D g2 = buffer.createGraphics();
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(Color.white);
 		g2.fillRect(0, 0, image.getWidth(), image.getHeight());
 		g2.setColor(Color.black);
 		drawObjects(g2);
+		g.drawImage(buffer, 0, 0, null);
 		repaint();
 		//		g.drawImage(buffer, 0, 0, null);
 	}

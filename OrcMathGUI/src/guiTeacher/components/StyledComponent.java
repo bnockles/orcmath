@@ -36,6 +36,7 @@ public abstract class StyledComponent extends Component {
 	private static Color tabShade = new Color(150,200,255);
 	
 	private static Font baseFont =new Font("Times Roman",Font.PLAIN,14);//also used in tables
+	private static Font monoFont =new Font("Courier",Font.PLAIN,14);//also used in tables
 	private static Color textColor = Color.black;
 	private static Color headerColor = new Color(0,0,0);
 	private static Color bodyColor = new Color(0,0,0);
@@ -58,6 +59,14 @@ public abstract class StyledComponent extends Component {
 	
 	public Color getTextColor(){
 		return textColor;
+	}
+	
+	public static void setMonoText(Font f){
+		monoFont = f;
+	}
+	
+	public Font getMonoFont(){
+		return monoFont;
 	}
 	
 	public StyledComponent(int x, int y, int w, int h) {
