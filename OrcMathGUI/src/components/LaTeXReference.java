@@ -36,9 +36,11 @@ public class LaTeXReference extends FullFunctionPane {
 
 	@Override
 	public void initAllObjects(List<Visible> v){
-		String[] codes = {"\\\\","\\text{plain text}","\\frac{a}{b}","sqrt{x}","x^2","\\left(\\frac{tall}{paren}\\right)"};
-		String[] images = {"newline.png","text.png","frac.png","sqrt.png","exp.png","tallParen.png"};
+		String[] codes = {"\\\\","\\text{plain text}","\\frac{a}{b}","sqrt{x}","x^2","\\left(\\frac{tall}{paren}\\right)",
+				"\\overline{AB}","overleftrightarrow.png"};
+		String[] images = {"newline.png","text.png","frac.png","sqrt.png","exp.png","tallParen.png","segment.png","line.png"};
 		for(int i = 0; i < codes.length; i++){
+			System.out.println(images[i]);
 			v.add(new LaTeXRef(i+1, codes[i], new Graphic(0, 0,.8, "resources/latex/"+images[i])));
 		}
 		dismiss = new CustomImageButton(5, 5, 20, 20, new DrawInstructions() {
@@ -84,10 +86,10 @@ public class LaTeXReference extends FullFunctionPane {
 		public LaTeXRef(int i,String text, Graphic image) {
 			super(0, i*_HEIGHT, _WIDTH, _HEIGHT, text);
 			this.image = image;
-			setVerticalAlign(TextField.CENTER);
+//			setVerticalAlign(TextField.CENTER);
 			setFont(getMonoFont());
-			setReadOnly(true);
-			setDrawBorder(false);
+//			setReadOnly(true);
+//			setDrawBorder(false);
 		}
 		
 		public void update(Graphics2D g){

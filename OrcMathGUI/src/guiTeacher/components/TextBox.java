@@ -96,6 +96,9 @@ public class TextBox extends TextField{
 				line ="";
 			}while(j< words.length);
 		}
+		if(lines.size()<=0){
+			lines.add(new TextLine("", 0));
+		}
 //		System.out.println("Lines are "+lines);
 	}
 
@@ -504,7 +507,7 @@ public class TextBox extends TextField{
 				y += getLineSpace(fm);
 			}
 		}
-		drawBorder(g);
+		drawBorder(fm,g);
 		g2.drawImage(buffer, 0, 0, null);
 	}
 

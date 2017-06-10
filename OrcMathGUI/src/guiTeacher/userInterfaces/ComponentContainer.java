@@ -199,18 +199,14 @@ public abstract class ComponentContainer extends JPanel{
 		//		gi.drawImage(buffer, getWidth(), getHeight(), null);
 	}
 
-	public void update(Graphics2D g){
-				BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-				Graphics2D g2 = buffer.createGraphics();
+	public void update(Graphics2D g2){
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(Color.white);
 		g2.fillRect(0, 0, image.getWidth(), image.getHeight());
 		g2.setColor(Color.black);
 		drawObjects(g2);
-		g.drawImage(buffer, 0, 0, null);
 		repaint();
-		//		g.drawImage(buffer, 0, 0, null);
 	}
 
 	public void drawObjects(Graphics2D g){
