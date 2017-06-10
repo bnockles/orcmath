@@ -60,8 +60,8 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 	private final FocusController parentScreen;
 	protected Component containingComponent;//some components like Accordion contain ScrollapblePanes
 	//	private Scrollable content;
-	private int contentX;
-	private int contentY;
+	protected int contentX;
+	protected int contentY;
 	private int maxY;
 	protected int xRelative;
 	protected int yRelative;

@@ -104,7 +104,9 @@ public class TextLabel extends StyledComponent implements TextComponent{
 			FontMetrics fm = g.getFontMetrics();
 			if(text != null){
 //				Utilities.drawText(g, text, 0, getWidth(), getHeight(), align);
-				g.drawString(text, 0, fm.getHeight());
+				if(align==ALIGN_LEFT) g.drawString(text, 0, fm.getHeight());
+				else if(align == ALIGN_CENTER)g.drawString(text, (getWidth()-fm.stringWidth(text))/2, fm.getHeight());
+				else g.drawString(text, getWidth()-fm.stringWidth(text), fm.getHeight());
 			}
 		}
 

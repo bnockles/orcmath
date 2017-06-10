@@ -93,10 +93,10 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 
 		boolean hoverOverDragable = false;
 		for(Clickable c: clickables){
-			if(c.isHovered(x-getX(), y-getY())){
+			if(c.isVisible() && c.isHovered(x-getX()+contentX, y-getY()+contentY)){
 				if(c instanceof Dragable){
 					Dragable item = (Dragable)c;
-					if(item.setStart(x-getX(),y-getY())){
+					if(item.setStart(x-getX()+contentX,y-getY()+contentY)){
 						draggedItem = item;
 						hoverOverDragable = true;
 					}
@@ -113,14 +113,14 @@ public abstract class FullFunctionPane extends ScrollablePane implements KeyedCo
 
 	@Override
 	public void setFinish(int x, int y) {
-		if(draggedItem != null)draggedItem.setFinish(x - getX(), y - getY());
+		if(draggedItem != null)draggedItem.setFinish(x - getX()+contentX, y - getY()+contentY);
 	}
 
 	@Override
 	public void setHeldLocation(int x, int y) {
 		//		System.out.println("<FullFunctionPane> Coordinates of drag are "+(x - getX())+", "+(y - getY()));
 		if(draggedItem != null){
-			draggedItem.setHeldLocation(x-getX(),y-getY());
+			draggedItem.setHeldLocation(x-getX()+contentX,y-getY()+contentY);
 		}
 
 	}

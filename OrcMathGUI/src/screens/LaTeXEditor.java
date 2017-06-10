@@ -75,8 +75,9 @@ public class LaTeXEditor extends FullFunctionPane{
 		int boxHeight = (getHeight()- 2*labelHeight-5*hSpace)/2;
 
 		problem = new TextBox(margin, 2*hSpace+labelHeight, boxWidth, boxHeight, "Sample: x^{\\frac{1}{2}}=\\sqrt{x}");
+		problem.setFont(problem.getMonoFont());
 		solution = new TextBox(margin, 4*hSpace+2*labelHeight+boxHeight, getWidth()-2*margin, boxHeight, PLACEHOLDER_TEXT);
-
+		solution.setFont(solution.getMonoFont());
 		Button add = new Button(getWidth()-margin-buttonWidth, hSpace, buttonWidth, buttonHeight, "Add", new Color(0,153,70),new Action() {
 
 			@Override

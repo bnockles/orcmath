@@ -16,6 +16,7 @@ import guiTeacher.components.FullFunctionPane;
 import guiTeacher.components.Graphic;
 import guiTeacher.components.ScrollablePane;
 import guiTeacher.components.TextField;
+import guiTeacher.components.TextLabel;
 import guiTeacher.interfaces.DrawInstructions;
 import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.Visible;
@@ -28,6 +29,8 @@ public class LaTeXReference extends FullFunctionPane {
 	 * 
 	 */
 	private static final long serialVersionUID = -8299483315862465532L;
+	private static final int _WIDTH = 400;
+	private static final int _HEIGHT = 40;
 	private CustomImageButton dismiss;
 
 	public LaTeXReference(FocusController focusController, int x, int y, int w, int h) {
@@ -36,13 +39,19 @@ public class LaTeXReference extends FullFunctionPane {
 
 	@Override
 	public void initAllObjects(List<Visible> v){
-		String[] codes = {"\\\\","\\text{plain text}","\\frac{a}{b}","sqrt{x}","x^2","\\left(\\frac{tall}{paren}\\right)",
-				"\\overline{AB}","overleftrightarrow.png"};
-		String[] images = {"newline.png","text.png","frac.png","sqrt.png","exp.png","tallParen.png","segment.png","line.png"};
-		for(int i = 0; i < codes.length; i++){
-			System.out.println(images[i]);
-			v.add(new LaTeXRef(i+1, codes[i], new Graphic(0, 0,.8, "resources/latex/"+images[i])));
-		}
+		String[] codes1 = {"\\\\","\\,","\\text{plain text}","\\frac{a}{b}","sqrt{x}","x^2","x_1,\\,y_2","\\log","\\cos","\\sin","\\tan","\\to","\\left(\\frac{tall}{paren}\\right)"};
+		String[] images1 = {"newline.png","space.png","text.png","frac.png","sqrt.png","sub.png","exp.png","log.png","cos.png","sin.png","tan.png","to.png","tallParen.png"};	
+		int y =1;
+		y = addSection(v, y, "BASIC", codes1, images1);
+		
+		String[] codes2 = {"\\overline{AB}","\\overrightarrow{AB}","\\overleftrightarrow{AB}","\\angle","\\theta","\\cong","\\sim","\\perp","\\triangle"};
+		String[] images2 = {"segment.png","ray.png","line.png","angle.png","theta.png","cong.png","sim.png","perp.png","triangle.png"};
+		y = addSection(v, y, "GEOMETRY", codes2, images2);
+		String[] codes3 = {"\\frac{\\partial u}{\\partial t}","\\lim_{x \\to +\\infty}","\\int_a^b f(x)\\,dx","\\sum_{i=1}^{2n}"};
+		String[] images3 = {"dudt.png","lim.png","integral.png","sum.png"};
+		y = addSection(v, y, "CALCULUS", codes3, images3);
+
+		
 		dismiss = new CustomImageButton(5, 5, 20, 20, new DrawInstructions() {
 			
 			@Override
@@ -63,6 +72,16 @@ public class LaTeXReference extends FullFunctionPane {
 		});
 	}
 	
+	private int addSection(List<Visible> v, int y, String name, String[] codes, String[] images){
+		v.add(new Section(y*_HEIGHT, name));
+		y++;
+		for(int i = 0; i < codes.length; i++){
+			v.add(new LaTeXRef(y, codes[i], new Graphic(0, 0,.7, "resources/latex/"+images[i])));
+			y++;
+		}
+		return y;
+	}
+	
 	public void drawBorder(Graphics2D g) {
 		super.drawBorder(g);
 		g.drawImage(dismiss.getImage(),dismiss.getX(), dismiss.getY(),null);	
@@ -75,11 +94,25 @@ public class LaTeXReference extends FullFunctionPane {
 		}
 	}
 	
+	private class Section extends TextLabel{
+
+		public Section(int y, String text) {
+			super(0, y, _WIDTH, 26, text);
+			setSize(18);
+			setCustomAlign(TextLabel.ALIGN_CENTER);
+			update();
+		}
+		
+		public void update(Graphics2D g){
+			super.update(g);
+			g.setStroke(new BasicStroke(2));
+			int h = g.getFontMetrics().getHeight()+2;
+			g.drawLine(20, h, getWidth()-20, h);
+		}
+		
+	}
 	private class LaTeXRef extends TextField{
 
-		private static final int _WIDTH = 400;
-		private static final int _HEIGHT = 60;
-		
 		private Graphic image;
 		
 		

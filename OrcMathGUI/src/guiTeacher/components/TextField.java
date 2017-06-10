@@ -32,6 +32,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -45,8 +46,10 @@ import main.OrcMath;
 public class TextField extends StyledComponent implements KeyedComponent,Clickable, Runnable, Dragable, TextComponent{
 
 	//FIELDS
+	protected BufferedImage borderImage;
 	protected String text;
 	private Font font;
+	private Font labelFont;
 	private float size;
 	private boolean readOnly;
 	private boolean drawBorder;
@@ -84,7 +87,6 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	private int inputRangeMax;
 	private int inputLength;
 	private String description;
-	private boolean updateDescription;
 
 	public static final int INPUT_TYPE_PLAIN = 0;
 	public static final int INPUT_TYPE_NUMERIC =1;
@@ -96,21 +98,20 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public TextField(int x, int y, int w, int h, String text) {
 		super(x, y-DESCRIPTION_SPACE, w, h+DESCRIPTION_SPACE);
 		this.text = text;
-		setDefaults();
 		description = null;
+		setDefaults();
 		update();
 	}
 
 	public TextField(int x, int y, int w, int h, String text, String description) {
 		super(x, y-DESCRIPTION_SPACE, w, h+DESCRIPTION_SPACE);
 		this.text = text;
-		setDefaults();
 		this.description = description;
+		setDefaults();
 		update();
 	}
 
 	protected void setDefaults(){
-		updateDescription = true;
 		history=new ArrayList<TextFieldSaveState>();
 		historyCount = 0;
 		changeMade = false;
@@ -123,15 +124,29 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		inputLength = 0;
 		editable = true;
 		font = getBaseFont();
+		labelFont = getBaseFont();
 		size = 20;
 		running = false;
 		cursorIndex = getText().length();
 		selectIndex = cursorIndex;
 		history.add(new TextFieldSaveState(this.text,cursorIndex,cursorIndex));
+		resetBorder();
 	}
 
+	public BufferedImage getImage(){
+		if(drawBorder){
+			BufferedImage canvas = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = canvas.createGraphics();
+			g.drawImage(super.getImage(), 0, 0, null);
+			g.drawImage(borderImage, 0, 0, null);
+			return canvas;
+		}else{
+			return super.getImage();
+		}
+	}
 
-
+	
+	
 	public boolean isReadOnly() {
 		return readOnly;
 	}
@@ -162,8 +177,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	public void setDescription(String description) {
 		this.description = description;
-		updateDescription = true;
-		update();
+		resetBorder();
 	}
 
 	public void setInputType(int min, int max, int length) {
@@ -240,7 +254,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	protected int getTop(FontMetrics fm){
 		if(verticalAlign == BOTTOM)return getHeight()-fm.getDescent();
-		else if(verticalAlign == CENTER)return DESCRIPTION_SPACE+(getHeight()-DESCRIPTION_SPACE)/2-fm.getAscent();
+		else if(verticalAlign == CENTER)return DESCRIPTION_SPACE+(getHeight()-DESCRIPTION_SPACE)/2;
 		else return BORDER+DESCRIPTION_SPACE+fm.getAscent();
 	}
 
@@ -249,8 +263,8 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(getBackgroundColor());
-		int spaceHeight = getHeight()-2*BORDER-DESCRIPTION_SPACE-2;
-		g.fillRoundRect(BORDER+1,BORDER+DESCRIPTION_SPACE+1,getWidth()-2*BORDER-2,spaceHeight,8,8);
+		int spaceHeight = getHeight()-DESCRIPTION_SPACE;
+		g.fillRoundRect(1,DESCRIPTION_SPACE,getWidth()-2,spaceHeight,8,8);
 		g.setFont(getFont());
 		FontMetrics fm = g.getFontMetrics();
 		if(findCursor){
@@ -281,21 +295,23 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			int x = fm.stringWidth(getText().substring(0,cursorIndex))+X_MARGIN;
 			g.drawLine(x, base, x, base - fm.getHeight());
 		}
-		drawBorder(fm, g);
+//		drawBorder(g);
 	}
 
-	public void drawBorder(FontMetrics fm, Graphics2D g){
-		if(updateDescription){
+	public void drawBorder(Graphics2D g){
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		FontMetrics fm = g.getFontMetrics(getLabelFont());
 			Color bc = (running)? getActiveBorderColor():getInactiveBorderColor();
 			g.setColor(bc);
 			g.setStroke(new BasicStroke(BORDER));
 			g.drawRoundRect(BORDER,BORDER+DESCRIPTION_SPACE,getWidth()-2*BORDER,getHeight()-2*BORDER-DESCRIPTION_SPACE,8,8);
 			if(description != null){
 				g.setColor(getForeground());
+				g.setFont(getLabelFont());
 				g.drawString(description, BORDER, DESCRIPTION_SPACE-fm.getDescent());
 
 			}
-		}
 	}
 
 	private void shortcut(char c){
@@ -501,15 +517,17 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	}
 
 	public void setFocus(boolean b) {
-		updateDescription = true;
 		if(b && !running && editable){
 
 			running = true;
 			Thread cursor = new Thread(this);
 			cursor.start();
+			resetBorder();
 		}else if(!b){
 			running = false;
 			resetSelect();
+			resetBorder();
+
 		}
 	}
 
@@ -537,13 +555,29 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		update();
 	}
 
-	public void setFont(Font font){
+	public void setLabelFont(Font font){
+		this.labelFont = font;
+		resetBorder();
+	}
+
+	
+	
+	public Font getLabelFont() {
+		return labelFont;
+	}
+
+	public void setFont(Font font) {
 		this.font = font;
 		update();
 	}
 
 	public Font getFont(){
 		return font;
+	}
+	
+	public void resetBorder(){
+		borderImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		drawBorder(borderImage.createGraphics());
 	}
 
 	public float getSize(){
