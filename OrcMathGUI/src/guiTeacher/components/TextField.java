@@ -48,6 +48,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	protected String text;
 	private Font font;
 	private float size;
+	private boolean readOnly;
+	private boolean drawBorder;
+	private int verticalAlign;
 	private ArrayList<TextFieldSaveState> history;//keeps track of recent changes
 	private boolean changeMade;//a boolean keeps track of if change was made since last time history was updated
 	private int historyCount;//number of intervals since last update of history. Once count == _HISTORY_UPDATE_LIMIT, an update of history is performed
@@ -86,6 +89,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public static final int INPUT_TYPE_PLAIN = 0;
 	public static final int INPUT_TYPE_NUMERIC =1;
 	public static final int INPUT_TYPE_CUSTOM =2;
+	public static final int TOP = -1;
+	public static final int CENTER = 0;
+	public static final int BOTTOM = 1;
 
 	public TextField(int x, int y, int w, int h, String text) {
 		super(x, y-DESCRIPTION_SPACE, w, h+DESCRIPTION_SPACE);
@@ -108,6 +114,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		history=new ArrayList<TextFieldSaveState>();
 		historyCount = 0;
 		changeMade = false;
+		drawBorder = true;
+		readOnly = false;
+		verticalAlign = BOTTOM;
 		inputType = INPUT_TYPE_PLAIN;
 		inputRangeMin =0;
 		inputRangeMax =0;
@@ -122,6 +131,30 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	}
 
 
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	public boolean isDrawBorder() {
+		return drawBorder;
+	}
+
+	public void setDrawBorder(boolean drawBorder) {
+		this.drawBorder = drawBorder;
+	}
+
+	public int getVerticalAlign() {
+		return verticalAlign;
+	}
+
+	public void setVerticalAlign(int verticalAlign) {
+		this.verticalAlign = verticalAlign;
+	}
 
 	public String getDescription() {
 		return description;
@@ -176,22 +209,22 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		update();
 	}
 
-	public void update(){
-		if(updateDescription){
-			clear();
-			super.update();
-			updateDescription = false;
-		}else{
-			super.update();			
-		}
-	}
+	//	public void update(){
+	//		if(updateDescription){
+	//			clear();
+	//			super.update();
+	//			updateDescription = false;
+	//		}else{
+	//			super.update();			
+	//		}
+	//	}
 
 	public int calculateIndexOfClick(String s, FontMetrics fm, int x){
 		int check = 0;
 		while(check < s.length() && fm.stringWidth(s.substring(0,check+1)) < x){
 			check++;
 		}
-//		System.out.println(check + " for string "+s+" with length "+s.length());
+		//		System.out.println(check + " for string "+s+" with length "+s.length());
 		return check;
 	}
 
@@ -204,7 +237,13 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		xEnd+=X_MARGIN;
 		g.fillRect(xStart, y, xEnd-xStart, fm.getHeight());
 	}
-	
+
+	protected int getTop(FontMetrics fm){
+		if(verticalAlign == BOTTOM)return getHeight()-fm.getDescent();
+		else if(verticalAlign == CENTER)return DESCRIPTION_SPACE+(getHeight()-DESCRIPTION_SPACE)/2-fm.getAscent();
+		else return BORDER+DESCRIPTION_SPACE+fm.getAscent();
+	}
+
 	@Override
 	public void update(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -220,21 +259,22 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			findCursor = false;
 			cursorShowing  = true;
 		}
+		int top = getTop(fm);
 		if(selectIndex != cursorIndex){
-			
+
 			int xStart = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
 			//			xStart+=X_MARGIN;
 			int xEnd = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
-			
-			int top = BORDER+DESCRIPTION_SPACE+fm.getDescent();
-			highlight(g,fm,xStart,xEnd,getText(),top);
-			
+
+//			int top = BORDER+DESCRIPTION_SPACE+fm.getDescent();
+			highlight(g,fm,xStart,xEnd,getText(),top-fm.getHeight());
+
 
 		}
 		g.setColor(getForeground());
-		if(getText() != null) g.drawString(getText(), X_MARGIN, getHeight()-fm.getDescent());
+		if(getText() != null) g.drawString(getText(), X_MARGIN, top);
 
-		if(cursorShowing && running && selectIndex == cursorIndex){
+		if(!isReadOnly() && cursorShowing && running && selectIndex == cursorIndex){
 			g.setColor(Color.black);
 			int base = getHeight()-fm.getDescent();
 			//			if(cursorIndex> getText().length())cursorIndex = getText().length();
@@ -327,18 +367,19 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		}else{
 			selectIndex = cursorIndex;	
 		}
-		
-//		if(low<high-1){
-//			//when deleting more than one 
-//		}else{
-//			decreaseCursor();
-//		}
+
+		//		if(low<high-1){
+		//			//when deleting more than one 
+		//		}else{
+		//			decreaseCursor();
+		//		}
 
 		update();
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
+		if(!isReadOnly()){
 		char c = e.getKeyChar();
 		shiftHeld = false;//disable shift held, otherwise cursor behaves like arrow key function
 
@@ -360,7 +401,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			int low = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
 			int high = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
 			if(high > text.length())high = text.length();//work around THIS IS A WORK AROUND. IT SHOULDN'T BE NECESSARY. WHY iS HIGH OUTTA BOUNDS?
-//			System.out.println("(TextField) deleting with low "+low+", high "+high);
+			//			System.out.println("(TextField) deleting with low "+low+", high "+high);
 			//when selector is not over more than one letter
 			if(low == high && low>0){
 				low=high-1;
@@ -372,17 +413,17 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		}else if(inputType == INPUT_TYPE_CUSTOM && t.length()<inputLength && c>=inputRangeMin && c<=inputRangeMax){
 			insert(c+"");
 		}
-
+		}
 	}
 
 	public int getSelectIndex(){
 		return selectIndex;
 	}
-	
+
 	public boolean isShiftHeld(){
 		return shiftHeld;
 	}
-	
+
 	/**
 	 * 
 	 * @return index of cursor after delete key is pressed. In TexTBoxes, this returns the last index of the previous line
@@ -429,7 +470,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			ignoreDismiss=false;
 		}
 	}
-	
+
 	protected void setSelect(int x){
 		selectIndex = x;
 	}
@@ -458,7 +499,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public String toString(){
 		return "TextBox with description + \""+description+"\"";
 	}
-	
+
 	public void setFocus(boolean b) {
 		updateDescription = true;
 		if(b && !running && editable){
@@ -471,7 +512,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			resetSelect();
 		}
 	}
-	
+
 	/**
 	 * sets the select cursor to the cursor
 	 */
@@ -554,11 +595,11 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public void setShiftHeld(boolean b){
 		shiftHeld = b;
 	}
-	
+
 	@Override
 	public boolean setStart(int x, int y) {
 		findCursor = true;
-		
+
 		update();
 		return editable;
 	}

@@ -86,10 +86,10 @@ public class LaTeXReference extends FullFunctionPane {
 		public LaTeXRef(int i,String text, Graphic image) {
 			super(0, i*_HEIGHT, _WIDTH, _HEIGHT, text);
 			this.image = image;
-//			setVerticalAlign(TextField.CENTER);
+			setVerticalAlign(TextField.CENTER);
 			setFont(getMonoFont());
-//			setReadOnly(true);
-//			setDrawBorder(false);
+			setReadOnly(true);
+			setDrawBorder(false);
 		}
 		
 		public void update(Graphics2D g){
