@@ -44,8 +44,8 @@ public class LaTeXReference extends FullFunctionPane {
 		int y =1;
 		y = addSection(v, y, "BASIC", codes1, images1);
 		
-		String[] codes2 = {"\\overline{AB}","\\overrightarrow{AB}","\\overleftrightarrow{AB}","\\angle","\\theta","\\cong","\\sim","\\perp","\\triangle"};
-		String[] images2 = {"segment.png","ray.png","line.png","angle.png","theta.png","cong.png","sim.png","perp.png","triangle.png"};
+		String[] codes2 = {"\\overline{AB}","\\overrightarrow{AB}","\\overleftrightarrow{AB}","\\angle","\\45^\\circ","\\theta","\\cong","\\sim","\\perp","\\triangle"};
+		String[] images2 = {"segment.png","ray.png","line.png","angle.png","degrees.png","theta.png","cong.png","sim.png","perp.png","triangle.png"};
 		y = addSection(v, y, "GEOMETRY", codes2, images2);
 		String[] codes3 = {"\\frac{\\partial u}{\\partial t}","\\lim_{x \\to +\\infty}","\\int_a^b f(x)\\,dx","\\sum_{i=1}^{2n}"};
 		String[] images3 = {"dudt.png","lim.png","integral.png","sum.png"};

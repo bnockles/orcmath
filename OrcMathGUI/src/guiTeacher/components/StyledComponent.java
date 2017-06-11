@@ -46,6 +46,7 @@ public abstract class StyledComponent extends Component {
 	private static Color activeBorderColor = new Color(0,0,0);
 	private static Color staticBorderColor = new Color(0,0,0);
 	private static Color accentColor = new Color(150,150,150);
+	private static Color highlightColor = new Color(200,200,240);
 	private static int headerAlign = ALIGN_CENTER;
 	private static int bodyAlign = ALIGN_LEFT;
 	private static int animationTime = 600;//duration of transitions
@@ -196,6 +197,15 @@ public abstract class StyledComponent extends Component {
 	public void setHeaderAlign(int headerAlign) {
 		this.headerAlign = headerAlign;
 	}
+
+	public static void setHighlightColor(Color c) {
+		highlightColor = c;
+	}
+
+	public Color getHighlightColor() {
+		return highlightColor;
+	}
+	
 
 	public int getBodyAlign() {
 		return bodyAlign;

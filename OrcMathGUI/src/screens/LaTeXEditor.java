@@ -83,6 +83,7 @@ public class LaTeXEditor extends FullFunctionPane{
 			@Override
 			public void act() {
 				//				Problem customProblem = new Problem(problem.getText(), solution.getText());
+				OrcMath.createScreen.showGuide(false);
 				OrcMath.createScreen.addQuestion(problem.getText(), solution.getText());		
 			}
 		});

@@ -31,7 +31,6 @@ import components.TopicAccordion;
 import components.UpdateNotification;
 import data.CustomProblemData;
 import data.Worksheet;
-import guiTeacher.components.Accordion;
 import guiTeacher.components.Action;
 import guiTeacher.components.Button;
 import guiTeacher.components.Graphic;
@@ -43,7 +42,6 @@ import guiTeacher.components.SimpleTable;
 import guiTeacher.components.SimpleTable.MatchingLengthException;
 import guiTeacher.components.TableHeader;
 import guiTeacher.components.TextBox;
-import guiTeacher.components.TextBox;
 import guiTeacher.components.TextField;
 import guiTeacher.interfaces.Visible;
 import main.OrcMath;
@@ -52,6 +50,10 @@ public class CreateScreen extends OrcMathScreen {
 
 	//fields
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2521723056380224274L;
 	//	protected static String worksheetName = "This was created by OrcMath";
 	//	protected static String FILE = "Lessons/" + subject +"/" + subject + " " +unit+"/"+unit+"."+lesson+"/resources/"+worksheetName+".pdf";
 	//TODO: Images are saving images to a PDF folder that is static. Make this dynamic (ClassworkProblems.class)
@@ -79,6 +81,7 @@ public class CreateScreen extends OrcMathScreen {
 	private SimpleTable outputTable;
 	private ScrollableDragablePane tableScroll;
 	private ProgressBar progressBar;
+	private boolean refrenceShowing;
 
 	private Graphic orcWorker;
 	private SearchBox search;
@@ -98,6 +101,7 @@ public class CreateScreen extends OrcMathScreen {
 
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) {
+		refrenceShowing = false;
 		customProblems = new ArrayList<CustomProblemData>();
 		customProblemIndex = 0;
 		search = new SearchBox(MARGIN, MARGIN+30, _ACCORDION_WIDTH, 30);
@@ -110,7 +114,7 @@ public class CreateScreen extends OrcMathScreen {
 		viewObjects.add(reference);
 		fileName = new TextField(fieldMargin, MARGIN+25+vertSpace, _FIELD_WIDTH, textFieldHeight, "Worksheet","File Name");
 		heading = new TextField(fieldMargin, fileName.getY()+fileName.getHeight()+vertSpace, _FIELD_WIDTH, textFieldHeight, "Practice","Header");
-		instructionsField = new TextBox(fieldMargin,heading.getY()+heading.getHeight()+vertSpace,_FIELD_WIDTH,200,"Somewhere, far away from here, I saw stars... start that I could reach, yeah.","Main Instructions");
+		instructionsField = new TextBox(fieldMargin,heading.getY()+heading.getHeight()+vertSpace,_FIELD_WIDTH,200,"Show your work.","Main Instructions");
 
 		//output table
 		addTable(viewObjects);
@@ -285,7 +289,6 @@ public class CreateScreen extends OrcMathScreen {
 			
 			@Override
 			public void act() {
-				System.out.println("Link clicked");
 				questionsByTopic.viewCustomProblem(problemLaTeX, solutionLaTeX);
 			}
 		} ));
@@ -297,14 +300,15 @@ public class CreateScreen extends OrcMathScreen {
 	 * called by LaTeX editor when latex is being typed
 	 */
 	public void showGuide(boolean on) {
-		String s = on?"on":"off";
-		System.out.println("Help is "+s);
-		fileName.setVisible(!on);
-		heading.setVisible(!on);
-		instructionsField.setVisible(!on);
-		tableScroll.setVisible(!on);
-		reference.setVisible(on);
-		update();		
+		if(refrenceShowing != on){
+			fileName.setVisible(!on);
+			heading.setVisible(!on);
+			instructionsField.setVisible(!on);
+			tableScroll.setVisible(!on);
+			reference.setVisible(on);
+			refrenceShowing = on;
+			update();
+		}
 	}
 
 	public LaTeXReference getReference() {

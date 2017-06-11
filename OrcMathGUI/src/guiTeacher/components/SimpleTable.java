@@ -47,6 +47,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	
 	private BufferedImage trashClosed;
 	private BufferedImage trashOpen;
+	private boolean trashClickedOnce;//helps for identifying double-click on trash
 	private SimpleTableRow movingRow;
 	private Component movementGhost;
 	private int hoverStartY;
@@ -66,7 +67,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 
 	public SimpleTable(FocusController fc, int x, int y, int w, int h, TableHeader columns) {
 		super(x, y, w, h);
-		highlight = getAccentColor();
+		highlight = getHighlightColor();
 		hoveredRow = null;
 		parentScreen =fc;
 		trashHovered = false;
@@ -86,6 +87,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	}
 
 	private void initTrashIcons(){
+		trashClickedOnce = false;
 		trashClosed = new BufferedImage(EDIT_COLUMN,columns.getRowHeight(),BufferedImage.TYPE_INT_ARGB);
 		trashOpen = new BufferedImage(EDIT_COLUMN,columns.getRowHeight(),BufferedImage.TYPE_INT_ARGB);
 		drawTrash(trashClosed.createGraphics(), false);
@@ -393,6 +395,10 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 				hoveredRow = null;
 			}
 			update();
+		}else if(hoveredRow != null){
+			hoveredRow.setHover(false);
+			hoveredRow = null;
+			update();
 		}
 
 	}
@@ -400,6 +406,34 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	@Override
 	public void act() {
 		int clickedRow = yRelative/columns.getRowHeight();
+		if(yRelative < columns.getRowHeight() && xRelative < EDIT_COLUMN){
+			if(!trashClickedOnce){
+				trashClickedOnce = true;
+				trashHovered=true;
+				Thread waitForDoubleClick = new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(400);
+							trashClickedOnce=false;
+							trashHovered = false;
+							update();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+				waitForDoubleClick.start();
+				update();		
+			}else{
+				rows.removeAll(rows);
+				trashHovered = false;
+				trashClickedOnce=false;
+				update();
+			}
+		}
 		if(xRelative >EDIT_COLUMN){
 			int clickedColumn = 0;
 			int widthToClick = 0;
@@ -461,7 +495,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 			//calculate difference between starty and finishy
 			
 			
-			rows.add(moveToIndex,rows.remove(origIndex));
+			if(moveToIndex>=0 && moveToIndex<rows.size()+1)rows.add(moveToIndex,rows.remove(origIndex));
 		}
 		moveToIndex = -1;
 		update();

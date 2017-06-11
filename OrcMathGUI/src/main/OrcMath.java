@@ -63,6 +63,7 @@ public class OrcMath extends GUIApplication {
 	public static final int SCREEN_WIDTH = 920; 
 	public static final int SCREEN_HEIGHT = 700; 
 	public static final Color ACCENT_COLOR = new Color(127,0,255);
+	public static final Color HIGHLIGHT_COLOR = new Color(220,212,242);
 
 	public static OrcMath app;
 	public static CreateScreen createScreen;
@@ -113,6 +114,7 @@ public class OrcMath extends GUIApplication {
 		StyledComponent.setTabColor(new Color(0,153,153));
 		StyledComponent.setTabShadeColor(new Color(0,127,119));
 		StyledComponent.setAccentColor(ACCENT_COLOR);
+		StyledComponent.setHighlightColor(HIGHLIGHT_COLOR);
 		try {
 			File fontFile = new File("resources//AdventPro-Medium.ttf");
 			//			File fontFile = new File("resources//DayRoman.ttf");
