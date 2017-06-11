@@ -336,6 +336,13 @@ public class TextBox extends TextField{
 			setCursorToIndices();
 		}
 	}
+	
+	//called when 'cut' is performed
+	protected void deleteAndInsert(String s){
+		insert(s);
+		selectIndexInLine = cursorIndexInLine;
+		selectLine = cursorLine;
+	}
 
 	public void insert(String c){
 		putCursorBeforeSelect();
@@ -363,7 +370,7 @@ public class TextBox extends TextField{
 			increaseCursor(c.length());
 		}
 		update();
-		//		System.out.println("This is the text body: \""+getText()+"\"");
+//				System.out.println("This is the text body: \""+getText()+"\"");
 		//		System.out.println("These are the lines: "+lines);
 	}
 
@@ -511,6 +518,10 @@ public class TextBox extends TextField{
 		g2.drawImage(buffer, 0, 0, null);
 	}
 
+	protected void selectAll(){
+		super.selectAll();
+		setIndicesToCursor();
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -545,7 +556,7 @@ public class TextBox extends TextField{
 		relativeY = relativeXClick;
 		identifyCursorLineUnderMouse();
 		update();
-		return isEditable();
+		return isEditable() && !isShiftHeld();
 	}
 
 	@Override

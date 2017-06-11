@@ -269,7 +269,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		FontMetrics fm = g.getFontMetrics();
 		if(findCursor){
 			cursorIndex = calculateIndexOfClick(getText(), fm, relativeXClick);
-			if(!shiftHeld)selectIndex = cursorIndex;
+			if(!shiftHeld){
+				selectIndex = cursorIndex;
+			}
 			findCursor = false;
 			cursorShowing  = true;
 		}
@@ -314,7 +316,22 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			}
 	}
 
+	protected void selectAll(){
+		selectIndex = 0;
+		cursorIndex = getText().length();
+		update();
+	}
+	
+	protected void deleteAndInsert(String s){
+		insert(s);
+	}
+	
 	private void shortcut(char c){
+		boolean removeAfterCopy=false;
+		if(c=='x'){
+			removeAfterCopy = true;
+			c = 'c';
+		}
 		if(c == 'z'){
 			if(historyIndex < history.size()-1)historyIndex++;
 			TextFieldSaveState state = history.get(historyIndex);
@@ -333,8 +350,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			} 
 
 		}else if(c == 'a'){
-			selectIndex = 0;
-			cursorIndex = getText().length();
+			selectAll();
 		}else if(c =='c'){
 			int low = (selectIndex < cursorIndex)?selectIndex:cursorIndex;
 			int high = (selectIndex > cursorIndex)?selectIndex:cursorIndex;
@@ -345,9 +361,13 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 				clpbrd.setContents(stringSelection, null);
 			}
 		}
+		if(removeAfterCopy){
+			deleteAndInsert("");
+		}
 
 	}
 
+	
 
 	protected void increaseCursor(int spaces){
 		cursorIndex+=spaces;
@@ -635,7 +655,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		findCursor = true;
 
 		update();
-		return editable;
+		return editable && !shiftHeld;
 	}
 
 	@Override
@@ -643,7 +663,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		FontMetrics fm = getImage().createGraphics().getFontMetrics();
 		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
 		relativeX = x - getX();
-		ignoreDismiss = false;
+		if(!shiftHeld) ignoreDismiss = false;
 		update();
 	}
 
