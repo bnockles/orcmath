@@ -98,9 +98,6 @@ public class TextLabel extends StyledComponent implements TextComponent{
 //					RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(this.getTextColor());
 			g.setFont(getFont());
-			if(size!=20){
-				System.out.println("Attempting to print label "+getText()+" with size "+size);
-			}
 			FontMetrics fm = g.getFontMetrics();
 			if(text != null){
 //				Utilities.drawText(g, text, 0, getWidth(), getHeight(), align);

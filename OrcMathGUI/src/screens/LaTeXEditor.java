@@ -191,16 +191,24 @@ public class LaTeXEditor extends FullFunctionPane{
 					String message = e.getLocalizedMessage().replaceAll(Pattern.quote("{"), " \\\\{ ").replaceAll(Pattern.quote("}"), " \\\\} ");
 					System.out.println(message);
 					testProblem = "\\text{Parse Error: "+message+"}";
+				}catch(IllegalArgumentException iae){
+					testProblem = "\\text{This question has no content.}";
 				}
+				
 				try{
 					Problem.toImage(testSolution);
-					Problem sample = new Problem(testProblem, testSolution);
-					qp.setImage(sample.getAnswerImage());
-					if(sample.getAnswerImage()==null){
-						System.out.println("No image exists");
-					}
+					
 				}catch(ParseException e){
 					testSolution = "\\text{Parse Error: "+e.getLocalizedMessage().replaceAll("{", "\\{").replaceAll("}", "\\}")+"}";
+				}catch(IllegalArgumentException iae){
+					iae.printStackTrace();
+					testSolution = "\\text{\"Solution LaTeX\"}";
+					
+				}
+				Problem sample = new Problem(testProblem, testSolution);
+				qp.setImage(sample.getAnswerImage());
+				if(sample.getAnswerImage()==null){
+					System.out.println("No image exists");
 				}
 				String previewText = (showPreview)?"Preview":"Hide";
 				preview.setText(previewText);

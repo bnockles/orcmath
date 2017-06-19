@@ -692,7 +692,8 @@ public class Problem {
 	public Problem(String problemLaTaX, String solutionLaTeX){
 		keyTheorem = null;
 		instructions = "";
-		question = "{"+problemLaTaX+"}";
+		question = "\\begin{array}{l}";
+		question += problemLaTaX+"\\end{array}";
 		answer = "\\begin{array}{l}";
 		answer += problemLaTaX + "\\\\";
 		answer += solutionLaTeX;

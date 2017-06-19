@@ -89,7 +89,7 @@ public class CreateScreen extends OrcMathScreen {
 
 	public static final int MARGIN = 20;
 	private static final int _ACCORDION_WIDTH= 410;
-	private static final int _FIELD_WIDTH= 410;
+	private static final int _FIELD_WIDTH= 440;
 	private static final int _INDEX_OF_QUANTITY = 0;
 	private static final int _INDEX_OF_QUESTION_TYPE = 1;
 	private static final int _INDEX_OF_DIFFICULTY = 2;

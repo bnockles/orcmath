@@ -39,7 +39,7 @@ public class LaTeXReference extends FullFunctionPane {
 
 	@Override
 	public void initAllObjects(List<Visible> v){
-		String[] codes1 = {"\\\\","\\,","\\text{plain text}","\\frac{a}{b}","sqrt{x}","x^2","x_1,\\,y_2","\\log","\\cos","\\sin","\\tan","\\to","\\left(\\frac{tall}{paren}\\right)"};
+		String[] codes1 = {"\\\\","\\,","\\text{plain text}","\\frac{a}{b}","sqrt{x}","x_1,\\,y_2","x^2","\\log","\\cos","\\sin","\\tan","\\to","\\left(\\frac{tall}{paren}\\right)"};
 		String[] images1 = {"newline.png","space.png","text.png","frac.png","sqrt.png","sub.png","exp.png","log.png","cos.png","sin.png","tan.png","to.png","tallParen.png"};	
 		int y =1;
 		y = addSection(v, y, "BASIC", codes1, images1);

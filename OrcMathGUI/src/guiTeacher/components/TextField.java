@@ -145,8 +145,8 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		}
 	}
 
-	
-	
+
+
 	public boolean isReadOnly() {
 		return readOnly;
 	}
@@ -282,7 +282,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			//			xStart+=X_MARGIN;
 			int xEnd = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
 
-//			int top = BORDER+DESCRIPTION_SPACE+fm.getDescent();
+			//			int top = BORDER+DESCRIPTION_SPACE+fm.getDescent();
 			highlight(g,fm,xStart,xEnd,getText(),top-fm.getHeight());
 
 
@@ -297,23 +297,23 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			int x = fm.stringWidth(getText().substring(0,cursorIndex))+X_MARGIN;
 			g.drawLine(x, base, x, base - fm.getHeight());
 		}
-//		drawBorder(g);
+		//		drawBorder(g);
 	}
 
 	public void drawBorder(Graphics2D g){
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		FontMetrics fm = g.getFontMetrics(getLabelFont());
-			Color bc = (running)? getActiveBorderColor():getInactiveBorderColor();
-			g.setColor(bc);
-			g.setStroke(new BasicStroke(BORDER));
-			g.drawRoundRect(BORDER,BORDER+DESCRIPTION_SPACE,getWidth()-2*BORDER,getHeight()-2*BORDER-DESCRIPTION_SPACE,8,8);
-			if(description != null){
-				g.setColor(getForeground());
-				g.setFont(getLabelFont());
-				g.drawString(description, BORDER, DESCRIPTION_SPACE-fm.getDescent());
+		Color bc = (running)? getActiveBorderColor():getInactiveBorderColor();
+		g.setColor(bc);
+		g.setStroke(new BasicStroke(BORDER));
+		g.drawRoundRect(BORDER,BORDER+DESCRIPTION_SPACE,getWidth()-2*BORDER,getHeight()-2*BORDER-DESCRIPTION_SPACE,8,8);
+		if(description != null){
+			g.setColor(getForeground());
+			g.setFont(getLabelFont());
+			g.drawString(description, BORDER, DESCRIPTION_SPACE-fm.getDescent());
 
-			}
+		}
 	}
 
 	protected void selectAll(){
@@ -321,11 +321,11 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		cursorIndex = getText().length();
 		update();
 	}
-	
+
 	protected void deleteAndInsert(String s){
 		insert(s);
 	}
-	
+
 	private void shortcut(char c){
 		boolean removeAfterCopy=false;
 		if(c=='x'){
@@ -335,9 +335,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		if(c == 'z'){
 			if(historyIndex < history.size()-1)historyIndex++;
 			TextFieldSaveState state = history.get(historyIndex);
-			cursorIndex = state.cursorPoint;
-			selectIndex= state.selectPoint;
+
 			setText(state.text);
+			setCursors(state.cursorPoint, state.selectPoint);
 
 		}else if(c == 'v'){
 			try {
@@ -367,7 +367,12 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	}
 
-	
+
+
+	protected void setCursors(int cursorPoint, int selectPoint) {
+		setCursor(cursorPoint);
+		setSelect(selectPoint);
+	}
 
 	protected void increaseCursor(int spaces){
 		cursorIndex+=spaces;
@@ -416,39 +421,39 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	@Override
 	public void keyTyped(KeyEvent e) {
 		if(!isReadOnly()){
-		char c = e.getKeyChar();
-		shiftHeld = false;//disable shift held, otherwise cursor behaves like arrow key function
+			char c = e.getKeyChar();
+			shiftHeld = false;//disable shift held, otherwise cursor behaves like arrow key function
 
 
 
-		String t = getText();
-		changeMade = true;
-		historyIndex = 0;
-		historyIndex=0;
-		if(inputType == INPUT_TYPE_PLAIN && c >=32 && c <127){
-			insert(""+c);
+			String t = getText();
+			changeMade = true;
+			historyIndex = 0;
+			historyIndex=0;
+			if(inputType == INPUT_TYPE_PLAIN && c >=32 && c <127){
+				insert(""+c);
 
-		}else if(inputType == INPUT_TYPE_NUMERIC && (c== 46 || c >=48 && c <57)){
+			}else if(inputType == INPUT_TYPE_NUMERIC && (c== 46 || c >=48 && c <57)){
 
-			insert(""+c);
+				insert(""+c);
 
-		}else if(c==127 || c==8){
-			//delete is pressed
-			int low = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
-			int high = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
-			if(high > text.length())high = text.length();//work around THIS IS A WORK AROUND. IT SHOULDN'T BE NECESSARY. WHY iS HIGH OUTTA BOUNDS?
-			//			System.out.println("(TextField) deleting with low "+low+", high "+high);
-			//when selector is not over more than one letter
-			if(low == high && low>0){
-				low=high-1;
-			}else{//save after deleting multiple characters
-				history.add(0,new TextFieldSaveState(text, cursorIndex, selectIndex));
+			}else if(c==127 || c==8){
+				//delete is pressed
+				int low = (selectIndex< cursorIndex)?selectIndex:cursorIndex;
+				int high = (selectIndex> cursorIndex)?selectIndex:cursorIndex;
+				if(high > text.length())high = text.length();//work around THIS IS A WORK AROUND. IT SHOULDN'T BE NECESSARY. WHY iS HIGH OUTTA BOUNDS?
+				//			System.out.println("(TextField) deleting with low "+low+", high "+high);
+				//when selector is not over more than one letter
+				if(low == high && low>0){
+					low=high-1;
+				}else{//save after deleting multiple characters
+					history.add(0,new TextFieldSaveState(text, cursorIndex, selectIndex));
+				}
+				remove(low,high);
+
+			}else if(inputType == INPUT_TYPE_CUSTOM && t.length()<inputLength && c>=inputRangeMin && c<=inputRangeMax){
+				insert(c+"");
 			}
-			remove(low,high);
-
-		}else if(inputType == INPUT_TYPE_CUSTOM && t.length()<inputLength && c>=inputRangeMin && c<=inputRangeMax){
-			insert(c+"");
-		}
 		}
 	}
 
@@ -482,18 +487,37 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		}else if(e.getKeyCode() == KeyEvent.VK_SHIFT){
 			shiftHeld = true;
 			ignoreDismiss=true;
-		}else{
-			if(e.getKeyCode() == KeyEvent.VK_LEFT){
-				decreaseCursor(1);
-				update();
-			}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-				if(cursorIndex <getText().length()){
-					increaseCursor(1);
-					update();
+		}else if(e.getKeyCode() == KeyEvent.VK_LEFT){
+			if(!ignoreDismiss)shiftHeld=false;
+			int change = 1;
+			if(!shiftHeld && cursorIndex > selectIndex){
+				change = cursorIndex-selectIndex;
+				if(cursorIndex+change < 0){
+					change = cursorIndex;
 				}
-
+			}else if(!shiftHeld && cursorIndex < selectIndex){
+				change = 0;
 			}
+			decreaseCursor(change);
+			update();
+		}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+			if(!ignoreDismiss)shiftHeld=false;
+			int change = 1;
+			if(!shiftHeld && cursorIndex < selectIndex){
+				change = -cursorIndex+selectIndex;
+				if(cursorIndex+change > getText().length()){
+					change = getText().length()-cursorIndex;
+				}
+			}else if(!shiftHeld && cursorIndex > selectIndex){
+				change = 0;
+			}
+
+			increaseCursor(change);
+			update();
+
+
 		}
+
 
 	}
 
@@ -508,7 +532,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	}
 
 	protected void setSelect(int x){
-		selectIndex = x;
+		if(x<0)selectIndex = 0;
+		else if(x>getText().length())selectIndex = getText().length();
+		else selectIndex = x;
 	}
 
 	protected void setCursor(int x){
@@ -538,12 +564,13 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	public void setFocus(boolean b) {
 		if(b && !running && editable){
-
+			//			System.out.println("Focus set on "+toString());
 			running = true;
 			Thread cursor = new Thread(this);
 			cursor.start();
 			resetBorder();
 		}else if(!b){
+			//			System.out.println("Focus removed from "+toString());
 			running = false;
 			resetSelect();
 			resetBorder();
@@ -562,8 +589,8 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	public void setText(String s){
 		this.text = s;
-		update();
 	}
+	
 
 	public String getText(){
 		return text;
@@ -580,8 +607,8 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		resetBorder();
 	}
 
-	
-	
+
+
 	public Font getLabelFont() {
 		return labelFont;
 	}
@@ -594,7 +621,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public Font getFont(){
 		return font;
 	}
-	
+
 	public void resetBorder(){
 		borderImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		drawBorder(borderImage.createGraphics());
@@ -660,7 +687,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void setFinish(int x, int y) {
-		FontMetrics fm = getImage().createGraphics().getFontMetrics();
+		FontMetrics fm = getImage().createGraphics().getFontMetrics(getFont());
 		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
 		relativeX = x - getX();
 		if(!shiftHeld) ignoreDismiss = false;
@@ -669,7 +696,7 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 
 	@Override
 	public void setHeldLocation(int x, int y) {
-		FontMetrics fm = getImage().createGraphics().getFontMetrics();
+		FontMetrics fm = getImage().createGraphics().getFontMetrics(getFont());
 		selectIndex = calculateIndexOfClick(getText(), fm, x-getX()-X_MARGIN);
 		relativeX = x - getX();
 		update();
