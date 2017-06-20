@@ -102,6 +102,10 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		}
 	}
 	
+	public ArrayList<SimpleTableRow> getRows(){
+		return rows;
+	}
+	
 	/**
 	 * Sets the content of a row to a custom text element. 
 	 * This method changes the most recently-added row

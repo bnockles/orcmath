@@ -194,9 +194,9 @@ public class Worksheet implements Task{
 				//				scaleFactor=scaleFactorPercent/100;
 
 			}
-			System.out.println("2. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
+//			System.out.println("2. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
 			image.scalePercent(scaleFactorPercent);
-			System.out.println("3. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
+//			System.out.println("3. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
 		} catch (BadElementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
