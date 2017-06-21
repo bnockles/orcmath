@@ -44,6 +44,7 @@ import guiTeacher.components.SimpleTableRow;
 import guiTeacher.components.TableHeader;
 import guiTeacher.components.TextBox;
 import guiTeacher.components.TextField;
+import guiTeacher.interfaces.TextComponent;
 import guiTeacher.interfaces.Visible;
 import main.OrcMath;
 
@@ -67,7 +68,6 @@ public class CreateScreen extends OrcMathScreen {
 	private static int identifier;//TODO once applet is made, this is no longer static
 
 
-	private ArrayList<CustomProblemData> customProblems;
 	private int customProblemIndex;
 
 	private static final int BUTTON_WIDTH = 90;
@@ -103,7 +103,7 @@ public class CreateScreen extends OrcMathScreen {
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) {
 		refrenceShowing = false;
-		customProblems = new ArrayList<CustomProblemData>();
+//		customProblems = new ArrayList<CustomProblemData>();
 		customProblemIndex = 0;
 		search = new SearchBox(MARGIN, MARGIN+30, _ACCORDION_WIDTH, 30);
 		viewObjects.add(search);
@@ -248,10 +248,10 @@ public class CreateScreen extends OrcMathScreen {
 		ArrayList<CustomProblemData> includedProblems = new ArrayList<CustomProblemData>();
 		for(SimpleTableRow data: outputTable.getRows()){
 			try{
-				String name =data.getValue(_INDEX_OF_QUESTION_TYPE);
-				if(name.contains(Problem.CUSTOM_TAG)){
-
-					includedProblems.add(customProblems.get(Integer.parseInt(name.replaceAll(Problem.CUSTOM_TAG+" ", ""))-1));	
+				TextComponent t = data.getValues()[_INDEX_OF_QUESTION_TYPE];
+				if(t instanceof CustomProblemData){
+					CustomProblemData cpd = (CustomProblemData)t;
+					includedProblems.add(cpd);	
 				}
 			}catch(Exception e){
 				e.printStackTrace();
@@ -289,7 +289,7 @@ public class CreateScreen extends OrcMathScreen {
 	//called when a custom problem is created
 	public void addQuestion(String problemLaTeX, String solutionLaTeX) {
 		String solution = (solutionLaTeX.equals(LaTeXEditor.PLACEHOLDER_TEXT))?"":solutionLaTeX;
-		customProblems.add(new CustomProblemData(problemLaTeX, solution));
+//		customProblems.add(new CustomProblemData(problemLaTeX, solution));
 
 		String[] data = new String[3];
 		data[_INDEX_OF_DIFFICULTY] = "N/A";
@@ -303,7 +303,7 @@ public class CreateScreen extends OrcMathScreen {
 		}catch(MatchingLengthException e){
 			e.printStackTrace();
 		}
-		outputTable.setColumnContent(_INDEX_OF_QUESTION_TYPE, new Link(0,0,70,20,Problem.CUSTOM_TAG+ " "+(++customProblemIndex), new Action() {
+		outputTable.setColumnContent(_INDEX_OF_QUESTION_TYPE, new CustomProblemData(problemLaTeX, solution,++customProblemIndex, new Action() {
 
 			@Override
 			public void act() {
