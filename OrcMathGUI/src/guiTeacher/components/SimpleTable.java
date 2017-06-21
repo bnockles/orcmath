@@ -399,14 +399,48 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 				hoveredRow = null;
 			}
 			update();
-		}else if(hoveredRow != null){
-			hoveredRow.setHover(false);
-			hoveredRow = null;
-			update();
+		}else if(xRelative > EDIT_COLUMN){
+			unHover();
+			changeMouse();
+		}else {
+			unHover();
 		}
 
 	}
+	
+	/**
+	 * changes mouse cursor depending on what is being hovered
+	 */
+	private void changeMouse(){
+			int hoveredRow = yRelative/columns.getRowHeight();
+			int hoveredColumn = 0;
+			int widthToClick = 0;
+			int[] widths = columns.getColumnWidths();
+			while(hoveredColumn<widths.length && widthToClick+widths[hoveredColumn]<xRelative){
+				widthToClick+=columns.getColumnWidths()[hoveredColumn];
+				hoveredColumn++;
+			}
+			//		System.out.println("xRelative = "+xRelative+", yRelative = "+yRelative+", SimpleTable.java clickedRow = "+clickedRow+", clickedColumn = "+clickedColumn);
+			if(hoveredColumn >= widths.length){
+				hoveredColumn = widths.length-1;
+			}
+			if(hoveredRow !=0 && hoveredRow-1 < rows.size()){
+				//NOTE: The following method call only set the pointer. Other hovering actions (i.e. hover text) are ignored
+				rows.get(hoveredRow-1).columnHovered(hoveredColumn, xRelative-(hoveredRow+1)*columns.getRowHeight(),yRelative-widthToClick);
+				update();
+			}
+		
+	}
 
+	private void unHover(){
+		if(hoveredRow != null){
+			hoveredRow.setHover(false);
+		hoveredRow = null;
+		update();
+		}
+	}
+	
+	
 	@Override
 	public void act() {
 		int clickedRow = yRelative/columns.getRowHeight();

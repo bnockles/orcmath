@@ -179,5 +179,10 @@ public abstract class Component implements Visible {
 		this.visible = visible;
 	}
 	
+	@Override
+	public void unhoverAction() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

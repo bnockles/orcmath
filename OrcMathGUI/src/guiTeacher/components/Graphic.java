@@ -165,5 +165,17 @@ public class Graphic implements Visible {
 		this.visible = visible;
 	}
 
+	@Override
+	public void unhoverAction() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hoverAction() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

@@ -139,6 +139,15 @@ public class Button extends TextLabel implements Clickable{
 		}
 	}
 
+	public void hoverAction(){
+		GUIApplication.mainFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		setLeft(false);
+	}
+	
+	public void unhoverAction(){
+		setLeft(true);
+		GUIApplication.mainFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	}
 
 	public boolean isHovered(int x, int y) {
 		boolean b = x>getX() && x<getX()+getWidth() 
@@ -148,11 +157,9 @@ public class Button extends TextLabel implements Clickable{
 //		}
 		hovered = b && enabled;
 		if(hovered){
-			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			setLeft(false);
+			hoverAction();
 		}else if (!hasLeft()){
-			setLeft(true);
-			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			unhoverAction();
 		}
 		return hovered;
 	}

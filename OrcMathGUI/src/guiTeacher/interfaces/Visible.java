@@ -33,4 +33,6 @@ public interface Visible {
 	public boolean isAnimated();
 	public void setVisible(boolean b);
 	boolean isVisible();
+	void unhoverAction();
+	void hoverAction();
 }

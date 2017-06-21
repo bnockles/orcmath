@@ -19,8 +19,10 @@
 package guiTeacher.components;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 
+import guiTeacher.GUIApplication;
 import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.TextComponent;
 
@@ -86,6 +88,23 @@ public class SimpleTableRow {
 	public TextComponent[] getValues(){
 		return values;
 	}
+	
+	/**
+	 * changes the cursor accordingly. If other hover actions are needed, this method need to be edited.
+	 * @param hoveredColumn the column being hovered
+	 * @param contextX
+	 * @param contextY
+	 */
+	public void columnHovered(int hoveredColumn, int contextX, int contextY){
+		
+		if(values[hoveredColumn] instanceof TextField && values[hoveredColumn].isEditable()){
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+		}else if(values[hoveredColumn] instanceof Link) {
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}else{
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+	}
 
 	public void columnClicked(int clickedColumn, int contextX, int contextY) {
 		if(values[clickedColumn] instanceof TextField && values[clickedColumn].isEditable()){
@@ -114,6 +133,20 @@ public class SimpleTableRow {
 		
 	}
 
+	public boolean isHovered(){
+		return hovered;
+	}
+	
+	public void setHover(boolean b) {
+		hovered = b;
+		hoverButton.setHovered(b);
+	}
+
+
+	public void drawButton(Graphics2D g, int x, int y) {
+		hoverButton.draw(g, x, y);
+	}
+
 	public class HoverButton{
 		
 		private boolean hovered;
@@ -136,20 +169,6 @@ public class SimpleTableRow {
 			hovered = b;
 		}
 		
-	}
-
-	public boolean isHovered(){
-		return hovered;
-	}
-	
-	public void setHover(boolean b) {
-		hovered = b;
-		hoverButton.setHovered(b);
-	}
-
-
-	public void drawButton(Graphics2D g, int x, int y) {
-		hoverButton.draw(g, x, y);
 	}
 	
 }
