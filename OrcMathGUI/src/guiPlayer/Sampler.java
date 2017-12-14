@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import danielComponent.displayMons;
 import guiTeacher.GUIApplication;
 import guiTeacher.components.*;
 import guiTeacher.interfaces.KeyedComponent;
@@ -119,13 +119,14 @@ public class Sampler extends GUIApplication {
 				}
 			}); 
 			viewObjects.add(cb);
-			
+			viewObjects.add(new displayMons());
 		}
 		
 		public void mouseDragged(MouseEvent m) {
 			super.mouseDragged(m);
 			mario.setX(m.getX());
 			mario.setY(m.getY());
+			
 		}
 		
 		
