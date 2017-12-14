@@ -133,7 +133,7 @@ public class Button extends TextLabel implements Clickable{
 		FontMetrics fm = g.getFontMetrics();
 		
 		if(getText()!= null){
-			g.setColor(Color.white);
+			g.setColor(getForeground());
 			String t = getText();
 			//just in case text is too wide, cut off
 			int cutoff = t.length();

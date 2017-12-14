@@ -12,16 +12,20 @@ public class RadioButton extends Button {
 
 	private boolean selected;
 	private ArrayList<RadioButton> peers;
+	private static final Color DEFAULT_SELECT_COLOR = new Color(80,80,80);
+	private Color selectedColor;
 	
 	public RadioButton(int x, int y, int w, int h, String text, Color color, Action action) {
 		super(x, y, w, h, text, color, action);
 		peers = new ArrayList<RadioButton>();
+		update();
 		// TODO Auto-generated constructor stub
 	}
 
 	public RadioButton(int x, int y, int w, int h, String text, Action action) {
 		super(x, y, w, h, text, action);
 		peers = new ArrayList<RadioButton>();
+		update();
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -42,6 +46,16 @@ public class RadioButton extends Button {
 		update();
 		
 	}
+	
+	
+
+	public Color getSelectedColor() {
+		return selectedColor;
+	}
+
+	public void setSelectedColor(Color selectedColor) {
+		this.selectedColor = selectedColor;
+	}
 
 	public BufferedImage getImage(){
 		
@@ -61,9 +75,9 @@ public class RadioButton extends Button {
 
 	public void drawShape(Graphics2D g, boolean hover){
 		if(!hover && selected){
-			System.out.println("selected button "+getText());
-			g.setColor(Color.black);
-			g.fillRoundRect(0, 0, getWidth(), getHeight(), curveX, curveY);
+			Color sC = selectedColor == null ? DEFAULT_SELECT_COLOR:selectedColor;
+			g.setColor(sC);
+			g.fillRoundRect(2, 2, getWidth()-4, getHeight()-4, curveX, curveY);
 		}
 		else if(getBackground() != null){
 			if(!hover){
@@ -74,12 +88,12 @@ public class RadioButton extends Button {
 				g.setColor(Utilities.lighten(getBackground(), .4f));
 //				g.setColor(getBackground());
 			}
-			g.fillRoundRect(0, 0, getWidth(), getHeight(), curveX, curveY);
+			g.fillRoundRect(2, 2, getWidth()-4, getHeight()-4, curveX, curveY);
 		}else{
 			clear();
 		}
 		g.setColor(Color.BLACK);
-		g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, curveX, curveY);
+		g.drawRoundRect(2, 2, getWidth()-5, getHeight()-5, curveX, curveY);
 	}
 	
 	public ArrayList<RadioButton> getPeers() {

@@ -1,18 +1,26 @@
 package guiPlayer;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import guiTeacher.GUIApplication;
-import guiTeacher.components.RadioButton;
-import guiTeacher.components.ScrollablePane;
-import guiTeacher.components.TextArea;
-import guiTeacher.components.TextBox;
-import guiTeacher.components.TextLabel;
+import guiTeacher.components.*;
+import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.Visible;
 import guiTeacher.userInterfaces.FullFunctionScreen;
 
 public class Sampler extends GUIApplication {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2452328323352199392L;
 
 	public Sampler(int width, int height) {
 		super(width, height);
@@ -33,7 +41,11 @@ public class Sampler extends GUIApplication {
 
 	public class SampleScreen extends FullFunctionScreen{
 
-		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 258186143576427947L;
+		AnimatedComponent mario;
 		
 		public SampleScreen(int width, int height) {
 			super(width, height);
@@ -42,14 +54,18 @@ public class Sampler extends GUIApplication {
 
 		@Override
 		public void initAllObjects(List<Visible> viewObjects) {
-			RadioButton rb1 = new RadioButton(0, 20, 30, 30, "X", null);
-			RadioButton rb2 = new RadioButton(100, 20, 30, 30, "Y", null);
+			//Set styles
+			StyledComponent.setButtonOutline(true);
+			setCustomFont();
+			
+			RadioButton rb1 = new RadioButton(480, 40, 30, 30, "X", null);
+			RadioButton rb2 = new RadioButton(520, 40, 30, 30, "Y", null);
 			rb1.addPeer(rb2);
 			rb2.addPeer(rb1);
 			viewObjects.add(rb1);
 			viewObjects.add(rb2);
 			
-			ScrollablePane scroll = new ScrollablePane(this, 20, 60, 100, 80);
+			ScrollablePane scroll = new ScrollablePane(this, 20, 60, 200, 80);
 			scroll.setBorderWidth(3);
 			for(int i=0; i < 10; i++){
 				
@@ -60,10 +76,75 @@ public class Sampler extends GUIApplication {
 			viewObjects.add(scroll);
 			
 			
-			TextBox area = new TextBox(20, 160, 200, 100, "Try typing here.");
-			viewObjects.add(area);
+			TextBox box = new TextBox(20, 160, 200, 100, "Try typing here.");
+			viewObjects.add(box);
+			
+			TextArea display = new TextArea(250, 160, 200, 100, "Press the button below the text box on the left to update this text.");
+			viewObjects.add(display);
+			
+			
+			Button b = new Button(20,265, 200, 30,"Update Text Area", new Action() {
+				
+				@Override
+				public void act() {
+					display.setText(box.getText());
+				}
+			});
+			viewObjects.add(b);
+			
+			Graphic level = new Graphic(20, 300, "resources/mariolevel.jpg");
+			viewObjects.add(level);
+			
+			mario = new AnimatedComponent(250, 265, 29, 34);
+			mario.addSequence("resources/mario.png", 150, 234, 50, 29, 34, 3);
+			Thread run = new Thread(mario);
+			run.start();
+			viewObjects.add(mario);
+			
+			TextLabel label = new TextLabel(280, 270, 100, 30, "Try Dragging!");
+			viewObjects.add(label);
+			
+			TextField tf = new TextField(250, 60, 200, 30, "", "Enter text below");
+			viewObjects.add(tf);
+			
+			Checkbox cb = new Checkbox("Invisible Mario", 250, 95, 200, false, new Action() {
+				
+				boolean visible = true;
+				
+				@Override
+				public void act() {
+					visible = !visible;
+					mario.setVisible(visible);;
+					
+				}
+			}); 
+			viewObjects.add(cb);
+			
+		}
+		
+		public void mouseDragged(MouseEvent m) {
+			super.mouseDragged(m);
+			mario.setX(m.getX());
+			mario.setY(m.getY());
+		}
+		
+		
+		private void setCustomFont(){
+			InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("AdventPro-Medium.ttf");
+			try {
+				Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(14f);
+				StyledComponent.setBaseFont(font);
+			} catch (FontFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
+	
+
 	
 }
