@@ -94,6 +94,7 @@ public class OrcMath extends GUIApplication {
 				while ((str = in.readLine()) != null) {
 					str =str+ in.readLine().toString();
 					text+=str;
+					System.out.println("Reading "+str);
 					// str is one line of text; readLine() strips the newline character(s)
 				}
 				//				String body = text.substring(text.indexOf("<body>")+6,str.indexOf("</body>"));

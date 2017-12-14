@@ -18,6 +18,7 @@
  *******************************************************************************/
 package guiTeacher.components;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
@@ -44,6 +45,7 @@ public class Button extends TextLabel implements Clickable{
 		enabled = true;
 		this.action = action;
 		setCurve(35,25);
+		setActiveBorderColor(Color.BLACK);
 		update();
 		
 	}
@@ -53,6 +55,7 @@ public class Button extends TextLabel implements Clickable{
 		this.action = action;
 		enabled = true;
 		setCurve(35,25);
+		setActiveBorderColor(Color.BLACK);
 		update();
 
 	}
@@ -79,7 +82,7 @@ public class Button extends TextLabel implements Clickable{
 	}
 
 	public BufferedImage getImage(){
-		if(hovered)return hoverImage;
+		if(hovered || !enabled)return hoverImage;
 		else return super.getImage();
 	}
 	
@@ -113,9 +116,13 @@ public class Button extends TextLabel implements Clickable{
 		}else{
 			clear();
 		}
-		g.setColor(Color.BLACK);
-		g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, curveX, curveY);
+		if (isButtonOutline()){
+			g.setColor(getActiveBorderColor());
+			g.setStroke(new BasicStroke(getButtonOutlineSize()));
+			g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, curveX, curveY);
+		}
 	}
+	
 	
 	public void drawButton(Graphics2D g, boolean hover){
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,

@@ -31,6 +31,7 @@ public abstract class Component implements Visible {
 	private int y;
 	private int w;
 	private int h;
+	private float alpha;
 	private BufferedImage image;
 	private BufferedImage buffer;
 	private Color foreground;
@@ -45,6 +46,7 @@ public abstract class Component implements Visible {
 		this.y = y;
 		this.w = w;
 		this.h = h;
+		this.alpha = 1.0f;
 		foreground = Color.black;
 		visible = true;
 		background = null;
@@ -183,6 +185,25 @@ public abstract class Component implements Visible {
 	public void unhoverAction() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	
+	
+	public float getAlpha() {
+		return alpha;
+	}
+
+
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
+	}
+
+
+	public void setDimensions(int width, int height) {
+		this.w = width;
+		this.h = height;
+		clear();
+		update();
 	}
 	
 }

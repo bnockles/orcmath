@@ -31,6 +31,7 @@ public class Graphic implements Visible {
 
 	private BufferedImage image;
 	private boolean loadedImages;
+	private float alpha;
 	private int x;
 	private int y;
 	private boolean visible;
@@ -38,6 +39,7 @@ public class Graphic implements Visible {
 	public Graphic(int x, int y, int w, int h, String imageLocation){	
 		this.x = x;
 		this.y = y;
+		this.alpha = 1.0f;
 		visible = true;
 		loadedImages = false;
 		loadImages(imageLocation, w, h);
@@ -46,16 +48,55 @@ public class Graphic implements Visible {
 	public Graphic(int x, int y, double scale, String imageLocation){	
 		this.x = x;
 		this.y = y;
+		this.alpha = 1.0f;
 		visible = true;
 		loadedImages = false;
 		loadImages(imageLocation, scale);
+	}
+
+	public Graphic(int x, int y, String imageLocation){
+		this.x = x;
+		this.y = y;
+		visible = true;
+		this.alpha = 1.0f;
+		loadedImages = false;
+		loadImages(imageLocation, 0,0);
+	}
+	
+	public Graphic(int x, int y, BufferedImage image){
+		this.x = x;
+		this.y = y;
+		this.alpha = 1.0f;
+		visible = true;
+		loadedImages = true;
+		this.image = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = this.image.createGraphics();
+		g.drawImage(image, 0, 0, null);
+	}
+	
+	public Graphic(int x, int y, BufferedImage image, double scale){
+		this.x = x;
+		this.y = y;
+		this.alpha = 1.0f;
+		visible = true;
+		loadedImages = true;
+		
+		AffineTransform scaleT = new AffineTransform();
+		scaleT.scale(scale, scale);
+		AffineTransformOp scaleOp = new AffineTransformOp(scaleT, AffineTransformOp.TYPE_BILINEAR);
+		this.image = scaleOp.filter(image,new BufferedImage((int)(image.getWidth()*scale), (int)(image.getHeight()*scale), BufferedImage.TYPE_INT_ARGB));
+		
+		loadedImages = true;
+		
+		
+
 	}
 
 	private void loadImages(String imageLocation, double scale) {
 		try{
 			//get the full-size image
 			ImageIcon icon = new ImageIcon(imageLocation);
-
+	
 			int newWidth = (int) (icon.getIconWidth() * scale);
 			int newHeight = (int) (icon.getIconHeight() * scale);
 			
@@ -74,25 +115,7 @@ public class Graphic implements Visible {
 		}
 	}
 
-	public Graphic(int x, int y, String imageLocation){
-		this.x = x;
-		this.y = y;
-		visible = true;
-		loadedImages = false;
-		loadImages(imageLocation, 0,0);
-	}
-	
-	public Graphic(int x, int y, BufferedImage image){
-		this.x = x;
-		this.y = y;
-		visible = true;
-		loadedImages = true;
-		this.image = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = this.image.createGraphics();
-		g.drawImage(image, 0, 0, null);
-	}
-
-	private void loadImages(String imageLocation, int w, int h) {
+	public void loadImages(String imageLocation, int w, int h) {
 		try{
 			//get the full-size image
 			ImageIcon icon = new ImageIcon(imageLocation);
@@ -103,14 +126,23 @@ public class Graphic implements Visible {
 				Graphics2D g = image.createGraphics();
 				g.drawImage(icon.getImage(), 0, 0, null);
 			}else{
+				//make a full-size image
 				image = new BufferedImage(icon.getIconWidth(),icon.getIconHeight(),BufferedImage.TYPE_INT_ARGB);
 				Graphics2D g = image.createGraphics();
 				g.drawImage(icon.getImage(), 0, 0, null);
 				
+				//scale the image to size
 				AffineTransform scale = new AffineTransform();
-				scale.scale(w/(double)icon.getIconWidth(), h/(double)icon.getIconHeight());
+				
+				//make it fit to the smaller of the two
+				double scaleWidth = w/(double)icon.getIconWidth();
+				double scaleHeight = h/(double)icon.getIconHeight();
+				double smallerOfTwo = (scaleWidth < scaleHeight)? scaleWidth : scaleHeight;
+				
+//				scale.scale(w/(double)icon.getIconWidth(), h/(double)icon.getIconHeight());
+				scale.scale(smallerOfTwo, smallerOfTwo);
 				AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_BILINEAR);
-				image = scaleOp.filter(image,new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB));
+				image = scaleOp.filter(image,new BufferedImage((int)(image.getWidth()*smallerOfTwo), (int)(image.getHeight()*smallerOfTwo), BufferedImage.TYPE_INT_ARGB));
 //				g.drawImage(icon.getImage(), 0, 0, w, h, 0,0,icon.getIconWidth(), icon.getIconHeight(), null);
 			}
 			loadedImages = true;
@@ -175,6 +207,16 @@ public class Graphic implements Visible {
 	public void hoverAction() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public float getAlpha() {
+		return alpha;
+	}
+
+	@Override
+	public void setAlpha(float f) {
+		this.alpha = f;
 	}
 
 

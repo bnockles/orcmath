@@ -139,6 +139,7 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 		contentY=0;
 		int[] maxXAndY = calculateMaxXY();
 		maxY = maxXAndY[1];
+		System.out.println("ScrollablePane has changed and maxY is now "+maxY);
 		setContentImage(maxXAndY[0],maxXAndY[1]);
 
 	}
@@ -315,12 +316,12 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 	public void update(Graphics2D g2) {
 		if(contentImage != null) {
 			Graphics2D gContent  = contentImage.createGraphics();
-			gContent.setColor(Color.WHITE);
+			gContent.setColor(getScreenBackground());
 			gContent.fillRect(0, 0, contentImage.getWidth(), contentImage.getHeight());
 			super.update(gContent);
 			BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = buffer.createGraphics();
-			g.setColor(Color.WHITE);
+			g.setColor(getScreenBackground());
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.drawImage(contentImage, 0, 0, getWidth(), getHeight(), contentX, contentY, contentX+getWidth(), contentY+getHeight(), null);
 			if(upArrowHovered){

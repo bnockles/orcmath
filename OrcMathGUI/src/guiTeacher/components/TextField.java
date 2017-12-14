@@ -290,12 +290,16 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		g.setColor(getForeground());
 		if(getText() != null) g.drawString(getText(), X_MARGIN, top);
 
+		try{
 		if(!isReadOnly() && cursorShowing && running && selectIndex == cursorIndex){
 			g.setColor(Color.black);
 			int base = getHeight()-fm.getDescent();
 			//			if(cursorIndex> getText().length())cursorIndex = getText().length();
 			int x = fm.stringWidth(getText().substring(0,cursorIndex))+X_MARGIN;
 			g.drawLine(x, base, x, base - fm.getHeight());
+		}
+		}catch(StringIndexOutOfBoundsException siobe){
+			System.out.println("Attempting to draw cursor, but cursor is out of bounds.");
 		}
 		//		drawBorder(g);
 	}
@@ -701,5 +705,11 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		relativeX = x - getX();
 		update();
 	}
+	
+	public void setDimensions(int width, int height) {
+		super.setDimensions(width, height);
+		resetBorder();
+	}
+
 
 }

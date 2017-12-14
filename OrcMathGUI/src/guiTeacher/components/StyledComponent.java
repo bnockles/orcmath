@@ -34,6 +34,8 @@ public abstract class StyledComponent extends Component {
 	private static Font tabFont = new Font("Times Roman",Font.PLAIN,14);//also used in tables
 	private static Color tabColor = new Color(150,200,255);
 	private static Color tabShade = new Color(150,200,255);
+	private static boolean buttonOutline = false;
+	private static int buttonOutlineSize = 2;
 	
 	private static Font baseFont =new Font("Times Roman",Font.PLAIN,14);//also used in tables
 	private static Font monoFont =new Font("Courier",Font.PLAIN,14);//also used in tables
@@ -87,6 +89,17 @@ public abstract class StyledComponent extends Component {
 		baseFont = f;
 	}
 	
+	
+	
+	
+	public static boolean isButtonOutline() {
+		return buttonOutline;
+	}
+
+	public static void setButtonOutline(boolean buttonOutline) {
+		StyledComponent.buttonOutline = buttonOutline;
+	}
+
 	public Color getInactiveBorderColor() {
 		return inactiveBorderColor;
 	}
@@ -135,6 +148,14 @@ public abstract class StyledComponent extends Component {
 	}
 
 
+
+	public static int getButtonOutlineSize() {
+		return buttonOutlineSize;
+	}
+
+	public static void setButtonOutlineSize(int buttonOutlineSize) {
+		StyledComponent.buttonOutlineSize = buttonOutlineSize;
+	}
 
 	public static void setTableBorder(int tableBorder) {
 		StyledComponent.tableBorder = tableBorder;

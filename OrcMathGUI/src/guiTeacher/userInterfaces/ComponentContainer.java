@@ -18,8 +18,10 @@
  *******************************************************************************/
 package guiTeacher.userInterfaces;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -38,43 +40,79 @@ public abstract class ComponentContainer extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = -6466250073705673444L;
+	private List<Visible> startingObjects;
 	private List<Visible> viewObjects;
 	private BufferedImage image;
 	private BufferedImage formerImage;//used for transitions
 	private int borderWidth;
 	private Color borderColor;
+	private Color backgroundColor;
 
 	//used for animating transitions
+	private float alpha;
 	private int xScreen;
 	private int yScreen;
 	private int widthScreen;
 	private int heightScreen;
 	private int xTarget;
 	private int yTarget;
-
+	private boolean fixedSize;
 
 	public ComponentContainer(int width, int height) {
-		viewObjects = new ArrayList<Visible>();
-		initImage(width, height);
-		widthScreen = image.getWidth();
-		heightScreen = image.getHeight();
-		initObjects(viewObjects);
+		alpha = 1.0f;
+		widthScreen = width;
+		heightScreen = height;
+		backgroundColor = Color.white;
+		startingObjects = new ArrayList<Visible>();
+		create();
 	}
-
 
 	public ComponentContainer(int width, int height, ArrayList<Visible> initWithObjects) {
-		viewObjects=initWithObjects;
-		initImage(width, height);
-		widthScreen = image.getWidth();
-		heightScreen = image.getHeight();
-		initObjects(viewObjects);
+		alpha = 1.0f;
+		widthScreen = width;
+		heightScreen = height;
+		startingObjects = initWithObjects;
+		backgroundColor = Color.white;
+		create();
 	}
 
-	public void initImage(int width, int height) {
-		borderColor = Color.black;
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		formerImage = null;
+	public void setDimensions(int w, int h){
+		widthScreen = w;
+		heightScreen = h;
+		startingObjects = viewObjects;
+		create();
+	}
+	
+	/** 
+	 * Called by constructors only (because this method calls initObjects, which will actually wipe out temp data from UI objects)
+	 */
+	private void create(){
+		viewObjects = new ArrayList<Visible>();
+		for (Visible v: startingObjects){
+			viewObjects.add(v);
+		}
+		initImage(widthScreen, heightScreen);
 		update();
+		initObjects(viewObjects);
+	}
+	
+	
+	
+	public Color getScreenBackground() {
+		return backgroundColor;
+	}
+	
+	public void setBackground(Color c){
+		this.backgroundColor = c;
+	}
+	
+	private void initImage(int width, int height) {
+		if (width > 0 && height > 0){
+			borderColor = Color.black;
+			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			formerImage = null;
+		}
+
 
 	}
 	/**
@@ -139,6 +177,10 @@ public abstract class ComponentContainer extends JPanel{
 	public void setBorderColor(Color borderColor) {
 		this.borderColor = borderColor;
 	}
+	
+	
+
+
 
 
 	public int getBorderWidth() {
@@ -190,19 +232,19 @@ public abstract class ComponentContainer extends JPanel{
 
 	}
 
-
-	public void update() {
-//				image = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = image.createGraphics();
+	
+	public void update(){
+		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = buffer.createGraphics();
 		update(g);
-		//		Graphics2D gi = buffer.createGraphics();
-		//		gi.drawImage(buffer, getWidth(), getHeight(), null);
+		image.createGraphics().drawImage(buffer, 0, 0, null);
 	}
+
 
 	public void update(Graphics2D g2){
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setColor(Color.white);
+		g2.setColor(getScreenBackground());
 		g2.fillRect(0, 0, image.getWidth(), image.getHeight());
 		g2.setColor(Color.black);
 		drawObjects(g2);
@@ -213,7 +255,18 @@ public abstract class ComponentContainer extends JPanel{
 		//iterate through all view objects
 		for(int i = 0; i < viewObjects.size(); i++){
 			Visible v= viewObjects.get(i);
-			if(v.isVisible())g.drawImage(v.getImage(), v.getX(), v.getY(), null);
+			if(v.isVisible()){
+				if(v.getAlpha() == 1f){
+					g.drawImage(v.getImage(), v.getX(), v.getY(), null);
+				}else{
+						float alpha = v.getAlpha();
+						Composite orig = g.getComposite();
+						AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+						g.setComposite(ac);
+						g.drawImage(v.getImage(), v.getX(), v.getY(), null);
+						g.setComposite(orig);
+				}
+			}
 		}
 	}
 
@@ -252,4 +305,36 @@ public abstract class ComponentContainer extends JPanel{
 		return image.getHeight();
 	}
 
+	public void setFixedSize(boolean b){
+		fixedSize = b;	
+	}
+
+	public boolean isFixedSize(){
+		return fixedSize;
+	}
+
+	/*
+	 * To resize components, override resizeComponents method Called 
+	 */
+	public void  resizeComponents(){
+	}
+	
+	public void resize(int width, int height){
+		this.widthScreen = width;
+		this.heightScreen = height;
+		initImage(widthScreen, heightScreen);
+		resizeComponents();
+		update();
+	}
+
+	public float getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
+	}
+
+	
+	
 }

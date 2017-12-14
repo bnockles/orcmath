@@ -6,6 +6,8 @@ import java.util.List;
 import guiTeacher.GUIApplication;
 import guiTeacher.components.RadioButton;
 import guiTeacher.components.ScrollablePane;
+import guiTeacher.components.TextArea;
+import guiTeacher.components.TextBox;
 import guiTeacher.components.TextLabel;
 import guiTeacher.interfaces.Visible;
 import guiTeacher.userInterfaces.FullFunctionScreen;
@@ -56,6 +58,10 @@ public class Sampler extends GUIApplication {
 			scroll.update();
 			
 			viewObjects.add(scroll);
+			
+			
+			TextBox area = new TextBox(20, 160, 200, 100, "Try typing here.");
+			viewObjects.add(area);
 		}
 		
 	}
