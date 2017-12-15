@@ -11,9 +11,9 @@ public class Movie extends Component {
 
 	String title;
 	String director;
-	String date;	
+	int date;	
 	
-	public Movie(String title, String director, String date) 
+	public Movie(String title, String director, int date) 
 	{
 		
 		super(170, 120, 25, 30);
