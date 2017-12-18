@@ -51,9 +51,12 @@ public class CatalogMaker
 					System.out.println("Your movie has been created.");
 					inConvo = true;
 				}				
-			}						
+			}
+			
+			System.out.println("Do you want to save your changes?");
+			
 		}
-				
+		
 		System.out.println(maker.getCsvContent());			
 	}
 	
@@ -72,8 +75,10 @@ public class CatalogMaker
 	{
 	    for (char c : str.toCharArray())
 	    {
-	        if (!Character.isDigit(c)) 
-	        return false;
+	        if (!Character.isDigit(c))
+	        {
+	        	return false;
+	        }
 	    }
 	    return true;
 	}
