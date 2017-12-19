@@ -20,7 +20,13 @@ public class CatalogScreen extends FullFunctionScreen
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) 
 	{
-
-		descriptionField = new TextField(50, 50, 30, 70, "sample");
+		TextField titleDescription = new TextField(50, 50, 300, 50, "sample text", "Movie Title");
+		viewObjects.add(titleDescription);
+		
+		TextField directorDescription = new TextField(50, 150, 300, 50, "sample text", "Director");
+		viewObjects.add(directorDescription);
+		
+		TextField yearDescription = new TextField(50, 250, 300, 50, "sample text", "Year Released");
+		viewObjects.add(yearDescription);
 	}
 }
