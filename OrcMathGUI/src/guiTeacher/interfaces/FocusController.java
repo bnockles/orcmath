@@ -18,6 +18,11 @@
  *******************************************************************************/
 package guiTeacher.interfaces;
 
+/**
+ * A focus controller shifts the focus of the scrolling panel
+ * @author bnockles
+ *
+ */
 public interface FocusController {
 
 	public void moveFocus(KeyedComponent k);

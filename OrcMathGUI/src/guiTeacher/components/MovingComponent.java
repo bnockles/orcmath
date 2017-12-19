@@ -18,10 +18,9 @@
  *******************************************************************************/
 package guiTeacher.components;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class MovingComponent extends Component implements Runnable{
+public abstract class MovingComponent extends Component implements Runnable{
 	private long moveTime; //time when the image last moved
 	private double vx; //the horizontal velocity
 	private double vy; //the vertical velocity
@@ -83,7 +82,15 @@ public class MovingComponent extends Component implements Runnable{
 		drawImage(g);
 	}
 
-
+	public void setX(int x){
+		super.setX(x);
+		posx = x;
+	}
+	
+	public void setY(int y){
+		super.setY(y);
+		posy = y;
+	}
 
 	public double getVx() {
 		return vx;
@@ -113,32 +120,29 @@ public class MovingComponent extends Component implements Runnable{
 	 * for demonstration purposes only. Make abstract
 	 * @param g
 	 */
-	public void drawImage(Graphics2D g) {
-		g.setColor(Color.black);
-		g.fillOval(0, 0, getWidth(), getHeight());
-	}
+	public abstract void drawImage(Graphics2D g);
 	
 	/**
 	 * For demonstration purposes only. Make abstract
 	 */
 	public void checkBehaviors(){
-		if(posy+vy > 300){
-			posy = 300;
-			vy=-vy;
-		}
-		else if(posy+vy < 20){
-			posy = 20;
-			vy=-vy;
-		}
-		
-		if(posx+vx > 300){
-			posx = 300;
-			vx=-vx;
-		}
-		else if(posx+vx < 20){
-			posx = 20;
-			vx=-vx;
-		}
-		
+//		if(posy+vy > 300){
+//			posy = 300;
+//			vy=-vy;
+//		}
+//		else if(posy+vy < 20){
+//			posy = 20;
+//			vy=-vy;
+//		}
+//		
+//		if(posx+vx > 300){
+//			posx = 300;
+//			vx=-vx;
+//		}
+//		else if(posx+vx < 20){
+//			posx = 20;
+//			vx=-vx;
+//		}
+//		
 	}
 }

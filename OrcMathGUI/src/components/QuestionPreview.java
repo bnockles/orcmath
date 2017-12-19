@@ -70,11 +70,39 @@ public class QuestionPreview extends JFrame implements FocusController, MouseWhe
 		addMouseWheelListener(this);
 		addMouseListener(pane);
 	}
+	
+	public QuestionPreview(int x, int y, int w, int h) {
+		super();
+		this.originalX=x;
+		this.originalY=y;
+		setBounds(x,y,w,h);
+		setUndecorated(true);
+		initialized = false;
+		currentlyShowingDifficulty = 0;
+		currentlyShowingType ="";
+		pane = new ScrollablePreview( 0, 0, w, h);
+		addMouseWheelListener(this);
+		addMouseListener(pane);
+	}
 
 	public boolean isInitialized(){
 		return initialized;
 	}
 
+	public void setImage(BufferedImage image){
+
+			Graphic example = new Graphic(0, 0,image);
+
+			initialized = true;
+			//			System.out.println("QuestionPreview.java "+question);
+			pane.addObject(example);
+			pane.update();
+			repaint();
+
+		
+
+	}
+	
 	public void setExample(String question, int difficulty){
 		if(!question.equals(currentlyShowingType) || difficulty !=currentlyShowingDifficulty){
 			Graphic example = new Graphic(0, 0,"resources/examples/difficulty"+difficulty+"/"+question.replace(":", "_")+".png");

@@ -31,6 +31,7 @@ public abstract class Component implements Visible {
 	private int y;
 	private int w;
 	private int h;
+	private float alpha;
 	private BufferedImage image;
 	private BufferedImage buffer;
 	private Color foreground;
@@ -38,12 +39,14 @@ public abstract class Component implements Visible {
 	private Visible containingComponent;
 	private boolean visible;
 	private Action hoverAction;
+	private boolean left;//a boolean to keep track of when a pointer leaves this object
 	
 	public Component(int x, int y, int w, int h){
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
+		this.alpha = 1.0f;
 		foreground = Color.black;
 		visible = true;
 		background = null;
@@ -51,6 +54,16 @@ public abstract class Component implements Visible {
 	}
 	
 	
+	public boolean hasLeft() {
+		return left;
+	}
+
+
+	public void setLeft(boolean left) {
+		this.left = left;
+	}
+
+
 	public BufferedImage getImage() {
 		return image;
 	}
@@ -168,5 +181,29 @@ public abstract class Component implements Visible {
 		this.visible = visible;
 	}
 	
+	@Override
+	public void unhoverAction() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	public float getAlpha() {
+		return alpha;
+	}
+
+
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
+	}
+
+
+	public void setDimensions(int width, int height) {
+		this.w = width;
+		this.h = height;
+		clear();
+		update();
+	}
 	
 }
