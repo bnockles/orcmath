@@ -16,10 +16,8 @@ public class CatalogMaker
 	{
 		movies = new ArrayList<Movie>();
 		
-		count = 0;
-		movies.add(count, new Movie("The Terminator", "James Cameron", 1984));
-		count++;
-		movies.add(count, new Movie("The Titanic", "James Cameron", 1997));
+		movies.add(new Movie("The Terminator", "James Cameron", 1984));
+		movies.add(new Movie("The Titanic", "James Cameron", 1997));
 		
 	}
 	
@@ -29,6 +27,7 @@ public class CatalogMaker
 		CatalogMaker maker = new CatalogMaker();
 		while (!inConvo)
 		{
+			
 			System.out.println("Enter a movie title.");
 			String title = in.nextLine();
 			if (!(title.equals("")))
@@ -46,8 +45,7 @@ public class CatalogMaker
 						date = in.nextLine();
 					}
 					int year = Integer.parseInt(date);
-					count++;
-					maker.movies.add(count, new Movie(title, director, year));
+					maker.movies.add(new Movie(title, director, year));
 					System.out.println("Your movie has been created.");
 					inConvo = true;
 				}				
