@@ -20,7 +20,12 @@ package guiTeacher.components;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 public class AnimatedComponent extends MovingComponent{
 
@@ -48,6 +53,47 @@ public class AnimatedComponent extends MovingComponent{
 		return true;
 	}
 	
+	public void addSequence(String originalImgageAddress, ArrayList<Integer> times, int x, int y, int w, int h,
+			int n) {
+		BufferedImage originalImgage;
+		try {
+			originalImgage = ImageIO.read(new File(originalImgageAddress));
+			for(int i = 0; i < n; i++){
+				addFrame(originalImgage.getSubimage(x+w*i, y, w, h),times.get(i));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Adds n subimages to the animation. each sub image has width w, and height h,
+	 * the sub-images are taken-from the iamges at the given address in a sequence from left
+	 * to right, beginning at coordinates x,y. Each frame will be shown for "time" ms
+	 * @param originalImgageAddress
+	 * @param time
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param n
+	 */
+	public void addSequence(String originalImgageAddress, int time, int x, int y, int w, int h,
+			int n) {
+		BufferedImage originalImgage;
+		try {
+			originalImgage = ImageIO.read(new File(originalImgageAddress));
+			for(int i = 0; i < n; i++){
+				addFrame(originalImgage.getSubimage(x+w*i, y, w, h),time);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 
 	public void addFrame(BufferedImage image, Integer time){

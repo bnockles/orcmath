@@ -25,4 +25,5 @@ public interface Scrollable {
 	void scrollY(int clicks);
 	void press();
 	void release();
+	boolean isVisible();
 }

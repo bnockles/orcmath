@@ -145,14 +145,14 @@ public class PerformTransform extends DynamicType{
 	}
 
 	protected void initFigure() {
-		if(false){//override the figure method to make a custom figure
-			figure.add(new CoordinatePoint(1, 3));
-			figure.add(new CoordinatePoint(5, 5));
-			figure.add(new CoordinatePoint(6, 8));
-			figure.add(new CoordinatePoint(1, 8));
-			
-		}
-		else{
+//		if(false){//override the figure method to make a custom figure
+//			figure.add(new CoordinatePoint(1, 3));
+//			figure.add(new CoordinatePoint(5, 5));
+//			figure.add(new CoordinatePoint(6, 8));
+//			figure.add(new CoordinatePoint(1, 8));
+//			
+//		}
+//		else{
 			if(difficulty==1||difficulty==2){
 				int x=Ops.randomNotZero(-6, 6);
 				int y=Ops.randomNotZero(-6, 6);
@@ -186,7 +186,7 @@ public class PerformTransform extends DynamicType{
 					figure.add(new CoordinatePoint(xBearing+Ops.randomInt(1, 5), yBearing+Ops.randomInt(-5, -2)));
 				}
 			}
-		}
+//		}
 	}
 
 	private void drawDynamicImage(CoordinateImage image) {
