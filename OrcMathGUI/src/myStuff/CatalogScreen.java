@@ -38,7 +38,7 @@ public class CatalogScreen extends FullFunctionScreen{
 				
 			}
 		});
-		
+		viewObjects.add(addbutton);
 	}
 	
 	private void setScreen(CatalogScreen window) {
