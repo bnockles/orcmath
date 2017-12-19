@@ -1,7 +1,9 @@
 package danielComponent;
 
+import java.awt.Color;
 import java.util.List;
 
+import guiTeacher.components.Button;
 import guiTeacher.components.TextField;
 import guiTeacher.interfaces.Visible;
 import guiTeacher.userInterfaces.FullFunctionScreen;
@@ -28,5 +30,8 @@ public class CatalogScreen extends FullFunctionScreen
 		
 		TextField yearDescription = new TextField(50, 250, 300, 50, "sample text", "Year Released");
 		viewObjects.add(yearDescription);
+		
+		Button button = new Button(50, 350, 120, 120, "Click me", new Color(205,11,100), null);
+		viewObjects.add(button);
 	}
 }
