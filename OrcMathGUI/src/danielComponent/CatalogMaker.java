@@ -109,6 +109,7 @@ public class CatalogMaker
 	}
 	
 	private void load() {
+		Scanner in = new Scanner(System.in);
 		String fileName = "";
 		//empty the catalog to prepare for a new load
 		movies = new ArrayList<Movie>();

@@ -22,27 +22,31 @@ public class CatalogScreen extends FullFunctionScreen implements FileRequester
 	private Button deleteButton;
 	private Button saveButton;
 	private CatalogMaker catalog;
+	private TextField yearDescription;
+	private TextField directorDescription;
+	private TextField titleDescription;
 	
 	public CatalogScreen(int width, int height) 
 	{
 		super(width, height);
 	}
-
+	
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) 
 	{
 		catalog = new CatalogMaker();
 		
-		text = new TextArea(50,50,200,50,"Movie Catalog");
+		text = new TextArea(50,50,1000,1000,"Movie Catalog");
 		viewObjects.add(text);
 		
-		TextField titleDescription = new TextField(50, 150, 300, 50, "sample text", "Movie Title");
+		titleDescription = new TextField(50, 150, 300, 50, "Jaws", "Movie Title");
 		viewObjects.add(titleDescription);
 		
-		TextField directorDescription = new TextField(50, 250, 300, 50, "sample text", "Director");
+		directorDescription = new TextField(50, 250, 300, 50, "Steven Spielberg", "Director");
 		viewObjects.add(directorDescription);
 		
-		TextField yearDescription = new TextField(50, 350, 300, 50, "sample text", "Year Released");
+		yearDescription = new TextField(50, 350, 300, 50, "1975", "Year Released");
+		yearDescription.setInputType(TextField.INPUT_TYPE_NUMERIC);
 		viewObjects.add(yearDescription);
 		
 		addButton = new Button(450, 250, 80, 80, "Click Me", new Color(205,11,100), 
@@ -67,7 +71,8 @@ public class CatalogScreen extends FullFunctionScreen implements FileRequester
 
 	protected void addClicked() 
 	{
-		text.setText("Sample");
+		Movie m = new Movie(titleDescription.getText(), directorDescription.getText(), Integer.parseInt(yearDescription.getText()));
+		text.setText(text.getText()+"\n"+m.title+", "+m.director+" ("+m.date+")");
 	}
 
 	@Override
