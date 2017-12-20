@@ -20,7 +20,7 @@ public class CatalogMakerGUI extends GUIApplication
 
 	public static void main(String[] args)
 	{
-		CatalogMakerGUI gui = new CatalogMakerGUI(700, 500);
+		CatalogMakerGUI gui = new CatalogMakerGUI(700, 700);
 		Thread go = new Thread(gui);
 		go.start();
 	}
