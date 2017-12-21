@@ -40,8 +40,16 @@ public class CatalogMaker {
 		}
 	}
 
+	public ArrayList<Book> getBooks(){
+		return catalog;
+	}
+	
+	public Book getBook(int index){
+		return catalog.get(index);
+	}
+	
 	private void create() {
-		
+
 		boolean running = true;
 		while(running){
 			showCatalog();
@@ -72,10 +80,11 @@ public class CatalogMaker {
 	}
 
 	private int getIntegerInput() {
-		String text = in.nextLine();
+		
 		int value = 0;
 		boolean valid = false;
 		while(!valid){
+			String text = in.nextLine();
 			try{
 				value = Integer.parseInt(text);
 				valid = true;
@@ -96,11 +105,11 @@ public class CatalogMaker {
 	}
 
 
-	private void addBook(Book b){
+	public void addBook(Book b){
 		catalog.add(b);
 	}
 
-	private void save() {
+	public void save() {
 		try{    
 			FileWriter fw=new FileWriter("BookCatalog.csv");
 			for(Book b: catalog){
@@ -148,29 +157,41 @@ public class CatalogMaker {
 		//use this boolean to control the while loop. The user should have multiple chances to enter a correct filename
 		boolean opened = false;
 		while(!opened){
-			try {
+			
 				System.out.println("Enter a file to open");
 				fileName = in.nextLine();
-				FileReader fileReader = new FileReader(new File(fileName));
-				String line = "";
-				//a BufferedReader enables us to read teh file one line at a time
-				BufferedReader br = new BufferedReader(fileReader);
-				while ((line = br.readLine()) != null) {
+				opened = read(new File(fileName));
 
-					String[] param = line.split(",");
-					//add a new Book for each line in the save file
-					catalog.add(new Book(param[0],param[1],Integer.parseInt(param[2])));
-
-
-
-				}
-				br.close();
-				opened = true;
-			}catch (IOException e) {
-				System.out.println("The file name you specified does not exist.");
-			}
+			
 		}
 		create();
 
+	}
+
+	public boolean read(File f){
+		try{
+			FileReader fileReader = new FileReader(f);
+			String line = "";
+			//a BufferedReader enables us to read teh file one line at a time
+			BufferedReader br = new BufferedReader(fileReader);
+			while ((line = br.readLine()) != null) {
+
+				String[] param = line.split(",");
+				//add a new Book for each line in the save file
+				catalog.add(new Book(param[0],param[1],Integer.parseInt(param[2])));
+
+
+
+			}
+			br.close();
+			return true;
+		}catch(Exception e){
+			System.out.println("The file name you specified does not exist.");
+			return false;
+		}
+	}
+
+	public void removeBook(Book b) {
+		catalog.remove(b);
 	}
 }
