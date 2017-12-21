@@ -28,13 +28,13 @@ public class HolidayScreen extends FullFunctionScreen {
 		changeScreen = new Button(550, 550, 100, 30, "Next Page", new Action() {
 
 			public void act() {
-				HolidayCardGUI.gui.setScreen(HolidayCardGUI.screen2);
+				HolidayCardGUI.gui.setScreen(HolidayCardGUI.gui.screen2);
 			}
 		});
 		
 		viewObjects.add(changeScreen);		
 		
-		title = new TextArea(300, 300, 300, 300, text);
+		title = new TextArea(300, 300, 300, 300, "Happy Holidays");
 		viewObjects.add(title);
 		
 	}
