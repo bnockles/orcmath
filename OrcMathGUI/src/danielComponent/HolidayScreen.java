@@ -15,6 +15,7 @@ public class HolidayScreen extends FullFunctionScreen {
 	private Button changeScreen;
 	private TextArea title;
 	private static final long serialVersionUID = 4954108273887121678L;
+	private Graphic image;
 	
 	public HolidayScreen(int width, int height, String text) {
 		super(width, height);
@@ -37,6 +38,8 @@ public class HolidayScreen extends FullFunctionScreen {
 		title = new TextArea(300, 300, 300, 300, "Happy Holidays");
 		viewObjects.add(title);
 		
+		image = new Graphic(0, 0, 700, 700, "resources\\card.jpg");
+		viewObjects.add(image);
 	}
 
 }
