@@ -22,7 +22,7 @@ public class Banner extends MovingComponent {
 
 	@Override
 	public void drawImage(Graphics2D g) {
-		g.setColor(Color.black);
+		g.setColor(Color.white);
 		try {
 			File fontFile = new File("resources/Holiday.ttf");
 			//			File fontFile = new File("resources//DayRoman.ttf");
