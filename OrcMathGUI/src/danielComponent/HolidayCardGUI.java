@@ -10,7 +10,7 @@ public class HolidayCardGUI extends GUIApplication {
 
 	public static HolidayCardGUI gui;
 	public static HolidayScreen screen1 = new HolidayScreen(700, 700, "Text");
-	public static HolidayScreen screen2 = new HolidayScreen(700, 700, "a");
+	public static HolidayScreen2 screen2 = new HolidayScreen2(700, 700);
 
 	private static final long serialVersionUID = 4513904487268188576L;
 
