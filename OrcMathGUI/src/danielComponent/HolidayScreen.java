@@ -24,15 +24,13 @@ public class HolidayScreen extends FullFunctionScreen {
 
 	@Override
 	public void initAllObjects(List<Visible> viewObjects) 
-	{
-		
+	{		
 		changeScreen = new Button(550, 550, 100, 30, "Next Page", new Action() {
 
 			public void act() {
 				HolidayCardGUI.gui.setScreen(HolidayCardGUI.gui.screen2);
 			}
-		});
-		
+		});		
 		viewObjects.add(changeScreen);		
 		
 		title = new TextArea(300, 300, 300, 300, "Happy Holidays");
@@ -41,5 +39,4 @@ public class HolidayScreen extends FullFunctionScreen {
 		image = new Graphic(0, 0, 700, 700, "resources\\card.jpg");
 		viewObjects.add(image);
 	}
-
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import guiTeacher.components.Action;
 import guiTeacher.components.Button;
+import guiTeacher.components.Graphic;
 import guiTeacher.components.TextArea;
 import guiTeacher.interfaces.Visible;
 import guiTeacher.userInterfaces.FullFunctionScreen;
@@ -14,6 +15,7 @@ public class HolidayScreen2 extends FullFunctionScreen {
 
 	public TextArea title;
 	public Button back;
+	public Graphic inside;
 	
 	public HolidayScreen2(int width, int height) {
 		super(width, height);
@@ -33,7 +35,8 @@ public class HolidayScreen2 extends FullFunctionScreen {
 		});
 		viewObjects.add(back);
 		
-		
+		inside = new Graphic(20,45,700,700, "resources\\inside.jpg");
+		viewObjects.add(inside);
 	}
 
 }
