@@ -44,9 +44,8 @@ public class CustButton extends Button {
 		string2 = string;
 	}
 
-	public void setIconColor(Color color1)
+	public void setIconColor(Color color1)	
 	{
 		color = color1;
 	}
-
 }
