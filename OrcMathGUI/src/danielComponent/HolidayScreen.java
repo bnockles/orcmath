@@ -31,6 +31,7 @@ public class HolidayScreen extends FullFunctionScreen {
 				HolidayCardGUI.gui.setScreen(HolidayCardGUI.gui.screen2);
 			}
 		});		
+		
 		viewObjects.add(changeScreen);		
 		
 		title = new TextArea(300, 300, 300, 300, "Happy Holidays");
