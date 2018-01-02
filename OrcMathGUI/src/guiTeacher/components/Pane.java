@@ -5,10 +5,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import guiPlayer.CustomPane;
 import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.Visible;
 import guiTeacher.userInterfaces.ComponentContainer;
+import guiTeacher.userInterfaces.Screen;
 
 public class Pane extends ComponentContainer implements Clickable {
 
@@ -19,11 +21,13 @@ public class Pane extends ComponentContainer implements Clickable {
 	private int y;
 	protected int xRelative;
 	protected int yRelative;
-	private final FocusController parentScreen;
+	protected final FocusController parentScreen;
 	protected Component containingComponent;//some components like Accordion contain ScrollapblePanes
 
 	public Pane(FocusController focusController, int x, int y,int width, int height) {
 		super(width, height);
+		this.x = x;
+		this.y = y;
 		this.parentScreen=focusController;
 		setVisible(true);
 		containingComponent = null;
@@ -32,6 +36,8 @@ public class Pane extends ComponentContainer implements Clickable {
 
 	public Pane(FocusController focusController, int x, int y,int width, int height, ArrayList<Visible> initWithObjects) {
 		super(width, height, initWithObjects);
+		this.x = x;
+		this.y = y;
 		this.parentScreen=focusController;
 		setVisible(true);
 		containingComponent = null;
@@ -149,6 +155,11 @@ public class Pane extends ComponentContainer implements Clickable {
 			}
 		}
 	}
+	
+	public void move(int newX, int newY, int durationMS){
+		Visible.move(this, newX, newY, durationMS);
+	}
+	
 	
 	/**
 	 * override by subclasses to add objects manually

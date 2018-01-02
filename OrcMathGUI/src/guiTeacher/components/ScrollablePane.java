@@ -407,6 +407,10 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 		
 	}
 
+	public void move(int newX, int newY, int durationMS){
+		Visible.move(this, newX, newY, durationMS);
+	}
+	
 
 
 

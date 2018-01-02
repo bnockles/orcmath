@@ -100,7 +100,9 @@ public class Button extends TextLabel implements Clickable{
 	
 	public void update(){
 		hoverImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-		drawButton(hoverImage.createGraphics(), true);
+		Graphics2D hoverG = hoverImage.createGraphics();
+		applyStyles(hoverG);
+		drawButton(hoverG, true);
 		super.update();
 	}
 	
