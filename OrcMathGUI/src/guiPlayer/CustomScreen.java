@@ -6,12 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import guiTeacher.components.Action;
-import guiTeacher.components.TextLabel;
-import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.Visible;
-import guiTeacher.userInterfaces.ClickableScreen;
+import guiTeacher.userInterfaces.FullFunctionScreen;
 
-public class CustomScreen extends ClickableScreen {
+public class CustomScreen extends FullFunctionScreen {
 
 	public CustomScreen(int width, int height) {
 		super(width, height);
@@ -20,6 +18,7 @@ public class CustomScreen extends ClickableScreen {
 
 	private CustomLabel label;
 	private int relativeY;
+	private CustomPane paneExample;
 
 	/**
 	 * 
@@ -43,6 +42,9 @@ public class CustomScreen extends ClickableScreen {
 				}
 			}
 		});
+		paneExample = new CustomPane(this, 400, 30);
+		paneExample.update();
+		viewObjects.add(paneExample);
 
 	}
 

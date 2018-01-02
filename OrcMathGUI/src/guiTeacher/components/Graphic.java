@@ -91,6 +91,8 @@ public class Graphic implements Visible {
 		
 
 	}
+	
+	
 
 	public Graphic(int x, int y, int w, int h, BufferedImage icon) {
 		this.x = x;
@@ -168,6 +170,10 @@ public class Graphic implements Visible {
 		}
 	}
 
+	public void move(int newX, int newY, int durationMS){
+		Visible.move(this, newX, newY, durationMS);
+	}
+	
 
 	public BufferedImage getImage() {
 		return image;
