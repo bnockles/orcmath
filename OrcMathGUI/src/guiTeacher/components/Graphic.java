@@ -92,6 +92,23 @@ public class Graphic implements Visible {
 
 	}
 
+	public Graphic(int x, int y, int w, int h, BufferedImage icon) {
+		this.x = x;
+		this.y = y;
+		this.alpha = 1.0f;
+		visible = true;
+		loadedImages = true;
+		AffineTransform scale = new AffineTransform();
+		
+		//make it fit to the smaller of the two
+		double scaleWidth = w/(double)icon.getWidth();
+		double scaleHeight = h/(double)icon.getHeight();
+		double smallerOfTwo = (scaleWidth < scaleHeight)? scaleWidth : scaleHeight;
+		scale.scale(smallerOfTwo, smallerOfTwo);
+		AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_BILINEAR);
+		image = scaleOp.filter(icon,new BufferedImage((int)(icon.getWidth()*smallerOfTwo), (int)(icon.getHeight()*smallerOfTwo), BufferedImage.TYPE_INT_ARGB));
+	}
+
 	private void loadImages(String imageLocation, double scale) {
 		try{
 			//get the full-size image
