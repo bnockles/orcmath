@@ -20,6 +20,9 @@ package guiTeacher.interfaces;
 
 import java.awt.image.BufferedImage;
 
+import guiTeacher.components.AnimatedComponent;
+import guiTeacher.components.Component;
+
 public interface Visible {
 
 	public BufferedImage getImage();
@@ -37,4 +40,32 @@ public interface Visible {
 	void setAlpha(float f);
 	void unhoverAction();
 	void hoverAction();
+	
+	
+	public static void move(Visible v, int newX, int newY, int durationMS){
+		final double frames = durationMS/AnimatedComponent.REFRESH_RATE;
+		final double origX = v.getX();
+		final double origY = v.getY();
+		Thread mover = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				double changeX = (newX - v.getX())/frames;
+				double changeY= (newY - v.getY())/frames;
+				for(int i = 0; i < frames; i++){
+					v.setX((int)(origX+i*changeX));
+					v.setY((int)(origY+i*changeY));
+					try {
+						Thread.sleep(AnimatedComponent.REFRESH_RATE);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				v.setX(newX);
+				v.setY(newY);
+				
+			}
+		});
+		mover.start();
+	}
 }

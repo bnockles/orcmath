@@ -299,7 +299,6 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 			g.drawLine(x, base, x, base - fm.getHeight());
 		}
 		}catch(StringIndexOutOfBoundsException siobe){
-			System.out.println("Attempting to draw cursor, but cursor is out of bounds.");
 		}
 		//		drawBorder(g);
 	}
