@@ -22,8 +22,8 @@ public class SimonGameAlice extends GUIApplication {
 	public SimonGameAlice(int width, int height) {
 		
 		super(width,height);
-		Thread app = new Thread(this);
-		app.start();
+		
+		setVisible(true);
 		// TODO Auto-generated constructor stub
 	}
 	//Write the main method
