@@ -20,6 +20,11 @@ package guiTeacher.components;
 
 import java.awt.Graphics2D;
 
+/**
+ * MovingComponent is a Component that is Runnable. While running, the Component moves according to it velocity vectors, vx and vy. Note that, to change the movement of a MovingComponent, a subclass should override the checkBehaviors method.
+ * @author bnockles
+ *
+ */
 public abstract class MovingComponent extends Component implements Runnable{
 	private long moveTime; //time when the image last moved
 	private double vx; //the horizontal velocity

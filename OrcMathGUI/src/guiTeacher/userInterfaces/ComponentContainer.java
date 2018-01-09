@@ -313,12 +313,16 @@ public abstract class ComponentContainer extends JPanel{
 		return fixedSize;
 	}
 
-	/*
-	 * To resize components, override resizeComponents method Called 
+	/**
+	 * Called indirectly by GUIApplication whenever the containing Window is resized
+	 * To resize components, override this method. Default implementation has no effect
 	 */
 	public void  resizeComponents(){
 	}
 	
+	/**
+	 * Called by GUIApplication whenever the containing Window is resized
+	 */
 	public void resize(int width, int height){
 		this.widthScreen = width;
 		this.heightScreen = height;

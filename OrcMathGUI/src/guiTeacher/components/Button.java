@@ -30,6 +30,11 @@ import guiTeacher.GUIApplication;
 import guiTeacher.Utilities;
 import guiTeacher.interfaces.Clickable;
 
+/**
+ * A Clickable Component that has two images: a normal image and a hovered image. If a button is enabled, its appearance changes when it is hovered as a visual confirmation that it can be clicked
+ * @author bnockles
+ *
+ */
 public class Button extends TextLabel implements Clickable{
 
 	private Action action;
@@ -39,6 +44,16 @@ public class Button extends TextLabel implements Clickable{
 	protected int curveX;
 	protected int curveY;
 	
+	/**
+	 * 
+	 * @param x - the x-coordinate of the Button, within the context of the ComponentContainer
+	 * @param y - the y-coordinate of the Button, within the context of the ComponentContainer
+	 * @param w - the pixel width of this Button
+	 * @param h - the pixel height of this Button
+	 * @param text - Text that will appear in the center of this Button
+	 * @param color - the background color of this button
+	 * @param action - the action associated with clicking this Button. May be null
+	 */
 	public Button(int x, int y, int w, int h, String text, Color color, Action action) {
 		super(x, y, w, h, text);
 		setBackground(color);
@@ -50,6 +65,15 @@ public class Button extends TextLabel implements Clickable{
 		
 	}
 	
+	/**
+	 * 
+	 * @param x - the x-coordinate of the Button, within the context of the ComponentContainer
+	 * @param y - the y-coordinate of the Button, within the context of the ComponentContainer
+	 * @param w - the pixel width of this Button
+	 * @param h - the pixel height of this Button
+	 * @param text - Text that will appear in the center of this Button
+	 * @param action - the action associated with clicking this Button. May be null.
+	 */
 	public Button(int x, int y, int w, int h, String text, Action action) {
 		super(x, y, w, h, text);
 		this.action = action;
@@ -62,7 +86,8 @@ public class Button extends TextLabel implements Clickable{
 	
 	/**
 	 * set the roundness of the curve. Default is 35,25 pixels
-	 * @param pixels
+	 * @param xPixels the horizontal width of the curve
+	 * @param yPixels the vertical height of the curve
 	 */
 	public void setCurve(int xPixels, int yPixels){
 		clear();
@@ -71,33 +96,57 @@ public class Button extends TextLabel implements Clickable{
 		update();
 	}
 	
+	/**
+	 * @return true if this Button is enabled (can be clicked and hovered)
+	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
 	
-
+/**
+ * set 'enabled' for this Button. When a Button is not enabled, it is visible but will not change when hovered and will not act when hovered.
+ * @param enabled
+ */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		if(!enabled)hovered = false;
 	}
 
+	/**
+	 * @return either the hoverImage or image, depending on the state of this Button
+	 */
 	public BufferedImage getImage(){
 		if(hovered || !enabled)return hoverImage;
 		else return super.getImage();
 	}
 	
+	/**
+	 * 
+	 * @return the hoverImage, regardless of the current state of this Button (i.e. even if the Button is not hovered right now)
+	 */
 	public BufferedImage getHoveredImage(){
 		return hoverImage;
 	}
 	
+	/**
+	 * 
+	 * @return the non-hovered image, regardless of the current state of this Button (i.e. even if the Button is currently hovered)
+	 */
 	public BufferedImage getNonhoveredImage(){
 		return super.getImage();
 	} 
+	
+	/**
+	 * Called automatically by update()
+	 * For most subclasses of Button, override drawButton() instead of this method
+	 */
 	public void update(Graphics2D g){
 		drawButton(g, false);
 	}
 	
-	
+	/**
+	 * Updates both the image and hover image of this Button
+	 */
 	public void update(){
 		hoverImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D hoverG = hoverImage.createGraphics();
@@ -106,7 +155,11 @@ public class Button extends TextLabel implements Clickable{
 		super.update();
 	}
 	
-	
+	/**
+	 * called by drawButton. This method draws the background of the Button and includes the background color and outline of the Button.
+	 * @param g
+	 * @param hover
+	 */
 	public void drawShape(Graphics2D g, boolean hover){
 		if(getBackground() != null){
 			if(!hover)g.setColor(getBackground());
@@ -125,7 +178,12 @@ public class Button extends TextLabel implements Clickable{
 		}
 	}
 	
-	
+	/**
+	 * Called automatically by update. This method replaces the update(Graphics 2D) method and draw the Button.
+	 * The hover parameter is used to distinguish between the Button when it is hovered and the Button when it is not being hovered
+	 * @param g
+	 * @param hover
+	 */
 	public void drawButton(Graphics2D g, boolean hover){
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
@@ -148,16 +206,27 @@ public class Button extends TextLabel implements Clickable{
 		}
 	}
 
+	/**
+	 * default implementation of hoverAction sets the cursor to the hand image
+	 */
 	public void hoverAction(){
 		GUIApplication.mainFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		setLeft(false);
 	}
 	
+	/**
+	 * default implementation of unhoverAction return the cursor to the default pointer
+	 */
 	public void unhoverAction(){
 		setLeft(true);
 		GUIApplication.mainFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
+	/**
+	 * Called automatically by ComponentContainers that listen for MouseMotion. This method checks whether the x, y coordinates of the mouse are within the bounds of this Button. To check the current status of the button without having to update its hver status, use isHovered
+	 *@param x - the x coordinate of the mouse, relative to this ComponentContainer
+	 *@param y - the y coordinate of the mouse, relative to this ComponentContainer
+	 */
 	public boolean isHovered(int x, int y) {
 		boolean b = x>getX() && x<getX()+getWidth() 
 		&& y > getY() && y<getY()+getHeight();
@@ -173,14 +242,23 @@ public class Button extends TextLabel implements Clickable{
 		return hovered;
 	}
 	
+	/**
+	 * called automatically when this Button is clicked
+	 */
 	public void act(){
 		if(action != null) action.act();
 	}
 	
+	/**
+	 * Set the action for this Button. The act() method of the action is called automatically whenever this Button is clicked
+	 */
 	public void setAction(Action a){
 		this.action = a;
 	}
 
+	/**
+	 * @return true if this Button is currently hovered. To update the status of the Button, us isHovered(int x, int y)
+	 */
 	public boolean isHovered() {
 		return hovered;
 	}

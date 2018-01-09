@@ -18,12 +18,10 @@
  *******************************************************************************/
 package guiTeacher;
 
-import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import guiTeacher.userInterfaces.ComponentContainer;
 import guiTeacher.userInterfaces.Screen;
@@ -41,7 +39,11 @@ public abstract class GUIApplication extends JFrame implements Runnable, Compone
 	
 
 
-
+/**
+ * 
+ * @param width initial width of the Window
+ * @param height initial height of the Window
+ */
 	public GUIApplication(int width, int height){
 		super();
 		scaleWithWindow = true;
@@ -115,6 +117,9 @@ public abstract class GUIApplication extends JFrame implements Runnable, Compone
 	}
 
 
+	/**
+	 * automatically called when this Window is resized. Note that the contained Screen will always match the dimensions of this Window
+	 */
 	public void resize(int w, int h){
 		if (!currentScreen.isFixedSize()){
 			currentScreen.resize(w, h);

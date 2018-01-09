@@ -93,10 +93,17 @@ public abstract class Component implements Visible {
 		return background;
 	}
 
+	/**
+	 * Use this method to set a custom background color for this component
+	 * @param background 
+	 */
 	public void setBackground(Color background) {
 		this.background = background;
 	}
 
+	/**
+	 * Set the pixel distance from the left side of the container
+	 */
 	public int getX() {
 		return x;
 	}
@@ -105,6 +112,9 @@ public abstract class Component implements Visible {
 		this.x = x;
 	}
 	
+	/**
+	 * Set the pixel distance from the top side of the container
+	 */
 	public void setY(int y){
 		this.y = y;
 	}
@@ -127,6 +137,9 @@ public abstract class Component implements Visible {
 		return image.createGraphics();
 	}
 	
+	/**
+	 * Updates the image representing this component
+	 */
 	public void update(){
 		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = buffer.createGraphics();
@@ -140,6 +153,11 @@ public abstract class Component implements Visible {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	}
 
+	/**
+	 * Called automatically by update()
+	 * Override this method to define the appearance of this Component. Note that the image is restricted with in the bounds from 0 to getWidth() and 0 to getHeight()
+	 * @param g
+	 */
 	public abstract void update(Graphics2D g);
 
 	public boolean isAnimated() {
@@ -166,6 +184,10 @@ public abstract class Component implements Visible {
 		if(hoverAction!=null)hoverAction.act();
 	}
 	
+	/**
+	 * Set the action that will occur automatically when this Component is hovered by the mouse
+	 * @param a
+	 */
 	public void setHoverAction(Action a){
 		this.hoverAction = a;
 	}
@@ -175,7 +197,9 @@ public abstract class Component implements Visible {
 		return visible;
 	}
 
-
+/**
+ * sets the visible value of this Component. A Component that is invisible is also inactive
+ */
 	public void setVisible(boolean visible) {
 		update();
 		this.visible = visible;
@@ -193,11 +217,20 @@ public abstract class Component implements Visible {
 		return alpha;
 	}
 
-
+/**
+ * Set the transparency of this Component: 0 = completely transparent
+ * 1.0 = completely opaque
+ */
 	public void setAlpha(float alpha) {
 		this.alpha = alpha;
 	}
 
+	/**
+	 * Call this method to animate a movement from existing position to new position
+	 * @param newX the new x-coordinate
+	 * @param newY the new y-coordinate
+	 * @param durationMS the length of time during which the animation runs
+	 */
 	public void move(int newX, int newY, int durationMS){
 		Visible.move(this, newX, newY, durationMS);
 	}

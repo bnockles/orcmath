@@ -26,7 +26,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-
+/**
+ * An AnimatedComponent is a MovingComponent that, while running, automatically displays a sequence of images. Each image is displayed for the amount of time specified. The "addSequence" and "addFrame" methods are commonly used for adding images into the sequence
+ * @author bnockles
+ *
+ */
 public class AnimatedComponent extends MovingComponent{
 
 	private ArrayList<BufferedImage> frame; //the images that can be displayed
@@ -37,6 +41,14 @@ public class AnimatedComponent extends MovingComponent{
 
 	public static final int REFRESH_RATE = 20;
 
+	
+	/**
+	 * Every frame of an AnimatedComponent
+	 * @param x 
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
 	public AnimatedComponent(int x, int y, int w, int h) {
 		super(x, y, w, h);
 		frame = new ArrayList<BufferedImage>();

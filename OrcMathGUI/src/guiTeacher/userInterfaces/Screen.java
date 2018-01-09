@@ -30,6 +30,11 @@ import java.util.ArrayList;
 
 import guiTeacher.interfaces.Visible;
 
+/**
+ * A Screen is a ComponentContainer that fills a Window. Screens do not listen for any events (MouseClicks, Typing, etc..) For a Screen that listens, use ClickableScreen of FullFunctionScreen. For a screen with a set size, override the resize method
+ * @author bnockles
+ *
+ */
 public abstract class Screen extends ComponentContainer{
 
 	
