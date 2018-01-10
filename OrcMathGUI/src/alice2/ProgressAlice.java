@@ -4,21 +4,27 @@ import java.awt.Graphics2D;
 
 import guiTeacher.components.Component;
 
-public class ProgressJas extends Component implements ProgressInterfaceAlice{
+public class ProgressAlice extends Component implements ProgressInterfaceAlice{
 
-	public ProgressJas(int x, int y, int w, int h) {
+	public ProgressAlice(int x, int y, int w, int h) {
 		super(x, y, w, h);
 	}
 
 	@Override
+	public void gameOver() {
+		
+	}
+
+	@Override
 	public int setRound() {
-		// TODO Auto-generated method stub
-		return 0;
+		////
+		//wer
+		
+		return 0 ;
 	}
 
 	@Override
 	public int setSequenceSize() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -27,14 +33,5 @@ public class ProgressJas extends Component implements ProgressInterfaceAlice{
 		// TODO Auto-generated method stub
 		
 	}
-
-
-	@Override
-	public void gameOver() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
 
 }

@@ -12,6 +12,6 @@ public interface ButtonInterfaceAlice extends Clickable{
 
 	void highlight();
 	void dim();
-	void getButton();
+	ButtonAlice getButton();
 
 }

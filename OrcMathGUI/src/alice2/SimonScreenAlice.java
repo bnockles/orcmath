@@ -20,12 +20,12 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 	private boolean acceptingInput;
 	private int sequenceIndex;
 	private int lastSelectedButton;
+	private int testing;
 
 
 	public SimonScreenAlice(int x, int y) {
 
 		super(x, y);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 				 b.getButton();
 				 b.highlight();
 				 int sleepTime;
-				 sleepTime = roundNumber +1;
+				 sleepTime = roundNumber +2;
 				 try {
 						Thread.sleep(800);
 						} catch (InterruptedException e) {
@@ -77,19 +77,12 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 	}
 
 			public void changeText(String string) {
-				Thread blink = new Thread(new Runnable(){
-					public void run(){
-
-						try {
-
-							Thread.sleep(800);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+				try {
+					Thread.sleep(800);
+					} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 					}
-
-				});		
 			}
 
 			public int setSequenceSize() {
@@ -107,14 +100,14 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 					viewObjects.add(b); 
 				}
 				progress = getProgress();
-				textLabel = new TextLabel(130,230,300,40,"Let's play Simon!");
+				textLabel = new TextLabel(130,330,300,40,"Let's play Simon!");
 				arrayList = new ArrayList<MoveInterfaceAlice>();
 				lastSelectedButton = -1;
 				arrayList.add(randomMove());
 				arrayList.add(randomMove());
 				roundNumber = 0;
 				viewObjects.add(progress);
-				viewObjects.add(textLabel);		
+			    viewObjects.add(textLabel);		
 
 
 				// instances of MoveInterfaceX to the ArrayList (again, change the name of sequence, if necessary)
@@ -147,9 +140,10 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 			}
 
 			private void addButtons() {
-				int numberOfButtons = 3;	
+				int numberOfButtons = 4;	
+				//num
 
-				buttons = new ButtonInterfaceAlice[numberOfButtons-1];
+				buttons = new ButtonInterfaceAlice[numberOfButtons];
 
 				Color button1 = new Color(107,244, 66);
 				Color button2 = new Color(244,191,66);
@@ -157,63 +151,65 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 				Color button4 = new Color(36,33,198);
 				Color button5 = new Color(43,19,41);
 				Color button6 = new Color(115,57,214);
-
-				for(int i = 0; i < numberOfButtons; i++) {
-
+				
+				Color buttonCollors[] = {button1, button2, button3, button4, button5, button6};
+				for(int i = 0; i < numberOfButtons;i++)
+				{
 					final ButtonInterfaceAlice b = getAButton();
 					buttons[i] = b;
+					   b.setColor(buttonCollors[i]); 
+					   b.setVisible(true);
+					   b.setX(50);
+					   b.setY(80+i*50);
+					 
+					   b.setAction(new Action(){
 
-					b.setColor(Color.blue);
-					b.setX(4);
-					b.setY(10);
+						   public void act(){
+							   if(acceptingInput)
+							   {
+								   Thread blink = new Thread(new Runnable(){
 
-					b.setAction(new Action(){
-
-						public void act(){
-
-							if(acceptingInput) {
-
-								Thread blink = new Thread(new Runnable(){
-									public void run(){
-
-										b.highlight();
-										try {
+									   public void run(){
+											b.highlight();
+											try {
 											Thread.sleep(800);
-										} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
+											} catch (InterruptedException e) {
 											e.printStackTrace();
-										}
-										b.dim();
+											}
+											b.dim();
+									   }
+
+									   });
+								   blink.start();
+								   if(b == arrayList.get(sequenceIndex).getButton()) {
+									   sequenceIndex++;
+								   }
+								   else {
+									   progress.gameOver();			
+								   }
+								   if(sequenceIndex == arrayList.size()){ 
+									    Thread nextRound = new Thread(SimonScreenAlice.this); 
+									    nextRound.start(); 
+									    
 									}
+							   }
+						   }
 
-								});
-								blink.start();
-
-							}
-
-						}
-
-					});
-					if(b == arrayList.get(sequenceIndex).getButton()) {
-						sequenceIndex++;
-
-					}
-					else {
-
-						progress.gameOver();
-					}
-					if(sequenceIndex == arrayList.size()){ 
-						Thread nextRound = new Thread(SimonScreenAlice.this); 
-						nextRound.start(); 
-					}
-				}
+						   });
+				
+				
+					 
+					   
+			}
 			}
 
 			//Placeholder until partner finishes implementation of ProgressInterface
 
 			private ButtonInterfaceAlice getAButton() {
 
-				return null;
+				//return new ButtonAlice(0,0,100,100,"Button",null);
+				return new ButtonAlice (130,230,300,40,"Button", null);
+
 
 			}
 

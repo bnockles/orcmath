@@ -8,7 +8,7 @@ import guiTeacher.components.TextLabel;
 public class SimonGameAlice extends GUIApplication {
 	
 	private static SimonGameAlice game;
-	private SimonGameAlice screen;
+	private SimonScreenAlice screen;
 
 	private TextLabel textlabel;
 	private ButtonInterfaceAlice[] buttonInterface;
@@ -33,7 +33,8 @@ public class SimonGameAlice extends GUIApplication {
 	@Override
 	public void initScreen() {
 
-	screen = new SimonGameAlice(getWidth(),getHeight());
+	screen = new SimonScreenAlice(getWidth(),getHeight());
+	setScreen(screen);
 	
 	}
 	public static void main(String args[]) {

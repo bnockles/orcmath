@@ -255,7 +255,7 @@ public abstract class ComponentContainer extends JPanel{
 		//iterate through all view objects
 		for(int i = 0; i < viewObjects.size(); i++){
 			Visible v= viewObjects.get(i);
-			if(v.isVisible()){
+			if(v != null && v.isVisible()){
 				if(v.getAlpha() == 1f){
 					g.drawImage(v.getImage(), v.getX(), v.getY(), null);
 				}else{
