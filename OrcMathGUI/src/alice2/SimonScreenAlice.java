@@ -212,7 +212,7 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 			private ButtonInterfaceAlice getAButton() {
 
 				//return new ButtonAlice(0,0,100,100,"Button",null);
-				return new ButtonAlice (130,230,300,40,"Button", null);
+				return new ButtonAlice (130,230,40,40," ", null);
 
 
 			}
