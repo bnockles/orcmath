@@ -16,7 +16,7 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 	private ButtonInterfaceAlice[] buttons;
 	private ProgressInterfaceAlice progress;
 	private ArrayList<MoveInterfaceAlice> arrayList;
-	private int roundNumber;
+	private int roundNumber=0;
 	private boolean acceptingInput;
 	private int sequenceIndex;
 	private int lastSelectedButton;
@@ -52,7 +52,14 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 	}
 
 	private void playSequence() {
-		 ButtonInterfaceAlice b = null;
+		ButtonInterfaceAlice b = null;
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}		
+
+	 
 		 for(int i = 0; i < arrayList.size();i++)
 		 {
 			 if(b != null)
@@ -65,20 +72,20 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 				 try {
 						Thread.sleep(800);
 						} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						
 						}		
-	
 			 }
 		 }
-		 b.dim();
+	//	 b.dim();
 		 
 		
 	}
 
 			public void changeText(String string) {
 				try {
-					Thread.sleep(800);
+					Thread.sleep(2000);
+					textLabel.setText(string);
 					} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -100,7 +107,8 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 					viewObjects.add(b); 
 				}
 				progress = getProgress();
-				textLabel = new TextLabel(130,330,300,40,"Let's play Simon!");
+				
+				textLabel = new TextLabel(50,330,300,40,"Let's play Simon!");
 				arrayList = new ArrayList<MoveInterfaceAlice>();
 				lastSelectedButton = -1;
 				arrayList.add(randomMove());
@@ -112,7 +120,7 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 
 				// instances of MoveInterfaceX to the ArrayList (again, change the name of sequence, if necessary)
 				//but calls a method named randomMove(). Create this method now. You will write this method next.
-				randomMove();
+				//randomMove();
 			}
 
 			private MoveInterfaceAlice randomMove() {
@@ -136,7 +144,7 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 	Placeholder until partner finishes implementation of MoveInterface
 			 */
 			private MoveInterfaceAlice getMove(int bIndex) {
-				return null;
+				return (MoveInterfaceAlice) buttons[bIndex];
 			}
 
 			private void addButtons() {
@@ -196,10 +204,6 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 						   }
 
 						   });
-				
-				
-					 
-					   
 			}
 			}
 
@@ -214,7 +218,7 @@ public class SimonScreenAlice extends ClickableScreen implements Runnable {
 			}
 
 			private ProgressInterfaceAlice getProgress() { 
-				return null; 
+				return new ProgressAlice(10, 10, 300,40);
 			}
 
 		}

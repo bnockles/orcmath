@@ -35,10 +35,11 @@ public class SimonGameAlice extends GUIApplication {
 
 	screen = new SimonScreenAlice(getWidth(),getHeight());
 	setScreen(screen);
+	new Thread(screen).run();
 	
 	}
 	public static void main(String args[]) {
-		game = new SimonGameAlice(200,200);
+		game = new SimonGameAlice(500,500);
 		Thread runner = new Thread(game);
 		runner.start();
 		
