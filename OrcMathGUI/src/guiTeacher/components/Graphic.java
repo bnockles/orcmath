@@ -35,6 +35,7 @@ public class Graphic implements Visible {
 	private int x;
 	private int y;
 	private boolean visible;
+	private String address;
 
 	public Graphic(int x, int y, int w, int h, String imageLocation){	
 		this.x = x;
@@ -42,6 +43,7 @@ public class Graphic implements Visible {
 		this.alpha = 1.0f;
 		visible = true;
 		loadedImages = false;
+		this.address = imageLocation;
 		loadImages(imageLocation, w, h);
 	}
 
@@ -51,6 +53,7 @@ public class Graphic implements Visible {
 		this.alpha = 1.0f;
 		visible = true;
 		loadedImages = false;
+		this.address = imageLocation;
 		loadImages(imageLocation, scale);
 	}
 
@@ -60,6 +63,7 @@ public class Graphic implements Visible {
 		visible = true;
 		this.alpha = 1.0f;
 		loadedImages = false;
+		this.address = imageLocation;
 		loadImages(imageLocation, 0,0);
 	}
 	
@@ -109,6 +113,31 @@ public class Graphic implements Visible {
 		scale.scale(smallerOfTwo, smallerOfTwo);
 		AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_BILINEAR);
 		image = scaleOp.filter(icon,new BufferedImage((int)(icon.getWidth()*smallerOfTwo), (int)(icon.getHeight()*smallerOfTwo), BufferedImage.TYPE_INT_ARGB));
+	}
+	
+	
+	/**
+	 * resizes the graphic to the specified size. Note that if this Graphic was constructed with an image address, 
+	 * the methods will scale the original image at that address. If this Graphic was constructed from an image, it will scale
+	 * itself, which may result in loss of resolution when going from small to large 
+	 * @param w
+	 * @param h
+	 */
+	public void resize(int w, int h){
+		if(address != null){
+			loadImages(address, w,h);
+		}else{
+			BufferedImage orig = image;
+			AffineTransform scale = new AffineTransform();
+			
+			//make it fit to the smaller of the two
+			double scaleWidth = w/(double)orig.getWidth();
+			double scaleHeight = h/(double)orig.getHeight();
+			double smallerOfTwo = (scaleWidth < scaleHeight)? scaleWidth : scaleHeight;
+			scale.scale(smallerOfTwo, smallerOfTwo);
+			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_BILINEAR);
+			image = scaleOp.filter(orig,new BufferedImage((int)(orig.getWidth()*smallerOfTwo), (int)(orig.getHeight()*smallerOfTwo), BufferedImage.TYPE_INT_ARGB));
+		}
 	}
 
 	private void loadImages(String imageLocation, double scale) {
