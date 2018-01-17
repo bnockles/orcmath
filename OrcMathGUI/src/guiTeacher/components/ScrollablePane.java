@@ -31,6 +31,11 @@ import guiTeacher.interfaces.Scrollable;
 import guiTeacher.interfaces.Visible;
 import guiTeacher.userInterfaces.ComponentContainer;
 
+/**
+ * A Pane that is Scrollable. Note that a ScrollablePane requires a FocusController (usually a FullFunctionScreen)
+ * @author bnockles
+ *
+ */
 public class ScrollablePane extends ComponentContainer implements Clickable, Scrollable{
 
 	/**
@@ -70,10 +75,10 @@ public class ScrollablePane extends ComponentContainer implements Clickable, Scr
 	/**
 	 * Use this constructor when this is the primary content of the JFrame
 	 * @param focusController
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
+	 * @param x x-coordinate within container
+	 * @param y y-coordinate within container
+	 * @param w width
+	 * @param h height
 	 */
 	public ScrollablePane(FocusController focusController, int x, int y, int w, int h) {
 		super(w, h);

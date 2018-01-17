@@ -18,6 +18,11 @@
  *******************************************************************************/
 package guiTeacher.interfaces;
 
+/**
+ * An interface for any Component that has a text value that can be retrieved
+ * @author bnockles
+ *
+ */
 public interface TextComponent extends Visible{
 
 	String getText();

@@ -41,7 +41,12 @@ import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.Dragable;
 import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.TextComponent;
-import main.OrcMath;
+
+/**
+ * A user-editable Text Component. Designed especially for forms, every TextField has a description that is draw above the field.
+ * @author bnockles
+ *
+ */
 
 public class TextField extends StyledComponent implements KeyedComponent,Clickable, Runnable, Dragable, TextComponent{
 
@@ -95,6 +100,14 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 	public static final int CENTER = 0;
 	public static final int BOTTOM = 1;
 
+	/**
+	 * Use for a text field with no description
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @param w pixel width
+	 * @param h pixel height
+	 * @param text - the initial value in the text field
+	 */
 	public TextField(int x, int y, int w, int h, String text) {
 		super(x, y-DESCRIPTION_SPACE, w, h+DESCRIPTION_SPACE);
 		this.text = text;
@@ -103,6 +116,15 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		update();
 	}
 
+	/**
+	 * 
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @param w pixels width
+	 * @param h pixel height
+	 * @param text - the initial value in the text field
+	 * @param description - the description drawn above the text field
+	 */
 	public TextField(int x, int y, int w, int h, String text, String description) {
 		super(x, y-DESCRIPTION_SPACE, w, h+DESCRIPTION_SPACE);
 		this.text = text;
@@ -111,6 +133,9 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		update();
 	}
 
+	/**
+	 * Sets all defalut falues for the field
+	 */
 	protected void setDefaults(){
 		history=new ArrayList<TextFieldSaveState>();
 		historyCount = 0;
@@ -151,6 +176,10 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		return readOnly;
 	}
 
+	/**
+	 * Use to disable user input
+	 * @param readOnly
+	 */
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
@@ -159,6 +188,10 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		return drawBorder;
 	}
 
+	/**
+	 * A rounded box is draw n around the field only when drawBorder is true
+	 * @param drawBorder
+	 */
 	public void setDrawBorder(boolean drawBorder) {
 		this.drawBorder = drawBorder;
 	}
@@ -175,11 +208,22 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		return description;
 	}
 
+	/**
+	 * The description of a TextField is drawn above the field box
+	 * @param description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 		resetBorder();
 	}
 
+	
+	/**
+	 * 
+	 * @param min ASCII value of lowest allowed entry, inclusive
+	 * @param max  ASCII value of lowest allowed entry, inclusive
+	 * @param length number of characters that can be entered into this field
+	 */
 	public void setInputType(int min, int max, int length) {
 		inputType = INPUT_TYPE_CUSTOM;
 		inputRangeMin = min;
@@ -187,6 +231,10 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		inputLength = length;
 	}
 
+	/**
+	 * Set the input type. Accepted Values include TextField.PLAIN and TextField.NUMERIC as well as TextField.CUSTOM
+	 * @param type
+	 */
 	public void setInputType(int type){
 		inputType = type;
 	}
@@ -590,28 +638,46 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		update();
 	}
 
+	/**
+	 * Set the value for this TextField. 
+	 * @param s
+	 */
 	public void setText(String s){
 		this.text = s;
 	}
 	
 
+	/**
+	 * @return the current value of the Field
+	 */
 	public String getText(){
 		return text;
 	}
 
+	/**
+	 * 
+	 * @param size the size of the Font inside the field
+	 */
 	public void setSize(float size){
 		this.size = size;
 		font = font.deriveFont(size);
 		update();
 	}
 
+	/**
+	 * Set the font of the description
+	 * @param font
+	 */
 	public void setLabelFont(Font font){
 		this.labelFont = font;
 		resetBorder();
 	}
 
 
-
+/**
+ * 
+ * @return the font for the TextLabel's description
+ */
 	public Font getLabelFont() {
 		return labelFont;
 	}
@@ -621,10 +687,17 @@ public class TextField extends StyledComponent implements KeyedComponent,Clickab
 		update();
 	}
 
+	/**
+	 * 
+	 * @return the font for the text inside the field
+	 */
 	public Font getFont(){
 		return font;
 	}
 
+	/**
+	 * clears the image of the border and redraws it
+	 */
 	public void resetBorder(){
 		borderImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		drawBorder(borderImage.createGraphics());

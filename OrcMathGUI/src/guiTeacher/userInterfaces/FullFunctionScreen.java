@@ -33,12 +33,22 @@ import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.Scrollable;
 import guiTeacher.interfaces.Visible;
 
+/**
+ * The most common type of Screen, a FullFunctionScreen handles all types of inputs (typed, mouse, motion, etc)
+ * @author bnockles
+ *
+ */
 public abstract class FullFunctionScreen extends ClickableScreen implements KeyListener, FocusController, MouseWheelListener {
 
 	private ArrayList<KeyedComponent>keyedComponents;
 	private KeyedComponent activeKeyedComponent;
 	private Scrollable activeScrollPane;
 
+	/**
+	 * 
+	 * @param width initial pixel width
+	 * @param height initial pixel height
+	 */
 	public FullFunctionScreen(int width, int height) {
 		super(width, height);
 		if(keyedComponents.size() == 1){

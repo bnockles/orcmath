@@ -23,6 +23,11 @@ import java.awt.Graphics2D;
 
 import guiTeacher.Utilities;
 
+/**
+ * A TextLabel that easily sets a Custom background color and custom foreground color 
+ * @author bnockles
+ *
+ */
 public class TextColoredLabel extends TextLabel {
 
 	private Color customBg;
@@ -54,6 +59,7 @@ public class TextColoredLabel extends TextLabel {
 
 	@Override
 	public void update(Graphics2D g) {
+		applyStyles(g);
 		g.setColor(customBg);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(customFg);

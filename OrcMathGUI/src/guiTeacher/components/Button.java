@@ -43,6 +43,9 @@ public class Button extends TextLabel implements Clickable{
 	private boolean enabled;
 	protected int curveX;
 	protected int curveY;
+	protected Color outlineColorActive;
+	protected Color outlineColorInactive;
+	protected int outlineSize;
 	
 	/**
 	 * 
@@ -57,10 +60,8 @@ public class Button extends TextLabel implements Clickable{
 	public Button(int x, int y, int w, int h, String text, Color color, Action action) {
 		super(x, y, w, h, text);
 		setBackground(color);
-		enabled = true;
 		this.action = action;
-		setCurve(35,25);
-		setActiveBorderColor(Color.BLACK);
+		setDefaults();
 		update();
 		
 	}
@@ -77,11 +78,17 @@ public class Button extends TextLabel implements Clickable{
 	public Button(int x, int y, int w, int h, String text, Action action) {
 		super(x, y, w, h, text);
 		this.action = action;
-		enabled = true;
-		setCurve(35,25);
-		setActiveBorderColor(Color.BLACK);
+		setDefaults();
 		update();
 
+	}
+	
+	protected void setDefaults(){
+		enabled = true;
+		setCurve(35,25);
+		outlineColorActive = getActiveBorderColor();
+		outlineColorInactive = getInactiveBorderColor();
+		outlineSize = getButtonOutlineSize();
 	}
 	
 	/**
@@ -112,6 +119,30 @@ public class Button extends TextLabel implements Clickable{
 		if(!enabled)hovered = false;
 	}
 
+	/**
+	 * sets the active border color of this Button. Use setActiveBorderColor to set the border color of ALL Buttons
+	 * @param c
+	 */
+	public void setCustomActiveBorderColor(Color c){
+		outlineColorActive = c;
+	}
+	
+	/**
+	 * sets the inactive border color of this Button. Use setInactiveBorderColor to set the border color of ALL Buttons
+	 * @param c
+	 */
+	public void setCustomInactiveBorderColor(Color c){
+		outlineColorInactive = c;
+	}
+	
+	/**
+	 * Sets the thickness of this Button's border
+	 * @param size
+	 */
+	public void setCustomOutlineSize(int size){
+		this.outlineSize = size;
+	}
+	
 	/**
 	 * @return either the hoverImage or image, depending on the state of this Button
 	 */
@@ -172,8 +203,11 @@ public class Button extends TextLabel implements Clickable{
 			clear();
 		}
 		if (isButtonOutline()){
-			g.setColor(getActiveBorderColor());
-			g.setStroke(new BasicStroke(getButtonOutlineSize()));
+			if(enabled)
+				g.setColor(outlineColorActive);
+			else 
+				g.setColor(outlineColorInactive);
+			g.setStroke(new BasicStroke(outlineSize));
 			g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, curveX, curveY);
 		}
 	}

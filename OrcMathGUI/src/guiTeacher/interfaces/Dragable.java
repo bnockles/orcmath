@@ -18,6 +18,11 @@
  *******************************************************************************/
 package guiTeacher.interfaces;
 
+/**
+ * A visible object that can be dragged. Note that a Draggable does not have any effect if it is not within a FullFunctionScreen
+ * @author bnockles
+ *
+ */
 public interface Dragable extends Visible{
 
 	

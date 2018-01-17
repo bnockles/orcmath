@@ -19,15 +19,31 @@
 package guiTeacher.interfaces;
 
 /**
- * A focus controller shifts the focus of the scrolling panel
+ * A focus controller shifts the focus of the scrolling pane. (When a Pane is clicked on, the focus controller gives focus to that pane so that clicks, keyed entry and mouse wheel are handled by that Pane)
  * @author bnockles
  *
  */
 public interface FocusController {
 
+	/**
+	 * Moves the focus
+	 * @param k the Component that focus is to move to 
+	 */
 	public void moveFocus(KeyedComponent k);
+	/**
+	 * 
+	 * @return the Component that currently has focus
+	 */
 	public KeyedComponent getFocusedComponent();
+	/**
+	 * Moves the focus of the mouse wheel
+	 * @param sp the scrollable that is to have focus
+	 */
 	public void moveScrollFocus(Scrollable sp);
+	/**
+	 * 
+	 * @return the Component that currently has focus of the mouse wheel
+	 */
 	public Scrollable getScrollComponent();
 	public int getWidth();
 	public int getHeight();

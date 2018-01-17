@@ -27,6 +27,11 @@ import guiTeacher.userInterfaces.ComponentContainer;
 import guiTeacher.userInterfaces.Screen;
 import guiTeacher.userInterfaces.Transition;
 
+/**
+ * This is the quintessential class for the Application engine. It is the window in which the GUI is viewed 
+ * @author bnockles
+ *
+ */
 public abstract class GUIApplication extends JFrame implements Runnable, ComponentListener{
 
 	/**
@@ -56,9 +61,15 @@ public abstract class GUIApplication extends JFrame implements Runnable, Compone
 	}
 
 
-
+/**
+ * Called by the constructor, this must instantiate a Screen that will be the content for the Frame
+ */
 	public abstract void initScreen();
 
+	/**
+	 * 
+	 * @param screen the destination Screen
+	 */
 	public void setScreen(Screen screen) {
 		removeListeners();
 		currentScreen = screen;
@@ -69,6 +80,11 @@ public abstract class GUIApplication extends JFrame implements Runnable, Compone
 		addListeners();
 	}
 
+	/**
+	 * 
+	 * @param screen the destination Screen
+	 * @param t the transition that will occur between the current Screen and the destination Screen 
+	 */
 	public void setScreen(Screen screen, Transition t) {
 		removeListeners();
 		ComponentContainer oldScreen = currentScreen;
@@ -98,7 +114,9 @@ public abstract class GUIApplication extends JFrame implements Runnable, Compone
 		}
 	}
 
-
+/**
+ * Automatically updates this Screen every 30 milliseconds
+ */
 	public void run() {
 		long updateTime;
 		long timeAfterUpdate;

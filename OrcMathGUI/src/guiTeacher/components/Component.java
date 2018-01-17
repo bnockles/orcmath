@@ -78,23 +78,34 @@ public abstract class Component implements Visible {
 	}
 	
 	
+	/**
+	 * 
+	 * @return the foreground Color for this Component. Foreground color is used most often for text Components
+	 */
 	public Color getForeground() {
 		return foreground;
 	}
 
+	/**
+	 * 
+	 * @param foreground the foreground Color for this Component. Foreground color is used most often for text Components. Default is black
+	 */
 	public void setForeground(Color foreground) {
 		this.foreground = foreground;
 		update();
 	}
 
 	
-	
+	/**
+	 * 
+	 * @return the custom backgroundColor for this Component
+	 */
 	public Color getBackground() {
 		return background;
 	}
 
 	/**
-	 * Use this method to set a custom background color for this component
+	 * Use this method to set a custom background color for this component. Components default to null
 	 * @param background 
 	 */
 	public void setBackground(Color background) {
@@ -102,31 +113,45 @@ public abstract class Component implements Visible {
 	}
 
 	/**
-	 * Set the pixel distance from the left side of the container
+	 * get the pixel distance from the left side of the container
 	 */
 	public int getX() {
 		return x;
 	}
 
+	/**
+	 * @param x the x-coordinate of this component (within context of container)
+	 */
 	public void setX(int x){
 		this.x = x;
 	}
 	
 	/**
-	 * Set the pixel distance from the top side of the container
+	 * @param y the pixel distance from the top side of the container
 	 */
 	public void setY(int y){
 		this.y = y;
 	}
 	
+	/**
+	 * 
+	 * get the pixel distance from the top side of the container
+	 *
+	 */
 	public int getY() {
 		return y;
 	}
 
+	/**
+	 * the width of this Component, in pixels
+	 */
 	public int getWidth() {
 		return w;
 	}
 
+	/**
+	 * the height of this Component, in pixels
+	 */
 	public int getHeight() {
 		return h;
 	}

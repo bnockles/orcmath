@@ -26,7 +26,11 @@ import guiTeacher.GUIApplication;
 import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.TextComponent;
 
-
+/**
+ * A row of data for a SimpleTable. Instances of this class are created by SimpleTable. 
+ * @author bnockles
+ *
+ */
 public class SimpleTableRow {
 
 	private SimpleTable table;

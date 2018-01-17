@@ -18,6 +18,13 @@
  *******************************************************************************/
 package guiTeacher.components;
 
+/**
+ * An action is often associated with a Button. It defines the events (act() method) associated with a Button click
+ * @author bnockles
+ *
+ */
 public interface Action {
+	
+	
 	public void act();
 }

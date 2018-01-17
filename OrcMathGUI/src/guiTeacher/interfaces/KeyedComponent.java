@@ -20,10 +20,26 @@ package guiTeacher.interfaces;
 
 import java.awt.event.KeyListener;
 
+/**
+ * Must be implemented by any Component that responds to keyed entry
+ * @author bnockles
+ *
+ */
 public interface KeyedComponent extends KeyListener, Visible{
 
+	
+	/**
+	 * Defines the bounds of this Component 
+	 * @param x x-coordinate of the mouse within context of immediate parent container
+	 * @param y y-coordinate of the mouse within context of immediate parent container
+	 * @return true if this Component is being hovered
+	 */
 	public boolean isHovered(int x, int y);
 
+	/**
+	 * Called when a FocusController gives focus to this Component
+	 * @param b
+	 */
 	public void setFocus(boolean b);
 
 }

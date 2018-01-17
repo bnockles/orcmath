@@ -18,12 +18,37 @@
  *******************************************************************************/
 package guiTeacher.interfaces;
 
+/**
+ * Must be implemented by Components that respond to Scrolling actions (mouse wheel)
+ * @author bnockles
+ *
+ */
 public interface Scrollable {
 
+	/**
+	 * Defines the bounds of this Component> Note: preserve the coordinates of parameters x,y for implementation of press() to determine relative position of press
+	 * @param x x-coordinate of the mouse within context of immediate parent container
+	 * @param y y-coordinate of the mouse within context of immediate parent container
+	 * @return true if this Component is being hovered
+	 */
 	boolean isHovered(int x, int y);
+	/**
+	 * Called when a FocusController gives focus to this Component
+	 * @param b
+	 */
 	void setFocus(boolean b);
+	/**
+	 * Called when the mouse wheel causes scrolling
+	 * @param clicks can be positive or negative
+	 */
 	void scrollY(int clicks);
+	/**
+	 * called when this Component is pressed. To have the relative coordinates of the press, preserve values of isHovered, which is always called before press
+	 */
 	void press();
+	/**
+	 * called when this Component is released.
+	 */
 	void release();
 	boolean isVisible();
 }

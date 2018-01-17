@@ -35,6 +35,11 @@ import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.TextComponent;
 import guiTeacher.userInterfaces.Screen;
 
+/**
+ * Serves as a basic table with scrolling, drag-to-move rows and editing values
+ * @author bnockles
+ *
+ */
 public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 
 	//Since clicking on a table moves focus, the table must have access to the direction of focus
@@ -65,12 +70,51 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	public static final int EDIT_COLUMN = 20;
 	public static final int X_MARGIN = 2;
 
+	/**
+	 * 
+	 * @param fc the FocusController (Screen) in which this table is positioned 
+	 * @param x the x coordinate within the container
+	 * @param y the y coordinate within the container
+	 * @param h the height of this table (which is scrollable) (width is summed from columns widths)
+	 * @param columns a TableHeader object defining each column of the SimpleTable
+	 */
+		public SimpleTable(FocusController fc, int x, int y, int h, TableHeader columns) {
+			super(x, y, SimpleTable.widthFromColumns(columns), h);
+			setUp(fc, getWidth(), columns, false);
+		}
+	
+	private static int widthFromColumns(TableHeader header) {
+		int sum = EDIT_COLUMN;
+		for(int i : header.getColumnWidths()){
+			sum += i;
+		}
+		return sum;
+	}
 
+	/**
+ * 
+ * @param fc the FocusController (Screen) in which this table is positioned 
+ * @param x the x coordinate within the container
+ * @param y the y coordinate within the container
+ * @param w the width of this table (columns will be clipped to this width)
+ * @param h the height of this table (which is scrollable)
+ * @param columns a TableHeader object defining each column of the SimpleTable
+ */
 	public SimpleTable(FocusController fc, int x, int y, int w, int h, TableHeader columns) {
 		super(x, y, w, h);
 		setUp(fc, w, columns, false);
 	}
 	
+	/**
+	 * 
+ * @param fc the FocusController (Screen) in which this table is positioned 
+ * @param x the x coordinate within the container
+ * @param y the y coordinate within the container
+ * @param w the width of this table (columns will be clipped to this width)
+ * @param h the height of this table (which is scrollable)
+ * @param columns a TableHeader object defining each column of the SimpleTable
+	 * @param multiline whether or not rows expand for multiple lines of text
+	 */
 	public SimpleTable(FocusController fc, int x, int y, int w, int h, TableHeader columns, boolean multiline) {
 		super(x, y, w, h);
 		setUp(fc, w, columns, multiline);
@@ -110,6 +154,10 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		clear();
 	}
 	
+	/**
+	 * Adds a row to the table. The method automatically creates a SimpleTableRow with all necessary parameters to fit the rows
+	 * @param values
+	 */
 	public void addRow(String[] values) {
 		if(values.length == columns.getColumnDescriptions().length){	
 			rows.add(new SimpleTableRow(this, values, columns.getColumnEditable(), columns.getColumnWidths(), columns.getRowHeight(), multilineRows));

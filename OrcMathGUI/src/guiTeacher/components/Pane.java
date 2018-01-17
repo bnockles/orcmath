@@ -12,6 +12,11 @@ import guiTeacher.interfaces.Visible;
 import guiTeacher.userInterfaces.ComponentContainer;
 import guiTeacher.userInterfaces.Screen;
 
+/**
+ * Pane is a ComponentContainer that is itself a Component. It can also be thought of as a "view", "layout" or "subscreen". It has its own Arrayist of Visible objects but also has x-, y-, coordinates and width and height
+ * @author bnockles
+ *
+ */
 public class Pane extends ComponentContainer implements Clickable {
 
 	protected ArrayList<Clickable> clickables;

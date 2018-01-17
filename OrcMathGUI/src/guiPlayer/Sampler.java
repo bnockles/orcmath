@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -72,6 +73,10 @@ public class Sampler extends GUIApplication implements FileRequester{
 			viewObjects.add(rb1);
 			viewObjects.add(rb2);
 			
+			String[] buttonTexts = {"1","2","3"};
+			RadioButtons buttons = new RadioButtons(640, 20, 100, 45, "Buttons", buttonTexts, 0, RadioButtons.STYLE_HORIZONTAL);
+			viewObjects.add(buttons);
+					
 			ScrollablePane scroll = new ScrollablePane(this, 20, 60, 200, 80);
 			scroll.setBorderWidth(3);
 			for(int i=0; i < 10; i++){
@@ -132,8 +137,33 @@ public class Sampler extends GUIApplication implements FileRequester{
 				FileOpenButton fileButton = new FileOpenButton(490, 70, 120, 30, null,Sampler.this);
 				viewObjects.add(fileButton);
 			
+			addTable(viewObjects);
 		}
 		
+		public void addTable(List<Visible> viewObjects) {
+			StyledComponent.setTabColor(new Color(100,180,230));
+			String[] headers = {"Title","Integer Value","Description"};
+			int[] widths = {80,60,150};
+			boolean[] editable = {false, true, true};
+			
+			TableHeader header = new TableHeader(headers, widths, editable, 30);
+			SimpleTable table = new SimpleTable(SampleScreen.this, 0, 0, 300, 200, header);
+			String[] cardinal = {"1st","2nd","3rd"};
+			for(int i = 0; i < 10; i++){
+				String c = (i < cardinal.length)? cardinal[i] : (i+1)+"th";
+			
+				
+				String[] value = {"Title #"+i,i+"","The "+c+" object"};
+				table.addRow(value);
+			}
+			
+			table.update();
+			ArrayList<Visible> contentsOfPane = new ArrayList<Visible>();
+			contentsOfPane.add(table);
+			ScrollableDragablePane tablePane = new ScrollableDragablePane(SampleScreen.this, contentsOfPane, 470, 110, 300, 180);
+			viewObjects.add(tablePane);
+		}
+
 		public void mouseDragged(MouseEvent m) {
 			super.mouseDragged(m);
 			mario.setX(m.getX());

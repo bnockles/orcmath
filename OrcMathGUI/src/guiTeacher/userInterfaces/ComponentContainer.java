@@ -34,6 +34,11 @@ import javax.swing.JPanel;
 
 import guiTeacher.interfaces.Visible;
 
+/**
+ * The quintessential container for Visible objects. There are two types of ComponentContainers, Screens that fill the whole window and Panes that have specified location width and height
+ * @author bnockles
+ *
+ */
 public abstract class ComponentContainer extends JPanel{
 
 	/**
@@ -58,6 +63,11 @@ public abstract class ComponentContainer extends JPanel{
 	private int yTarget;
 	private boolean fixedSize;
 
+	/**
+	 * 
+	 * @param width initial pixel width
+	 * @param height initial pixel height
+	 */
 	public ComponentContainer(int width, int height) {
 		alpha = 1.0f;
 		widthScreen = width;
@@ -67,6 +77,12 @@ public abstract class ComponentContainer extends JPanel{
 		create();
 	}
 
+/**
+ * 
+ * @param width initial pixel width
+ * @param height initial pixel height
+ * @param initWithObjects initial Visible objects in this ComponentContainer
+ */
 	public ComponentContainer(int width, int height, ArrayList<Visible> initWithObjects) {
 		alpha = 1.0f;
 		widthScreen = width;
@@ -76,6 +92,11 @@ public abstract class ComponentContainer extends JPanel{
 		create();
 	}
 
+	/**
+	 * Will resize the ComponentContainer and complete refresh it
+	 * @param w
+	 * @param h
+	 */
 	public void setDimensions(int w, int h){
 		widthScreen = w;
 		heightScreen = h;
@@ -97,11 +118,18 @@ public abstract class ComponentContainer extends JPanel{
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @return the background color of this ComponentContainer
+	 */
 	public Color getScreenBackground() {
 		return backgroundColor;
 	}
 	
+	/**
+	 * 
+	 * @param c the background color of this ComponentContainer
+	 */
 	public void setBackground(Color c){
 		this.backgroundColor = c;
 	}
@@ -120,7 +148,10 @@ public abstract class ComponentContainer extends JPanel{
 	 */
 	public abstract void initObjects(List<Visible> viewObjects);
 
-
+/**
+ * Used for resizing Scrollable Panes
+ * @return an int[] of length 2, specifying the maximum x- and y- coordinate of the most extreme Component
+ */
 	public int[] calculateMaxXY(){
 		int maxX = 1;
 		int maxY = 1;
@@ -140,7 +171,7 @@ public abstract class ComponentContainer extends JPanel{
 		viewObjects.add(v);
 	}
 
-
+	@Override
 	public void paint(Graphics g){
 		//		g.drawImage(image, 0, -22, null);
 		int offset = -20;
@@ -157,6 +188,10 @@ public abstract class ComponentContainer extends JPanel{
 		}
 	}
 
+	/**
+	 * Draws a border around this ComponentContainer if the width of the border is >0
+	 * @param g
+	 */
 	public void drawBorder(Graphics2D g){
 		if(getBorderWidth() >0){
 			g.setColor(getBorderColor());
@@ -168,12 +203,19 @@ public abstract class ComponentContainer extends JPanel{
 	}
 
 
-
+/**
+ * 
+ * @return the Color of this ComponentContainer
+ */
 	public Color getBorderColor() {
 		return borderColor;
 	}
 
 
+	/**
+	 * 
+	 * @param borderColor the Color of this ComponentContainer
+	 */
 	public void setBorderColor(Color borderColor) {
 		this.borderColor = borderColor;
 	}
@@ -182,17 +224,28 @@ public abstract class ComponentContainer extends JPanel{
 
 
 
-
+/**
+ * 
+ * @return the pixel thickness of this ComponentContainer
+ */
 	public int getBorderWidth() {
 		return borderWidth;
 	}
 
 
+	/**
+	 * 
+	 * @param borderWidth the pixel thickness of this ComponentContainer
+	 */
 	public void setBorderWidth(int borderWidth) {
 		this.borderWidth = borderWidth;
 	}
 
-
+/**
+ * called by GUIApplication when performing a Transition 
+ * @param t
+ * @param formerScreenImage
+ */
 	public void transitionWith(Transition t, BufferedImage formerScreenImage) {
 		formerImage = formerScreenImage;
 		xScreen = t.getxScreen();
@@ -232,7 +285,9 @@ public abstract class ComponentContainer extends JPanel{
 
 	}
 
-	
+	/**
+	 * Clears this image and calls update(Graphics2D g) 
+	 */
 	public void update(){
 		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = buffer.createGraphics();
@@ -240,7 +295,9 @@ public abstract class ComponentContainer extends JPanel{
 		image.createGraphics().drawImage(buffer, 0, 0, null);
 	}
 
-
+	/**
+	 * Updates all Components in this ComponentContainer 
+	 */
 	public void update(Graphics2D g2){
 		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
@@ -251,6 +308,10 @@ public abstract class ComponentContainer extends JPanel{
 		repaint();
 	}
 
+	/**
+	 * Draws all Visible objects, called by update(Graphics2D)
+	 * @param g
+	 */
 	public void drawObjects(Graphics2D g){
 		//iterate through all view objects
 		for(int i = 0; i < viewObjects.size(); i++){
@@ -270,12 +331,20 @@ public abstract class ComponentContainer extends JPanel{
 		}
 	}
 
+	/**
+	 * removes a Visible Component
+	 * @param v the Visible to be removed
+	 */
 	public void remove(Visible v){
 		if(viewObjects.contains(v)){
 			viewObjects.remove(v);//all other objects slide up in order
 		}
 	}
 
+	/**
+	 * Moves a visible to the front
+	 * @param v
+	 */
 	public void moveToFront(Visible v){
 		if(viewObjects.contains(v)){
 			viewObjects.remove(v);//all other objects slide up in order
@@ -283,6 +352,10 @@ public abstract class ComponentContainer extends JPanel{
 		}
 	}
 
+	/**
+	 * Moves a Visible to the back
+	 * @param v
+	 */
 	public void moveToBack(Visible v){
 		if(viewObjects.contains(v)){
 			viewObjects.remove(v);//all other objects slide up in order
@@ -290,25 +363,47 @@ public abstract class ComponentContainer extends JPanel{
 		}
 	}
 
+	/**
+	 * removes all Visible objects
+	 */
 	public void removeAll(){
 		viewObjects = new ArrayList<Visible>();
 	}
 
+	/**
+	 * 
+	 * @return the image of this ComponentContainer 
+	 */
 	public BufferedImage getImage(){
 		return image;
 	}
+	
+	/**
+	 * @return the width of this ComponentContainer
+	 */
 	public int getWidth(){
 		return image.getWidth();
 	}
 
+	/**
+	 * @return teh height of this ComponentContainer
+	 */
 	public int getHeight(){
 		return image.getHeight();
 	}
 
+	/**
+	 * Set to true in order to prevent Screens from adopting the size of their Window containers
+	 * @param b
+	 */
 	public void setFixedSize(boolean b){
 		fixedSize = b;	
 	}
 
+	/**
+	 * 
+	 * @return true if this ComponentContainer adopts the size of their Window containers
+	 */
 	public boolean isFixedSize(){
 		return fixedSize;
 	}
@@ -331,10 +426,17 @@ public abstract class ComponentContainer extends JPanel{
 		update();
 	}
 
+	/**
+	 * 
+	 * @return the opacity of this ComponentContainer 
+	 */
 	public float getAlpha() {
 		return alpha;
 	}
 
+	/**
+	 * Set the opacity of this ComponentContainer
+	 */
 	public void setAlpha(float alpha) {
 		this.alpha = alpha;
 	}

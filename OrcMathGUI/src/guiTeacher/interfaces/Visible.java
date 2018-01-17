@@ -23,6 +23,11 @@ import java.awt.image.BufferedImage;
 import guiTeacher.components.AnimatedComponent;
 import guiTeacher.components.Component;
 
+/**
+ * Everything that can be shown within a window must implement this interface
+ * @author bnockles
+ *
+ */
 public interface Visible {
 
 	public BufferedImage getImage();
@@ -42,6 +47,13 @@ public interface Visible {
 	void hoverAction();
 	
 	
+	/**
+	 * Smoothly moves a Visible from its current x,y coordinates to new x,y coordinates over the specified duration
+	 * @param v the Visible to be moved
+	 * @param newX the new x-coordinate of the Visible, within the context of the container
+	 * @param newY the new y-coordinate of the Visible, within the context of the container
+	 * @param durationMS the number of milliseconds the move will require
+	 */
 	public static void move(Visible v, int newX, int newY, int durationMS){
 		final double frames = durationMS/AnimatedComponent.REFRESH_RATE;
 		final double origX = v.getX();

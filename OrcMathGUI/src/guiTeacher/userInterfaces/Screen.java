@@ -38,7 +38,11 @@ import guiTeacher.interfaces.Visible;
 public abstract class Screen extends ComponentContainer{
 
 	
-	
+	/**
+	 * 
+	 * @param width the initial pixel width of this Screen
+	 * @param height the initial pixel height of this Screen
+	 */
 	public Screen(int width, int height) {
 		super(width, height);
 	}

@@ -11,6 +11,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * A multi-line TextField (does not scroll) Also incudes a description above the box defining the field
+ * @author bnockles
+ *
+ */
 public class TextBox extends TextField{
 
 	private ArrayList<TextLine> lines;
@@ -21,6 +26,14 @@ public class TextBox extends TextField{
 	final int SPACING = 2;//vertical space between horizontal lines
 	private boolean spaceTyped;//when the space button is pressed, algorithm is triggered to determine whether  the currentline formed a word that can be added to the previous line.
 
+	/**
+	 * 
+	 * @param x x-coordinate within container
+	 * @param y y-coordinate within container
+	 * @param w width 
+	 * @param h height (should be at least 30 for lines to be visible)
+	 * @param text
+	 */
 	public TextBox(int x, int y, int w, int h, String text) {
 		super(x,y,w,h,text);
 		lines = new ArrayList<TextLine>();
@@ -28,6 +41,15 @@ public class TextBox extends TextField{
 		update();
 	}
 
+	/**
+	 * 
+	 * @param x x-coordinate within container
+	 * @param y y-coordinate within container
+	 * @param w width
+	 * @param h height (should be at least 30 for lines to be visible)
+	 * @param text
+	 * @param description shown above this TextBox
+	 */
 	public TextBox(int x, int y, int w, int h, String text, String description) {
 		super(x,y,w,h,text, description);
 		lines = new ArrayList<TextLine>();
@@ -195,6 +217,9 @@ public class TextBox extends TextField{
 		selectLine = j;
 	}
 
+	/**
+	 * Set the text value of this TextBox
+	 */
 	public void setText(String s){
 		text = s;
 		setIndicesToCursor();

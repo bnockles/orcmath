@@ -22,7 +22,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import guiTeacher.interfaces.FileRequester;
 
 
-
+/**
+ * An instance of this class is created by FileOpenButton. This class handles the file selection interface. See FileOpenButton
+ * @author bnockles
+ *
+ */
 public class FileLoader {
 
 

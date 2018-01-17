@@ -4,6 +4,11 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+/**
+ * Must be implemented by Screens that use FileOpenButtons
+ * @author bnockles
+ *
+ */
 public interface FileRequester{
 
 	/**

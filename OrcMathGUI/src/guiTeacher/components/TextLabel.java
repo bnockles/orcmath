@@ -26,6 +26,11 @@ import java.awt.Graphics2D;
 import guiTeacher.Utilities;
 import guiTeacher.interfaces.TextComponent;
 
+/**
+ * A single-line, non-user-editable text Component
+ * @author bnockles
+ *
+ */
 public class TextLabel extends StyledComponent implements TextComponent{
 
 	//FIELDS
@@ -55,7 +60,10 @@ public class TextLabel extends StyledComponent implements TextComponent{
 		}
 
 
-
+/**
+ * Set the text color for this TextLabel. (Note: calling setTextColor will affect the color for ALL Text in all components)
+ * @param textColor
+ */
 		public void setCustomTextColor(Color textColor) {
 			this.textColor = textColor;
 			update();
@@ -72,11 +80,19 @@ public class TextLabel extends StyledComponent implements TextComponent{
 			return text;
 		}
 		
+		/**
+		 * set the Font size of this TextLabel
+		 * @param float size of the Font.
+		 */
 		public void setSize(float size){
 			this.size = size;
 			setFont(font.deriveFont(size));
 		}
 		
+		/**
+		 * set the Font of this TextLabel
+		 * @param font
+		 */
 		public void setFont(Font font){
 			this.font = font;
 			update();

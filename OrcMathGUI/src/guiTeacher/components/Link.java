@@ -26,11 +26,25 @@ import java.awt.RenderingHints;
 
 import guiTeacher.Utilities;
 
+/**
+ * A Button with no outline and colored text with an underline (like an html link)
+ * @author bnockles
+ *
+ */
 public class Link extends Button {
 
 	private int align;
 	private Color linkColor;
 
+	/**
+	 * 
+	 * @param x x-coordinate within container
+	 * @param y y-coordinate within container
+	 * @param w width of the link
+	 * @param h height of the link
+	 * @param text link text
+	 * @param action associated Action
+	 */
 	public Link(int x, int y, int w, int h, String text, Action action) {
 		super(x, y, w, h, text, null, action);
 		linkColor = getAccentColor();
@@ -39,13 +53,19 @@ public class Link extends Button {
 	}
 
 
-
+/**
+ * 
+ * @return the link Color for this link (default linkColor is StyledComponent.accentColor)
+ */
 	public Color getLinkColor() {
 		return linkColor;
 	}
 
 
-
+/**
+ * 
+ * @param linkColor set the linkColor for this link (otherwise, linkColor defaults to StyledComponent.accentColor 
+ */
 	public void setLinkColor(Color linkColor) {
 		this.linkColor = linkColor;
 		update();

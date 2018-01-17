@@ -28,6 +28,11 @@ import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.Dragable;
 import guiTeacher.interfaces.Visible;
 
+/**
+ * A Screen that responds to MouseClicks
+ * @author bnockles
+ *
+ */
 public abstract class ClickableScreen extends Screen implements MouseListener, MouseMotionListener {
 
 	private ArrayList<Clickable> clickables;
@@ -59,6 +64,7 @@ public abstract class ClickableScreen extends Screen implements MouseListener, M
 			}
 		}
 	}
+
 
 	public void addObject(Visible v){
 		super.addObject(v);

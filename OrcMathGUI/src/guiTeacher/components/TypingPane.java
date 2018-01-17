@@ -9,6 +9,11 @@ import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.Visible;
 
+/**
+ * A Pane that listens for keyed entry
+ * @author bnockles
+ *
+ */
 public class TypingPane extends Pane implements KeyListener, KeyedComponent, Runnable {
 
 	private ArrayList<KeyedComponent> keyedComponents;

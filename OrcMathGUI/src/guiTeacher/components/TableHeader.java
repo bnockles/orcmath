@@ -18,6 +18,11 @@
  *******************************************************************************/
 package guiTeacher.components;
 
+/**
+ * A TableHeader is required to create a Table. It defines the number and label of every column
+ * @author bnockles
+ *
+ */
 
 public class TableHeader  {
 
@@ -26,7 +31,13 @@ public class TableHeader  {
 	private int[] columnWidths;
 	private int rowHeight;
 	
-	
+	/**
+	 * 
+	 * @param columnValues = labels for each column
+	 * @param columnWidths = pixel width of each column
+	 * @param columnEditable = determines whether user can input values for each row of each column
+	 * @param rowHeight = the pixel height of the header
+	 */
 	public TableHeader(String[] columnValues, int[] columnWidths, boolean[] columnEditable, int rowHeight) {
 		this.columnDescriptions = columnValues;
 		this.columnWidths = columnWidths;

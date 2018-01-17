@@ -8,6 +8,11 @@ import java.util.List;
 
 import guiTeacher.Utilities;
 
+/**
+ * An individual Radio Button. When assigned to peers, only one RadioButton can be selected at a time. Call addPeer to pair with other Buttons. See also the RadioButtons class, which elegantly handles large number of RadioButton
+ * @author bnockles
+ *
+ */
 public class RadioButton extends Button {
 
 	private boolean selected;
@@ -15,6 +20,16 @@ public class RadioButton extends Button {
 	private static final Color DEFAULT_SELECT_COLOR = new Color(80,80,80);
 	private Color selectedColor;
 	
+	/**
+	 * 
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @param w pixel width
+	 * @param h pixel height
+	 * @param text Description of the RadioButton's function
+	 * @param color
+	 * @param action
+	 */
 	public RadioButton(int x, int y, int w, int h, String text, Color color, Action action) {
 		super(x, y, w, h, text, color, action);
 		peers = new ArrayList<RadioButton>();
