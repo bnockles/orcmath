@@ -26,12 +26,17 @@ import java.awt.Graphics2D;
 import guiTeacher.Utilities;
 import guiTeacher.interfaces.TextComponent;
 
+/**
+ * A single-line, non-user-editable text Component
+ * @author bnockles
+ *
+ */
 public class TextLabel extends StyledComponent implements TextComponent{
 
 	//FIELDS
 		private String text;
 		private Font font;
-		private int size;
+		private float size;
 		private Color textColor;
 		private int align; 
 		
@@ -55,7 +60,10 @@ public class TextLabel extends StyledComponent implements TextComponent{
 		}
 
 
-
+/**
+ * Set the text color for this TextLabel. (Note: calling setTextColor will affect the color for ALL Text in all components)
+ * @param textColor
+ */
 		public void setCustomTextColor(Color textColor) {
 			this.textColor = textColor;
 			update();
@@ -72,13 +80,21 @@ public class TextLabel extends StyledComponent implements TextComponent{
 			return text;
 		}
 		
-		public void setSize(int size){
+		/**
+		 * set the Font size of this TextLabel
+		 * @param float size of the Font.
+		 */
+		public void setSize(float size){
 			this.size = size;
-			this.font=font.deriveFont(size);
-			update();
+			setFont(font.deriveFont(size));
 		}
 		
+		/**
+		 * set the Font of this TextLabel
+		 * @param font
+		 */
 		public void setFont(Font font){
+			this.font = font;
 			update();
 		}
 		
@@ -86,7 +102,7 @@ public class TextLabel extends StyledComponent implements TextComponent{
 			return font;
 		}
 		
-		public int getSize(){
+		public float getSize(){
 			return size;
 		}
 		
@@ -101,7 +117,9 @@ public class TextLabel extends StyledComponent implements TextComponent{
 			FontMetrics fm = g.getFontMetrics();
 			if(text != null){
 //				Utilities.drawText(g, text, 0, getWidth(), getHeight(), align);
-				g.drawString(text, 0, fm.getHeight());
+				if(align==ALIGN_LEFT) g.drawString(text, 0, fm.getHeight());
+				else if(align == ALIGN_CENTER)g.drawString(text, (getWidth()-fm.stringWidth(text))/2, fm.getHeight());
+				else g.drawString(text, getWidth()-fm.stringWidth(text), fm.getHeight());
 			}
 		}
 

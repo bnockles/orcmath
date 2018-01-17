@@ -20,6 +20,14 @@ package guiTeacher.interfaces;
 
 import java.awt.image.BufferedImage;
 
+import guiTeacher.components.AnimatedComponent;
+import guiTeacher.components.Component;
+
+/**
+ * Everything that can be shown within a window must implement this interface
+ * @author bnockles
+ *
+ */
 public interface Visible {
 
 	public BufferedImage getImage();
@@ -33,4 +41,43 @@ public interface Visible {
 	public boolean isAnimated();
 	public void setVisible(boolean b);
 	boolean isVisible();
+	float getAlpha();
+	void setAlpha(float f);
+	void unhoverAction();
+	void hoverAction();
+	
+	
+	/**
+	 * Smoothly moves a Visible from its current x,y coordinates to new x,y coordinates over the specified duration
+	 * @param v the Visible to be moved
+	 * @param newX the new x-coordinate of the Visible, within the context of the container
+	 * @param newY the new y-coordinate of the Visible, within the context of the container
+	 * @param durationMS the number of milliseconds the move will require
+	 */
+	public static void move(Visible v, int newX, int newY, int durationMS){
+		final double frames = durationMS/AnimatedComponent.REFRESH_RATE;
+		final double origX = v.getX();
+		final double origY = v.getY();
+		Thread mover = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				double changeX = (newX - v.getX())/frames;
+				double changeY= (newY - v.getY())/frames;
+				for(int i = 0; i < frames; i++){
+					v.setX((int)(origX+i*changeX));
+					v.setY((int)(origY+i*changeY));
+					try {
+						Thread.sleep(AnimatedComponent.REFRESH_RATE);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				v.setX(newX);
+				v.setY(newY);
+				
+			}
+		});
+		mover.start();
+	}
 }

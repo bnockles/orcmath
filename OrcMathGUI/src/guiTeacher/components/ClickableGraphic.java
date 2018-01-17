@@ -20,22 +20,51 @@ package guiTeacher.components;
 
 import guiTeacher.interfaces.Clickable;
 
+/**
+ * A Graphic that can be clicked
+ * @author bnockles
+ *
+ */
 public class ClickableGraphic extends Graphic implements Clickable {
 
 	private Action action;
 	
+	/**
+	 * 
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @param w pixel width (preserves aspect ratio)
+	 * @param h pixel height (preserves aspect ratio)
+	 * @param imageLocation Location within specified source folder (for example: resources/image.png)
+	 */
 	public ClickableGraphic(int x, int y, int w, int h, String imageLocation) {
 		super(x, y, w, h, imageLocation);
 	}
 
+	/**
+	 * 
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @scale percentage scale of original image. Will set width and height based on this scale
+	 * @param imageLocation Location within specified source folder (for example: resources/image.png)
+	 */
 	public ClickableGraphic(int x, int y, double scale, String imageLocation) {
 		super(x, y, scale, imageLocation);
 	}
 
-	
+	/**
+	 * Set the action associated with clicking this Graphic
+	 */
 	public void setAction(Action a){
 		this.action = a;
 	}
+	
+	/**
+	 * 
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @param imageLocation Location within specified source folder (for example: resources/image.png) Width and height will match original
+	 */
 	public ClickableGraphic(int x, int y, String imageLocation) {
 		super(x, y, imageLocation);
 	}

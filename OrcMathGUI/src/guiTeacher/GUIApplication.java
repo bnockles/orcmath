@@ -18,27 +18,37 @@
  *******************************************************************************/
 package guiTeacher;
 
-import java.awt.Graphics;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import guiTeacher.userInterfaces.ComponentContainer;
 import guiTeacher.userInterfaces.Screen;
 import guiTeacher.userInterfaces.Transition;
 
-public abstract class GUIApplication extends JFrame implements Runnable{
+/**
+ * This is the quintessential class for the Application engine. It is the window in which the GUI is viewed 
+ * @author bnockles
+ *
+ */
+public abstract class GUIApplication extends JFrame implements Runnable, ComponentListener{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 390738816689963935L;
+	public static JFrame mainFrame;
 	private Screen currentScreen;
 	private boolean scaleWithWindow; 
 	
 
 
-
+/**
+ * 
+ * @param width initial width of the Window
+ * @param height initial height of the Window
+ */
 	public GUIApplication(int width, int height){
 		super();
 		scaleWithWindow = true;
@@ -46,19 +56,35 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 		initScreen();
 		setUndecorated(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame = this;
+		addComponentListener(this);
 	}
 
 
-
+/**
+ * Called by the constructor, this must instantiate a Screen that will be the content for the Frame
+ */
 	public abstract void initScreen();
 
+	/**
+	 * 
+	 * @param screen the destination Screen
+	 */
 	public void setScreen(Screen screen) {
 		removeListeners();
 		currentScreen = screen;
+		if (!screen.isFixedSize() && (screen.getWidth() != this.getWidth() || screen.getHeight() != this.getHeight())){
+			resize(getWidth(), getHeight());
+		}
 		setContentPane(currentScreen);
 		addListeners();
 	}
 
+	/**
+	 * 
+	 * @param screen the destination Screen
+	 * @param t the transition that will occur between the current Screen and the destination Screen 
+	 */
 	public void setScreen(Screen screen, Transition t) {
 		removeListeners();
 		ComponentContainer oldScreen = currentScreen;
@@ -88,7 +114,9 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 		}
 	}
 
-
+/**
+ * Automatically updates this Screen every 30 milliseconds
+ */
 	public void run() {
 		long updateTime;
 		long timeAfterUpdate;
@@ -104,6 +132,48 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	/**
+	 * automatically called when this Window is resized. Note that the contained Screen will always match the dimensions of this Window
+	 */
+	public void resize(int w, int h){
+		if (!currentScreen.isFixedSize()){
+			currentScreen.resize(w, h);
+		}
+	}
+
+	/**
+	 * On resize, every component is simply recreated, as initObjects is ultimately recalled.
+	 */
+	@Override
+	public void componentResized(ComponentEvent e) {
+		resize(getWidth(), getHeight());
+	}
+
+
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

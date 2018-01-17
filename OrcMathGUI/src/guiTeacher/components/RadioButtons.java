@@ -7,6 +7,11 @@ import java.awt.Graphics2D;
 
 import guiTeacher.interfaces.Clickable;
 
+/**
+ * A simplified implementation of a group of RadioButton. Visually, this group has a label above it defining the overall group of Buttons 
+ * @author bnockles
+ *
+ */
 public class RadioButtons extends StyledComponent implements Clickable{
 
 	public static final int STYLE_HORIZONTAL = 0;
@@ -21,6 +26,17 @@ public class RadioButtons extends StyledComponent implements Clickable{
 	private int yRelative;
 	private Action action;
 	
+	/**
+	 * 
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @param w width of all the buttons
+	 * @param h height of all the buttons
+	 * @param name Description above all buttons
+	 * @param descriptions the desciption for each individual button
+	 * @param defaultButton corresponds to the index of one of the descriptions in the previous parameter, this defines the initial RadioButton
+	 * @param style can be RadioButtons.STYLE_HORIZONTAL or _VERTICAL
+	 */
 	public RadioButtons(int x, int y, int w, int h, String name, String[] descriptions, int defaultButton, int style) {
 		super(x, y, w, h);
 		this.name = name;
@@ -131,6 +147,10 @@ public class RadioButtons extends StyledComponent implements Clickable{
 		this.action = a;
 	}
 
+	/**
+	 * 
+	 * @return the description associated with the currently selected RadioButton
+	 */
 	public String getCheckedValue() {
 		for(int i = 0; i < buttons.length; i++){
 			if(buttons[i].isValue())return buttons[i].getDescription();
@@ -139,6 +159,10 @@ public class RadioButtons extends StyledComponent implements Clickable{
 		return buttons[0].getDescription();
 	}
 
+	/**
+	 * 
+	 * @return the index of the currently selected RadioButton
+	 */
 	public int getIndexOfChecked() {
 		for(int i = 0; i < buttons.length; i++){
 			if(buttons[i].isValue())return i;

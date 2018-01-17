@@ -35,27 +35,34 @@ import guiTeacher.interfaces.FocusController;
 import guiTeacher.interfaces.TextComponent;
 import guiTeacher.userInterfaces.Screen;
 
+/**
+ * Serves as a basic table with scrolling, drag-to-move rows and editing values
+ * @author bnockles
+ *
+ */
 public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 
 	//Since clicking on a table moves focus, the table must have access to the direction of focus
 	private FocusController parentScreen;
 
-	private TableHeader columns;
-	private ArrayList<SimpleTableRow> rows;
+	protected TableHeader columns;
+	protected ArrayList<SimpleTableRow> rows;
 	private SimpleTableRow hoveredRow;
 	
 	
-	private BufferedImage trashClosed;
-	private BufferedImage trashOpen;
+	protected BufferedImage trashClosed;
+	protected BufferedImage trashOpen;
+	private boolean trashClickedOnce;//helps for identifying double-click on trash
 	private SimpleTableRow movingRow;
 	private Component movementGhost;
 	private int hoverStartY;
 	private int origIndex;
 	private int moveToIndex;
 	private boolean trashHovered; 
+	private boolean multilineRows;
 	
-	private int xRelative;
-	private int yRelative;
+	protected int xRelative;
+	protected int yRelative;
 	private Color highlight;
 	private int lastHeight;//a variable that clears the table when its size is reduced (so old rows get deleted)
 
@@ -63,10 +70,59 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 	public static final int EDIT_COLUMN = 20;
 	public static final int X_MARGIN = 2;
 
+	/**
+	 * 
+	 * @param fc the FocusController (Screen) in which this table is positioned 
+	 * @param x the x coordinate within the container
+	 * @param y the y coordinate within the container
+	 * @param h the height of this table (which is scrollable) (width is summed from columns widths)
+	 * @param columns a TableHeader object defining each column of the SimpleTable
+	 */
+		public SimpleTable(FocusController fc, int x, int y, int h, TableHeader columns) {
+			super(x, y, SimpleTable.widthFromColumns(columns), h);
+			setUp(fc, getWidth(), columns, false);
+		}
+	
+	private static int widthFromColumns(TableHeader header) {
+		int sum = EDIT_COLUMN;
+		for(int i : header.getColumnWidths()){
+			sum += i;
+		}
+		return sum;
+	}
 
+	/**
+ * 
+ * @param fc the FocusController (Screen) in which this table is positioned 
+ * @param x the x coordinate within the container
+ * @param y the y coordinate within the container
+ * @param w the width of this table (columns will be clipped to this width)
+ * @param h the height of this table (which is scrollable)
+ * @param columns a TableHeader object defining each column of the SimpleTable
+ */
 	public SimpleTable(FocusController fc, int x, int y, int w, int h, TableHeader columns) {
 		super(x, y, w, h);
-		highlight = getAccentColor();
+		setUp(fc, w, columns, false);
+	}
+	
+	/**
+	 * 
+ * @param fc the FocusController (Screen) in which this table is positioned 
+ * @param x the x coordinate within the container
+ * @param y the y coordinate within the container
+ * @param w the width of this table (columns will be clipped to this width)
+ * @param h the height of this table (which is scrollable)
+ * @param columns a TableHeader object defining each column of the SimpleTable
+	 * @param multiline whether or not rows expand for multiple lines of text
+	 */
+	public SimpleTable(FocusController fc, int x, int y, int w, int h, TableHeader columns, boolean multiline) {
+		super(x, y, w, h);
+		setUp(fc, w, columns, multiline);
+	}
+	
+	private void setUp(FocusController fc,int w,TableHeader columns, boolean multiline){
+		highlight = getHighlightColor();
+		multilineRows = multiline;
 		hoveredRow = null;
 		parentScreen =fc;
 		trashHovered = false;
@@ -85,21 +141,75 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		update();
 	}
 
-	private void initTrashIcons(){
+	protected void initTrashIcons(){
+		trashClickedOnce = false;
 		trashClosed = new BufferedImage(EDIT_COLUMN,columns.getRowHeight(),BufferedImage.TYPE_INT_ARGB);
 		trashOpen = new BufferedImage(EDIT_COLUMN,columns.getRowHeight(),BufferedImage.TYPE_INT_ARGB);
 		drawTrash(trashClosed.createGraphics(), false);
 		drawTrash(trashOpen.createGraphics(), true);
 	}
 	
+	public void clearRows(){
+		rows.removeAll(rows);
+		clear();
+	}
+	
+	/**
+	 * Adds a row to the table. The method automatically creates a SimpleTableRow with all necessary parameters to fit the rows
+	 * @param values
+	 */
 	public void addRow(String[] values) {
 		if(values.length == columns.getColumnDescriptions().length){	
-			rows.add(new SimpleTableRow(this, values, columns.getColumnEditable(), columns.getColumnWidths(), columns.getRowHeight()));
+			rows.add(new SimpleTableRow(this, values, columns.getColumnEditable(), columns.getColumnWidths(), columns.getRowHeight(), multilineRows));
 			clear();//updates height
-			update();
+		}
+	}
+	
+	public ArrayList<SimpleTableRow> getRows(){
+		return rows;
+	}
+	
+	/**
+	 * Sets the content of a row to a custom text element. 
+	 * This method changes the most recently-added row
+	 * It is intended primarily to change text labels into links
+	 * @param column
+	 * @param component
+	 */
+	public void setColumnContent(int column, TextComponent component) {
+		SimpleTableRow row = rows.get(rows.size()-1);
+		row.setColumn(column, component);
+		update();
+	}
+	
+	/**
+	 * changes the editable value of the last-added row
+	 * @param edit
+	 */
+	public void setRowEdit(boolean[] edit) throws MatchingLengthException{
+		if(edit.length == columns.getColumnEditable().length){
+			SimpleTableRow row = rows.get(rows.size()-1);
+			for(int i = 0; i< edit.length; i++){
+				row.resetEdit(i, edit[i], multilineRows);
+			}
+		}else{
+			throw new MatchingLengthException("You cannot change the mutability of a row using a boolean array of length "+edit.length+" because there are "+columns.getColumnEditable().length+" columns. ");
 		}
 	}
 
+	
+	public class MatchingLengthException extends Exception{
+
+		public MatchingLengthException(String string) {
+			super(string);
+		}
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2264179106739745725L;
+		
+	}
 	
 	
 	public Color getHighlight() {
@@ -230,12 +340,17 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 			for(int i = 0; i < row.getValues().length; i++){
 				TextComponent tc = row.getValues()[i];
 				int useY = y;
+				int increase = columns.getColumnWidths()[i];
 				if(tc instanceof TextField){
 					useY-=TextField.DESCRIPTION_SPACE;
+				}else if(tc instanceof TextLabel){
+					x+=2;
+					increase-=2;
+					
 				}
 				
 				g.drawImage(tc.getImage(), x, useY, null);
-				x+=columns.getColumnWidths()[i];
+				x+=increase;
 			}
 			//			drawRow(g, str.getValues(), y);
 			borderY+=rh;
@@ -307,7 +422,11 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 		int i=0;
 		for(SimpleTableRow r: rows)
 		{
-			values[i]=Integer.parseInt(r.getValue(columnIndex));
+			try{
+				values[i]=Integer.parseInt(r.getValue(columnIndex));
+			}catch(NumberFormatException e){
+				values[i] = 1;
+			}
 			i++;
 		}
 		return values;
@@ -344,13 +463,79 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 				hoveredRow = null;
 			}
 			update();
+		}else if(xRelative > EDIT_COLUMN){
+			unHover();
+			changeMouse();
+		}else {
+			unHover();
 		}
 
 	}
+	
+	/**
+	 * changes mouse cursor depending on what is being hovered
+	 */
+	private void changeMouse(){
+			int hoveredRow = yRelative/columns.getRowHeight();
+			int hoveredColumn = 0;
+			int widthToClick = 0;
+			int[] widths = columns.getColumnWidths();
+			while(hoveredColumn<widths.length && widthToClick+widths[hoveredColumn]<xRelative){
+				widthToClick+=columns.getColumnWidths()[hoveredColumn];
+				hoveredColumn++;
+			}
+			//		System.out.println("xRelative = "+xRelative+", yRelative = "+yRelative+", SimpleTable.java clickedRow = "+clickedRow+", clickedColumn = "+clickedColumn);
+			if(hoveredColumn >= widths.length){
+				hoveredColumn = widths.length-1;
+			}
+			if(hoveredRow !=0 && hoveredRow-1 < rows.size()){
+				//NOTE: The following method call only set the pointer. Other hovering actions (i.e. hover text) are ignored
+				rows.get(hoveredRow-1).columnHovered(hoveredColumn, xRelative-(hoveredRow+1)*columns.getRowHeight(),yRelative-widthToClick);
+				update();
+			}
+		
+	}
 
+	private void unHover(){
+		if(hoveredRow != null){
+			hoveredRow.setHover(false);
+		hoveredRow = null;
+		update();
+		}
+	}
+	
+	
 	@Override
 	public void act() {
 		int clickedRow = yRelative/columns.getRowHeight();
+		if(yRelative < columns.getRowHeight() && xRelative < EDIT_COLUMN){
+			if(!trashClickedOnce){
+				trashClickedOnce = true;
+				trashHovered=true;
+				Thread waitForDoubleClick = new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(400);
+							trashClickedOnce=false;
+							trashHovered = false;
+							update();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+				waitForDoubleClick.start();
+				update();		
+			}else{
+				rows.removeAll(rows);
+				trashHovered = false;
+				trashClickedOnce=false;
+				update();
+			}
+		}
 		if(xRelative >EDIT_COLUMN){
 			int clickedColumn = 0;
 			int widthToClick = 0;
@@ -412,7 +597,7 @@ public class SimpleTable extends StyledComponent implements Clickable, Dragable{
 			//calculate difference between starty and finishy
 			
 			
-			rows.add(moveToIndex,rows.remove(origIndex));
+			if(moveToIndex>=0 && moveToIndex<rows.size()+1)rows.add(moveToIndex,rows.remove(origIndex));
 		}
 		moveToIndex = -1;
 		update();

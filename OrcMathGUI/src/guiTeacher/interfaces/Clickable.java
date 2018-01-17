@@ -20,11 +20,32 @@ package guiTeacher.interfaces;
 
 import guiTeacher.components.Action;
 
+/**
+ * A Visible object that can be clicked on. Note that a Clickable has no effect if it is not in at least a Clickable Screen
+ * @author bnockles
+ *
+ */
 public interface Clickable extends Visible {
 
+	/**
+	 * Defines the bounds within the object can be clicked
+	 * @param x x-coordinates of the mouse within context of immediate parent container
+	 * @param y y-coordinates of the mouse within context of immediate parent container
+	 * @return true if this Clickable is hovered by mouse
+	 */
 	public boolean isHovered(int x, int y);
+	/**
+	 * The action that is executed when this object is clicked
+	 */
 	public void act();
+	/**
+	 * The action that is executed when this object is hovered
+	 */
 	public void hoverAction();
+	/**
+	 * Change the action associated with this Clickable
+	 * @param a an Action
+	 */
 	public void setAction(Action a);
 	
 }

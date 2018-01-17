@@ -24,19 +24,21 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import guiTeacher.interfaces.Clickable;
+import guiTeacher.interfaces.Dragable;
 
 
-public class Accordion extends StyledComponent implements Clickable {
+public class Accordion extends StyledComponent implements Clickable, Dragable {
 
-	private ArrayList<AccordionTab> tabs;
-	private AccordionTab openTab;
-	
+	protected ArrayList<AccordionTab> tabs;
+	protected AccordionTab openTab;
+
 	//mouse listening
 	private int relativeX;
 	private int relativeY;
 	private Color tabColor;
 	private Color tabShade;
-	
+	private Dragable draggedItem;
+
 	public Accordion(int x, int y, int w) {
 		super(x, y, w, 1);
 		setHeaderColor(new Color(255,255,255));
@@ -49,13 +51,13 @@ public class Accordion extends StyledComponent implements Clickable {
 	public boolean isAnimated(){
 		return true;
 	}
-	
+
 	public AccordionTab addTab(String tabHeader, ScrollablePane content){
 		AccordionTab t = new AccordionTab(this, tabHeader, content);
 		tabs.add(t);
 		return t;
 	}
-	
+
 	@Override
 	public boolean isHovered(int x, int y) {
 		if (x >= getX() && x <= getX()+ getWidth() && y >= getY() && y <= getY()+getHeight()){
@@ -73,19 +75,19 @@ public class Accordion extends StyledComponent implements Clickable {
 	}
 
 	public int getHeight(){
-//		int openTabHeight = 0;
-//		if(openTab != null){
-//			openTabHeight = openTab.getHeight()-getTabHeight();
-//		}
-//		System.out.println("the height of this accordion is "+(getTabHeight()*tabs.size()+openTabHeight)+" and the height of the image is "+getImage().getHeight());
-//		return getTabHeight()*tabs.size()+openTabHeight;
+		//		int openTabHeight = 0;
+		//		if(openTab != null){
+		//			openTabHeight = openTab.getHeight()-getTabHeight();
+		//		}
+		//		System.out.println("the height of this accordion is "+(getTabHeight()*tabs.size()+openTabHeight)+" and the height of the image is "+getImage().getHeight());
+		//		return getTabHeight()*tabs.size()+openTabHeight;
 		int th = 0;
 		for(AccordionTab t: tabs){
 			th+=t.getHeight();
 		}
 		return th;
 	}
-	
+
 	@Override
 	public void act() {
 		int indexOfOpenTab = 0;
@@ -110,14 +112,14 @@ public class Accordion extends StyledComponent implements Clickable {
 				clickedTab = openTab;
 			}
 		}
-//		System.out.println("Accordion.java virtual tab index is "+virtualTabIndex+"\nthe actually clicked tabe is at index "+tabs.indexOf(clickedTab)+"\nopenTab is "+indexOfOpenTab+" with height "+heightOfOpenTab+"\nvirtual tab is "+virtualTabIndex);
+		//		System.out.println("Accordion.java virtual tab index is "+virtualTabIndex+"\nthe actually clicked tabe is at index "+tabs.indexOf(clickedTab)+"\nopenTab is "+indexOfOpenTab+" with height "+heightOfOpenTab+"\nvirtual tab is "+virtualTabIndex);
 		if(openTab != null && clickedTab == openTab){
 			clickedTab.act(relativeX,relativeY-getTabHeight()*(indexOfOpenTab+1));
 		}else{
 			openTab(clickedTab);
 		}
 	}
-	
+
 	public void openTab(AccordionTab tab){
 		if(openTab != null)openTab.close();
 		tab.open();
@@ -129,12 +131,21 @@ public class Accordion extends StyledComponent implements Clickable {
 	 * Accordion image is dynamic (height changes based on open tabs)
 	 * so when update is called, a new image is always created
 	 */
+
+	private int lastWidth = 0;
+	private int lastHeight = 0;
 	public void update(){
-		BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-		update(buffer.createGraphics());
-		resize().drawImage(buffer, 0, 0, null);
+		if(getWidth() != lastWidth || getHeight() != lastHeight){
+			lastWidth = getWidth();
+			lastHeight = getHeight();
+			BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+			update(buffer.createGraphics());
+			resize().drawImage(buffer, 0, 0, null);
+		}else{
+			super.update();
+		}
 	}
-	
+
 	@Override
 	public void update(Graphics2D g) {
 		int tabY= 0;
@@ -150,13 +161,56 @@ public class Accordion extends StyledComponent implements Clickable {
 	@Override
 	public void setAction(Action a) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setTabShade(Color shade){
 		tabShade = shade;
 	}
+
+	private int yInTab(){
+		if(openTab != null){
+			return relativeY-getTabHeight()*(1+tabs.indexOf(openTab));			
+		}else{
+			return 0;
+		}
+	}
 	
+	private int xInTab(){
+		if(openTab != null){
+			return relativeX;			
+		}else{
+			return 0;
+		}
+	}
+	
+	public boolean setStart(int x, int y) {
+		boolean hoverOverDragable = false;
+
+		if(openTab != null && openTab.getContent() instanceof Dragable){
+			Dragable item = (Dragable)openTab.getContent();
+			if(item.setStart(xInTab(),yInTab())){
+				draggedItem = item;
+				hoverOverDragable = true;
+			}
+		}
+
+
+		return hoverOverDragable;
+	}
+
+	@Override
+	public void setFinish(int x, int y) {
+		if(draggedItem != null)draggedItem.setFinish(xInTab(),yInTab() );
+		draggedItem = null;
+	}
+
+	@Override
+	public void setHeldLocation(int x, int y) {
+		if(draggedItem != null)draggedItem.setHeldLocation(xInTab(),yInTab());
+
+	}
+
 
 
 }

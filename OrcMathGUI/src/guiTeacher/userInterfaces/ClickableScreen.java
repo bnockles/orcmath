@@ -28,6 +28,11 @@ import guiTeacher.interfaces.Clickable;
 import guiTeacher.interfaces.Dragable;
 import guiTeacher.interfaces.Visible;
 
+/**
+ * A Screen that responds to MouseClicks
+ * @author bnockles
+ *
+ */
 public abstract class ClickableScreen extends Screen implements MouseListener, MouseMotionListener {
 
 	private ArrayList<Clickable> clickables;
@@ -53,12 +58,13 @@ public abstract class ClickableScreen extends Screen implements MouseListener, M
 
 	public void mouseClicked(MouseEvent m) {
 		for(Clickable c: clickables){
-			if(c.isHovered(m.getX(), m.getY())){
+			if(c.isVisible() && c.isHovered(m.getX(), m.getY())){
 				c.act();
 				break;
 			}
 		}
 	}
+
 
 	public void addObject(Visible v){
 		super.addObject(v);
@@ -86,7 +92,7 @@ public abstract class ClickableScreen extends Screen implements MouseListener, M
 
 	public void mousePressed(MouseEvent m) {
 		for(Clickable c: clickables){
-			if(c.isHovered(m.getX(), m.getY())){
+			if(c.isVisible() && c.isHovered(m.getX(), m.getY())){
 				if(c instanceof Dragable){
 					Dragable item = (Dragable)c;
 					if(item.setStart(m.getX(),m.getY())){
@@ -122,7 +128,7 @@ public abstract class ClickableScreen extends Screen implements MouseListener, M
 	@Override
 	public void mouseMoved(MouseEvent m) {
 		for(Clickable c: clickables){
-			if(c.isHovered(m.getX(), m.getY())){
+			if(c.isVisible() && c.isHovered(m.getX(), m.getY())){
 				c.hoverAction();
 			}
 		}

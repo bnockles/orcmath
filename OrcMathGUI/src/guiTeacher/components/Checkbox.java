@@ -20,11 +20,17 @@ package guiTeacher.components;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 
+import guiTeacher.GUIApplication;
 import guiTeacher.interfaces.Clickable;
 
-
+/**
+ * A Button that shows a checkmark after it has been clicked
+ * @author bnockles
+ *
+ */
 public class Checkbox extends StyledComponent implements Clickable {
 
 	public static final Color CHECK_COLOR = new Color(50,200,150);
@@ -36,6 +42,15 @@ public class Checkbox extends StyledComponent implements Clickable {
 	private boolean checked;
 	private Action action;
 
+	/**
+	 * 
+	 * @param text Desciption of the Button
+	 * @param x x-coordinate within context of parent ComponentContainer
+	 * @param y y-coordinate within context of parent ComponentContainer
+	 * @param width pixel width
+	 * @param checked pixel height
+	 * @param action performed when Button is clicked. Can be null
+	 */
 	public Checkbox(String text, int x, int y, int width, boolean checked, Action action){
 		super(x, y, width,CHECKBOX_LENGTH);
 		this.text = text;
@@ -78,6 +93,9 @@ public class Checkbox extends StyledComponent implements Clickable {
 		if(action != null) action.act();
 	}
 
+	/**
+	 * @return true if this Button is checked
+	 */
 	public boolean isChecked(){
 		return checked;
 	}
@@ -85,7 +103,15 @@ public class Checkbox extends StyledComponent implements Clickable {
 
 	@Override
 	public boolean isHovered(int x, int y) {
-		return x>getX() && x < getX()+CHECKBOX_LENGTH && y>getY() && y < getY()+CHECKBOX_LENGTH;
+		boolean hovered = x>getX() && x < getX()+CHECKBOX_LENGTH && y>getY() && y < getY()+CHECKBOX_LENGTH;
+		if(hovered){
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			setLeft(false);
+		}else if (!hasLeft()){
+			setLeft(true);
+			GUIApplication.mainFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		return hovered;
 	}
 
 	@Override

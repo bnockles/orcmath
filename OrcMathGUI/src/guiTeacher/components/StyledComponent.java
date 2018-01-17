@@ -34,8 +34,11 @@ public abstract class StyledComponent extends Component {
 	private static Font tabFont = new Font("Times Roman",Font.PLAIN,14);//also used in tables
 	private static Color tabColor = new Color(150,200,255);
 	private static Color tabShade = new Color(150,200,255);
+	private static boolean buttonOutline = false;
+	private static int buttonOutlineSize = 2;
 	
 	private static Font baseFont =new Font("Times Roman",Font.PLAIN,14);//also used in tables
+	private static Font monoFont =new Font("Courier",Font.PLAIN,14);//also used in tables
 	private static Color textColor = Color.black;
 	private static Color headerColor = new Color(0,0,0);
 	private static Color bodyColor = new Color(0,0,0);
@@ -45,6 +48,7 @@ public abstract class StyledComponent extends Component {
 	private static Color activeBorderColor = new Color(0,0,0);
 	private static Color staticBorderColor = new Color(0,0,0);
 	private static Color accentColor = new Color(150,150,150);
+	private static Color highlightColor = new Color(200,200,240);
 	private static int headerAlign = ALIGN_CENTER;
 	private static int bodyAlign = ALIGN_LEFT;
 	private static int animationTime = 600;//duration of transitions
@@ -52,18 +56,45 @@ public abstract class StyledComponent extends Component {
 	//tables
 	private static int tableBorder = 1;
 	
+	/**
+	 * set the text Color for text in ALL StyledComponents
+	 * @param c
+	 */
 	public static void setTextColor(Color c){
 		textColor = c;
 	}
 	
+	/**
+	 * get the default text Color for text in ALL StyledComponents
+	 * @param c
+	 */
 	public Color getTextColor(){
 		return textColor;
+	}
+	
+	/**
+	 * Set the default mono-spaced font for all Styled-Components that use a mono-spaced font
+	 * @param f
+	 */
+	public static void setMonoText(Font f){
+		monoFont = f;
+	}
+	
+	/**
+	 * 
+	 * @return the default mono-spaced font for all Styled-Components that use a mono-spaced font
+	 */
+	public Font getMonoFont(){
+		return monoFont;
 	}
 	
 	public StyledComponent(int x, int y, int w, int h) {
 		super(x, y, w, h);
 	}
 
+	/**
+	 * called by StyledComponents, this method sets RenderingHints and the base Font
+	 */
 	protected void applyStyles(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setFont(baseFont);
@@ -73,10 +104,36 @@ public abstract class StyledComponent extends Component {
 		return baseFont;
 	}
 	
+	/**
+	 * Set the base font for ALL StyledComponents that contain Text
+	 * @param f
+	 */
 	public static void setBaseFont(Font f){
 		baseFont = f;
 	}
 	
+	
+	
+	/**
+	 * 
+	 * @return true if default Button outline is ON
+	 */
+	public static boolean isButtonOutline() {
+		return buttonOutline;
+	}
+
+	/**
+	 * Set whether or not standard Buttons have a drawn outline
+	 * @param buttonOutline
+	 */
+	public static void setButtonOutline(boolean buttonOutline) {
+		StyledComponent.buttonOutline = buttonOutline;
+	}
+
+	/**
+	 * 
+	 * @return the default inactive border Color for standard Buttons and other Components that can be made inactive
+	 */
 	public Color getInactiveBorderColor() {
 		return inactiveBorderColor;
 	}
@@ -126,6 +183,14 @@ public abstract class StyledComponent extends Component {
 
 
 
+	public static int getButtonOutlineSize() {
+		return buttonOutlineSize;
+	}
+
+	public static void setButtonOutlineSize(int buttonOutlineSize) {
+		StyledComponent.buttonOutlineSize = buttonOutlineSize;
+	}
+
 	public static void setTableBorder(int tableBorder) {
 		StyledComponent.tableBorder = tableBorder;
 	}
@@ -144,6 +209,10 @@ public abstract class StyledComponent extends Component {
 		return headerColor;
 	}
 
+	/**
+	 * 
+	 * @param headerColor the default Font Color of Tables and any other StyledComponent which may have a header
+	 */
 	public void setHeaderColor(Color headerColor) {
 		this.headerColor = headerColor;
 	}
@@ -152,30 +221,58 @@ public abstract class StyledComponent extends Component {
 		tabHeight = height;
 	}
 
+	/**
+	 * 
+	 * @param c the default background Color in the header of Tables and any other StyledComponent that may have a header or tab
+	 */
 	public static void setTabColor(Color c) {
 		tabColor = c;
 	}
 
+	/**
+	 * 
+	 * @return the body color for all StyledComponents (Note: no standard Components utilize bodyColor)
+	 */
 	public Color getBodyColor() {
 		return bodyColor;
 	}
 
+	/**
+	 * Set the body color for all StyledComponents (Note: no standard Components utilize bodyColor)
+	 * @param bodyColor
+	 */
 	public void setBodyColor(Color bodyColor) {
-		this.bodyColor = bodyColor;
+		StyledComponent.bodyColor = bodyColor;
 	}
 
+	/**
+	 * 
+	 * @return the standard background color for all Components (usually, this value is white)
+	 */
 	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
 
+	/**
+	 * 
+	 * @param backgroundColor the standard background color for all Components (usually, this value is white)
+	 */
 	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
+		StyledComponent.backgroundColor = backgroundColor;
 	}
 
+	/**
+	 * 
+	 * @return the default accent Color for all StyledComponents (includes Links)
+	 */
 	public static Color getAccentColor() {
 		return accentColor;
 	}
 
+	/**
+	 * 
+	 * @param c the default accent Color for all StyledComponents (includes Links)
+	 */
 	public static void setAccentColor(Color c) {
 		accentColor = c;
 	}
@@ -187,6 +284,15 @@ public abstract class StyledComponent extends Component {
 	public void setHeaderAlign(int headerAlign) {
 		this.headerAlign = headerAlign;
 	}
+
+	public static void setHighlightColor(Color c) {
+		highlightColor = c;
+	}
+
+	public Color getHighlightColor() {
+		return highlightColor;
+	}
+	
 
 	public int getBodyAlign() {
 		return bodyAlign;
@@ -202,6 +308,10 @@ public abstract class StyledComponent extends Component {
 		return alertColor;
 	}
 
+	/**
+	 * 
+	 * @param alertColor - the alert Color of ALL StyledComponents (Note: Alert Color is not used by any standard components)
+	 */
 	public static void setAlertColor(Color alertColor) {
 		StyledComponent.alertColor = alertColor;
 	}

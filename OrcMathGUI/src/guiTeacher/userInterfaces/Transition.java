@@ -20,6 +20,14 @@ package guiTeacher.userInterfaces;
 
 import javax.swing.JFrame;
 
+/**
+ * This class illustrates transitions between Screens in a GUI Application. There are 3 types of standard Transitions:
+ * ENTER_LEFT
+ * ENTER_RIGHT
+ * REVEAL_RIGHT 
+ * @author bnockles
+ *
+ */
 public class Transition {
 
 	public static final int ENTER_LEFT = 0;
@@ -34,6 +42,12 @@ public class Transition {
 	private  int changeY;
 	private  long time;
 
+	/**
+	 * 
+	 * @param frame the GUIApplication performing the Transition
+	 * @param type the type of Transition being performed (Transition.ENTER_LEFT, _RIGHT, or REVEAL_RIGHT)
+	 * @param time the duration of the animation
+	 */
 	public Transition(JFrame frame, int type, long time) {
 		
 		this.frame = frame;
