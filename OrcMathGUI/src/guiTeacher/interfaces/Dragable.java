@@ -18,8 +18,10 @@
  *******************************************************************************/
 package guiTeacher.interfaces;
 
-public interface Dragable {
+public interface Dragable extends Visible{
 
+	
+	
 	/**
 	 * 
 	 * @param x x coord at start of drag

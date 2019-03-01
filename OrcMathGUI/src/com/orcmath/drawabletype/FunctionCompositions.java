@@ -51,16 +51,16 @@ public class FunctionCompositions extends DynamicType{
 	protected void getInstance(){
 
 		Graph f=new Graph();
-		int ftype;
-		double[] fcoefficents;
+		int ftype=0;
+		double[] fcoefficents= {0,1};
 		f.setFunction(ftype, fcoefficents);
 
 		Graph g=new Graph();
-		int gtype;
-		double[] gcoefficents;
+		int gtype=1;
+		double[] gcoefficents= {0,1};
 		g.setFunction(gtype, gcoefficents);
 		
-		String objective;//this string should say f of g or g of f
+		String objective="g";//this string should say f of g or g of f
 		//initiate question string
 		String questionText = "Given the function #f(x)="+f.getFunctionText()+ "# and #g(x)="+g.getFunctionText()+"#, determine #"+objective+"#";
 		WorkTable answerWork = new WorkTable();

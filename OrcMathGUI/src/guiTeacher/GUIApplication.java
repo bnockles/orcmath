@@ -19,6 +19,8 @@
 package guiTeacher;
 
 import java.awt.Graphics;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -27,12 +29,13 @@ import guiTeacher.userInterfaces.ComponentContainer;
 import guiTeacher.userInterfaces.Screen;
 import guiTeacher.userInterfaces.Transition;
 
-public abstract class GUIApplication extends JFrame implements Runnable{
+public abstract class GUIApplication extends JFrame implements Runnable, ComponentListener{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 390738816689963935L;
+	public static JFrame mainFrame;
 	private Screen currentScreen;
 	private boolean scaleWithWindow; 
 	
@@ -46,6 +49,8 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 		initScreen();
 		setUndecorated(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame = this;
+		addComponentListener(this);
 	}
 
 
@@ -55,6 +60,9 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 	public void setScreen(Screen screen) {
 		removeListeners();
 		currentScreen = screen;
+		if (!screen.isFixedSize() && (screen.getWidth() != this.getWidth() || screen.getHeight() != this.getHeight())){
+			resize(getWidth(), getHeight());
+		}
 		setContentPane(currentScreen);
 		addListeners();
 	}
@@ -104,6 +112,45 @@ public abstract class GUIApplication extends JFrame implements Runnable{
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	public void resize(int w, int h){
+		if (!currentScreen.isFixedSize()){
+			currentScreen.resize(w, h);
+		}
+	}
+
+	/**
+	 * On resize, every component is simply recreated, as initObjects is ultimately recalled.
+	 */
+	@Override
+	public void componentResized(ComponentEvent e) {
+		resize(getWidth(), getHeight());
+	}
+
+
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

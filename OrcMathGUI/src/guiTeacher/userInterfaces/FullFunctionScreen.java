@@ -85,30 +85,43 @@ public abstract class FullFunctionScreen extends ClickableScreen implements KeyL
 	public void mouseClicked(MouseEvent m) {
 		super.mouseClicked(m);
 		for(KeyedComponent k: keyedComponents){
-			if(k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
+			if(k.isVisible() && k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
 				moveFocus(k);
 				break;
 			}
 		}
 	}
-	
+
 	public void moveFocus(KeyedComponent k){
-		if(activeKeyedComponent!=null)activeKeyedComponent.setFocus(false);
-		k.setFocus(true);
-		activeKeyedComponent = k;
+		if(k.isVisible()){
+			if(activeKeyedComponent!=null)activeKeyedComponent.setFocus(false);
+			k.setFocus(true);
+			activeKeyedComponent = k;
+		}
 	}
 
 	public KeyedComponent getFocusedComponent(){
 		return activeKeyedComponent;
 	}
 
-	
+
 	public void moveScrollFocus(Scrollable sp){
-		if(sp != activeScrollPane){
+		if(sp.isVisible() && sp != activeScrollPane){
 			if(activeScrollPane!=null)activeScrollPane.setFocus(false);
 			sp.setFocus(true);
 			activeScrollPane = sp;			
 		}
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent m) {
+		for(KeyedComponent k: keyedComponents){
+			if(k.isVisible() && k.isHovered(m.getX(), m.getY()) && k != activeKeyedComponent){
+				moveFocus(k);
+				break;
+			}
+		}
+		super.mouseDragged(m);
 	}
 
 	public void mousePressed(MouseEvent m) {
@@ -117,14 +130,14 @@ public abstract class FullFunctionScreen extends ClickableScreen implements KeyL
 			activeScrollPane.press();
 		}
 	}
-	
+
 	public void mouseReleased(MouseEvent m) {
 		super.mouseReleased(m);
 		if(activeScrollPane != null ){
 			activeScrollPane.release();
 		}
 	}
-	
+
 	public Scrollable getScrollComponent(){
 		return activeScrollPane;
 	}
@@ -151,11 +164,11 @@ public abstract class FullFunctionScreen extends ClickableScreen implements KeyL
 	public MouseWheelListener getMouseWheelListener(){
 		return this;
 	}
-	
+
 	public KeyListener getKeyListener(){
 		return this;
 	}
-	
+
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if(activeScrollPane != null){

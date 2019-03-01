@@ -19,6 +19,7 @@
 package components;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import guiTeacher.components.Accordion;
@@ -27,15 +28,22 @@ import guiTeacher.components.Action;
 import guiTeacher.components.SearchBox;
 import guiTeacher.components.StyledComponent;
 import guiTeacher.interfaces.FocusController;
+import guiTeacher.interfaces.KeyedComponent;
 import guiTeacher.interfaces.Visible;
 import main.OrcMath;
+import screens.LaTeXEditor;
 
-public class TopicAccordion extends Accordion {
+public class TopicAccordion extends Accordion implements KeyedComponent{
 
 	private QuestionPreview qp;
 	private SearchBox searchBox;
 	
+	
+	private AccordionTab latexTab;
+	private LaTeXEditor latexEditor;
+	
 	public static final int CONTENT_HEIGHT = 310;
+	public static final int LATEX_TAB_INDEX = 4;//index of LateX Tab, use for shifting focus to LateX tab
 	
 	public TopicAccordion(FocusController fc, int x, int y, int w, SearchBox searchBox) {
 		super(x, y, w);
@@ -149,7 +157,8 @@ public class TopicAccordion extends Accordion {
 		addTab(fc, "Simplifying & Solving", algebraTopics);
 		addTab(fc, "Geometry", geometryTopics);
 		addTab(fc, "Functions", functions);
-		
+		latexEditor = new LaTeXEditor(fc, this,0, 0, getWidth(), CONTENT_HEIGHT);
+		latexTab = addTab("LaTeX",latexEditor);
 		update();
 		
 		
@@ -157,7 +166,12 @@ public class TopicAccordion extends Accordion {
 	
 	public boolean isHovered(int x, int y){
 		boolean b = super.isHovered(x, y);
-		if(qp.isInitialized())qp.setVisible(b);
+		int openTabI = tabs.indexOf(openTab);
+		if(qp.isInitialized() && openTabI != LATEX_TAB_INDEX){
+			qp.setVisible(b);	
+		}else{
+			qp.setVisible(false);
+		}
 		return b;
 	}
 	
@@ -175,7 +189,7 @@ public class TopicAccordion extends Accordion {
 				}
 			},qp);
 			searchBox.addToCollection(l);
-			l.setSize(13);
+			l.setSize(14);
 			l.setLinkColor(Color.BLACK);
 			l.setAlign(StyledComponent.ALIGN_LEFT);
 			links.add(l);
@@ -185,6 +199,39 @@ public class TopicAccordion extends Accordion {
 		QuestionListSubscreen screen = new QuestionListSubscreen(fc, this, getWidth(), CONTENT_HEIGHT, links);
 		return addTab(name, screen);
 		
+	}
+
+	
+	public void viewCustomProblem(String problemLaTeX, String solutionLaTeX){
+		if(!latexTab.isOpen())latexTab.switchToThisTab();
+		latexEditor.setProblemText(problemLaTeX);
+		latexEditor.setSolutionText(solutionLaTeX);
+		latexEditor.update();
+		update();
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		latexEditor.keyTyped(e);
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		latexEditor.keyPressed(e);
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		latexEditor.keyReleased(e);
+		
+	}
+
+	@Override
+	public void setFocus(boolean b) {
+		if (tabs.indexOf(openTab)== LATEX_TAB_INDEX){
+			latexEditor.setFocus(b);
+		}
 	}
 	
 

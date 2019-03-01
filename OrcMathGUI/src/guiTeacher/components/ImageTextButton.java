@@ -29,7 +29,8 @@ public class ImageTextButton extends Button{
 	
 	public ImageTextButton(String text, Image icon, int x, int y, int width, int height, Action action) {
 		super(x, y, width, height,"    "+text, getAccentColor(),action);
-		text = "    "+text;
+		String adjustedTitle = icon == null ? text:"    "+text;
+		setText(adjustedTitle);
 		this.icon = icon;
 		update();
 	}
@@ -37,7 +38,9 @@ public class ImageTextButton extends Button{
 	public void update(Graphics2D g) {
 		super.update(g);
 		
-		if(icon != null) g.drawImage(icon, 2, 0, null);
+		if(icon != null){
+			g.drawImage(icon, 2, 0, null);
+		}
 //		GuiUtilities.centerIcon(g2, icon, getWidth()-fm.stringWidth(text), getHeight());
 	}
 

@@ -80,7 +80,9 @@ public class Worksheet implements Task{
 	private boolean includeTeacherNameInHeader;
 	private int identifier;//used to match sheets with answer keys
 	private  boolean keepQuestionOrder;
-
+	private ArrayList<CustomProblemData> customProblems;
+	private int customIndex;
+	
 	//task related
 	private boolean finished;
 
@@ -190,11 +192,11 @@ public class Worksheet implements Task{
 			if(image.getHeight()*scaleFactor>650){
 				scaleFactorPercent=(float)65000/(float)image.getHeight();
 				//				scaleFactor=scaleFactorPercent/100;
-			
+
 			}
-			System.out.println("2. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
+//			System.out.println("2. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
 			image.scalePercent(scaleFactorPercent);
-			System.out.println("3. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
+//			System.out.println("3. image height = "+image.getScaledHeight()+", scaling "+scaleFactor+", scaleFactorPercent = "+scaleFactorPercent);
 		} catch (BadElementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -205,7 +207,7 @@ public class Worksheet implements Task{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}catch (NullPointerException e) {
-			
+
 			e.printStackTrace();
 		}
 		return image;
@@ -352,21 +354,30 @@ public class Worksheet implements Task{
 
 			try{
 				Problem p;
+				System.out.println("Creating a problem: "+(problemOrder[index]));
+				//custom problem
+				if (problemOrder[index].contains(Problem.CUSTOM_TAG)){
+					CustomProblemData data = customProblems.get(++customIndex%customProblems.size());
+					p = new Problem(data.getProblemLaTeX(),data.getSolutionLaTeX());
+				}
+				//generated problem
+				else{
+					if(difficultyMode == Settings.DIFFICULT_MODE_CUSTOM){
+						p = new Problem(problemOrder[index],customDifficulties[index%customDifficulties.length]);
+					}else{
+						if (difficultyMode == Settings.DIFFICULT_MODE_INCREMENTAL){
+							p = new Problem(problemOrder[index],difficultyStep);
+							difficultyStep=1;
+							difficultyStep=(int)(difficultyStep+stepInterval);
+							stepInterval=stepInterval+d;
+						}
+						else{
+							//static difficulty
 
-				if(difficultyMode == Settings.DIFFICULT_MODE_CUSTOM){
-					p = new Problem(problemOrder[index],customDifficulties[index%customDifficulties.length]);
-				}else{
-					if (difficultyMode == Settings.DIFFICULT_MODE_INCREMENTAL){
-						p = new Problem(problemOrder[index],difficultyStep);
-						difficultyStep=1;
-						difficultyStep=(int)(difficultyStep+stepInterval);
-						stepInterval=stepInterval+d;
-					}
-					else{
-						//static difficulty
+							p = new Problem(problemOrder[index],difficulty);	  
 
-						p = new Problem(problemOrder[index],difficulty);	  
 
+						}
 
 					}
 				}
@@ -407,7 +418,7 @@ public class Worksheet implements Task{
 		return questions;
 	}
 
-	
+
 	protected void showProblemSpecificError(String[] problemOrder, int index){
 		if(OrcMath.createScreen != null){
 			int maxChar = 20;
@@ -445,7 +456,7 @@ public class Worksheet implements Task{
 
 				//makes image of instructions and places question according to where it must go.
 				int scaledInstructionsImageWidth=0;
-	
+
 
 				if (eachQuestionHasItsOwnInstructions && !q.neverIncludeInstructions()) {
 					Image instructionsImage = prepareAndAddInstructions(cell, q.getInstructions(), cellWidthLimit, q.getScaleFactors(),(int)(image.getScaledHeight()));
@@ -454,7 +465,7 @@ public class Worksheet implements Task{
 					//add the image of the question under the instructions
 					cell.addElement(new Chunk(image,0,-scaledInstructionsImageHeight));		
 				}else{
-					
+
 					cell.addElement(new Chunk(image,0,0));				
 				}
 
@@ -468,10 +479,10 @@ public class Worksheet implements Task{
 				 * I have found there is a margin at the top of each graphic that is inversely proportional to what seems to be approximately the square of the 
 				 * scale factor. The next two lines are an attempt to remedy it.
 				 */
-//				float littleRemainingSpace=(float) (1/Math.pow((q.getScaleFactors()),1.7));
+				//				float littleRemainingSpace=(float) (1/Math.pow((q.getScaleFactors()),1.7));
 				float topPadding = (float)(image.getScaledHeight()-15);
-//				float topPadding = (float)((q.getImageMargin()-littleRemainingSpace)*q.getScaleFactors());
-//				System.out.println("topPadding = "+topPadding);
+				//				float topPadding = (float)((q.getImageMargin()-littleRemainingSpace)*q.getScaleFactors());
+				//				System.out.println("topPadding = "+topPadding);
 				cell.setPaddingTop(topPadding);
 
 
@@ -672,6 +683,10 @@ public class Worksheet implements Task{
 		includeHeading = b;
 	}
 
+	public void setCustomProblems(ArrayList<CustomProblemData> data){
+		this.customProblems = data;
+	}
+
 	public void setIdentifier(int i){
 		identifier = i;
 	}
@@ -749,7 +764,7 @@ public class Worksheet implements Task{
 						OrcMath.createScreen.presentNotification("An error occurred while generating the file.");
 					}
 				}
-				
+
 				finally{
 					count = (int) getTotal();
 					if(OrcMath.createScreen != null){
